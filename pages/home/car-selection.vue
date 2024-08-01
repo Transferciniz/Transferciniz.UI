@@ -38,7 +38,7 @@
 
         <div class="flex justify-between gap-x-2 items-center">
           <div class="bg-gray-700 text-white text-md font-normal px-4 py-1 rounded-md">Deneyimle</div>
-          <div class="bg-base-700 text-white text-md font-normal px-4 py-1 rounded-md">Seç ve 12.463₺ Ödeme Yap</div>
+          <div class="bg-base-700 text-white text-md font-normal px-4 py-1 rounded-md" @click="openPaymentDrawer()">Seç ve 12.463₺ Ödeme Yap</div>
         </div>
 
       </div>
@@ -63,7 +63,7 @@
 
         <div class="flex justify-between gap-x-2 items-center">
           <div class="bg-gray-700 text-white text-md font-normal px-4 py-1 rounded-md">Deneyimle</div>
-          <div class="bg-base-700 text-white text-md font-normal px-4 py-1 rounded-md">Seç ve 9.135₺ Ödeme Yap</div>
+          <div class="bg-base-700 text-white text-md font-normal px-4 py-1 rounded-md" @click="openPaymentDrawer()">Seç ve 9.135₺ Ödeme Yap</div>
         </div>
 
       </div>
@@ -92,7 +92,7 @@
 
         <div class="flex justify-between gap-x-2 items-center">
           <div class="bg-white text-gray-700 text-md font-normal px-4 py-1 rounded-md">Deneyimle</div>
-          <div class="bg-base-700 text-white text-md font-normal px-4 py-1 rounded-md">Seç ve 48.312₺ Ödeme Yap</div>
+          <div class="bg-base-700 text-white text-md font-normal px-4 py-1 rounded-md" @click="openPaymentDrawer()">Seç ve 48.312₺ Ödeme Yap</div>
         </div>
 
       </div>
@@ -114,16 +114,33 @@
 
         <div class="flex justify-between gap-x-2 items-center">
           <div class="bg-white text-gray-700 text-md font-normal px-4 py-1 rounded-md">Deneyimle</div>
-          <div class="bg-base-700 text-white text-md font-normal px-4 py-1 rounded-md">Seç ve 48.312₺ Ödeme Yap</div>
+          <div class="bg-base-700 text-white text-md font-normal px-4 py-1 rounded-md" @click="openPaymentDrawer()">Seç ve 48.312₺ Ödeme Yap</div>
         </div>
 
       </div>
     </div>
 
+    <Drawer title="Ödeme Yap" ref="paymentDrawer">
+      <div class="flex flex-col p-4 gap-y-4">
+        <div>
+          <label for="countries" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kayıtlı Kartlarım</label>
+          <select id="countries" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+            <option selected>**** 8998 ile biten kartım</option>
+          </select>
+        </div>
+
+
+        <div class="flex justify-center">
+          <div class="bg-base-600 text-white rounded-md px-4 py-2 text-center" @click="doPayment()">Ödemeyi Onayla</div>
+        </div>
+      </div>
+    </Drawer>
+
   </div>
 </template>
 <script setup lang="ts">
 
+const paymentDrawer = ref(null);
 const items = [
   'https://picsum.photos/1920/1080?random=1',
   'https://picsum.photos/1920/1080?random=2',
@@ -132,4 +149,12 @@ const items = [
   'https://picsum.photos/1920/1080?random=5',
   'https://picsum.photos/1920/1080?random=6'
 ]
+
+function openPaymentDrawer() {
+  paymentDrawer.value.open();
+}
+
+function doPayment() {
+  paymentDrawer.value.close();
+}
 </script>

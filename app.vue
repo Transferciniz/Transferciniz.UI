@@ -1,5 +1,5 @@
 <template>
-  <NuxtLayout>
+  <NuxtLayout v-if="isContentReady">
     <NuxtPage/>
   </NuxtLayout>
 </template>
@@ -12,8 +12,11 @@ const loader = new Loader({
   apiKey: apiKey,
   version: 'weekly'
 });
+const isContentReady = ref(false)
 onBeforeMount(() => {
-  loader.load();
+  loader.load().then(() => {
+    isContentReady.value = true;
+  })
 })
 </script>
 <style>

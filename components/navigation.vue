@@ -11,18 +11,15 @@
       <img class="w-10 h-10 rounded-full" src="/logo-type.png" alt="tripTypeLogo" @click="openTripTypeDrawer()">
     </div>
     <Drawer title="Transfer Tipi Seç" ref="selectTripTypeDrawer">
-      <div class="flex flex-col gap-y-4 p-5 divide-y divide-gray-600">
+      <div class="flex flex-col gap-y-4 p-5 ">
         <div class="flex justify-between p-4 items-center rounded-md border border-gray-400 text-white">
           <p>Kara Yolu Transferi</p>
-          <img src="/logo-type.png" class="w-12 h-12" alt="groundTrip">
         </div>
         <div class="flex justify-between p-4 items-center rounded-md border border-gray-400 text-white">
-          <p>Kara Yolu Transferi</p>
-          <img src="/logo-type.png" class="w-12 h-12" alt="groundTrip">
+          <p>Hava Yolu Transferi (Pek Yakında)</p>
         </div>
         <div class="flex justify-between p-4 items-center rounded-md border border-gray-400 text-white">
-          <p>Kara Yolu Transferi</p>
-          <img src="/logo-type.png" class="w-12 h-12" alt="groundTrip">
+          <p>Deniz Yolu Transferi (Pek Yakında)</p>
         </div>
       </div>
     </Drawer>

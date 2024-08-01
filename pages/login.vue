@@ -11,10 +11,10 @@
       </a>
 
       <!-- Giriş -->
-      <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700 mt-10">
+      <div class="w-full rounded-lg shadow border md:mt-0 sm:max-w-md xl:p-0 bg-gray-800 border-gray-700 mt-10">
         <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
           <div class="flex justify-between items-center">
-            <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+            <h1 class="text-xl font-bold leading-tight tracking-tight md:text-2xl text-white">
               Hesabınıza Giriş Yapın
             </h1>
 
@@ -23,21 +23,20 @@
 
           <form class="space-y-4 md:space-y-6" action="#">
             <div>
-              <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Mail Adresiniz</label>
+              <label for="email" class="block mb-2 text-sm font-medium text-white">Mail Adresiniz</label>
               <input type="email" name="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Mail adresinizi yazınız..." required>
             </div>
             <div>
-              <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Parolanız</label>
+              <label for="password" class="block mb-2 text-sm font-medium text-white">Parolanız</label>
               <input type="password" name="password" id="password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
             </div>
             <div class="flex items-center justify-between">
-
-              <a href="#" class="text-sm font-medium text-primary-600 hover:underline dark:text-base-500">Parolanızı mı unuttunuz?</a>
+              <a href="#" class="text-sm font-medium hover:underline text-base-500">Parolanızı mı unuttunuz?</a>
             </div>
-            <button type="submit" class="w-full text-white bg-base-600 hover:bg-base-700 focus:ring-4 focus:outline-none focus:ring-base-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-base-600 dark:hover:bg-base-700 dark:focus:ring-base-800">Giriş Yap</button>
+            <button type="submit" class="w-full text-white bg-base-600 hover:bg-base-700 focus:ring-4 focus:outline-none focus:ring-base-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-base-600 dark:hover:bg-base-700 dark:focus:ring-base-800" @click="login()">Giriş Yap</button>
             <div class="inline-flex items-center justify-center w-full">
               <hr class="w-64 h-px my-2 bg-gray-200 border-0 dark:bg-gray-700">
-              <span class="absolute px-3 font-medium text-gray-900 -translate-x-1/2 bg-white left-1/2 dark:text-white dark:bg-gray-800">yada</span>
+              <span class="absolute px-3 font-medium -translate-x-1/2 left-1/2 text-white bg-gray-800">yada</span>
             </div>
             <div class="flex justify-between">
               <button type="button" class="text-white bg-[#050708] hover:bg-[#050708]/90 focus:ring-4 focus:outline-none focus:ring-[#050708]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#050708]/50 dark:hover:bg-[#050708]/30 me-2 mb-2">
@@ -52,7 +51,7 @@
               </button>
             </div>
             <p class="text-sm font-light text-gray-500 dark:text-gray-400">
-              Bir hesabınız yok mu? <a href="#" class="font-medium text-primary-600 hover:underline dark:text-base-500">Kayıt Ol</a>
+              Bir hesabınız yok mu? <a href="#" class="font-medium hover:underline text-base-500">Kayıt Ol</a>
             </p>
           </form>
         </div>
@@ -66,6 +65,12 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  layout: "fullscreen",
+})
 
+function login() {
+  useRouter().push('/home')
+}
 
 </script>
