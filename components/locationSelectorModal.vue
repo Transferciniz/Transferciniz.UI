@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import L, {control} from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import {GoogleProvider} from 'leaflet-geosearch';
 import 'leaflet-geosearch/dist/geosearch.css';
@@ -10,6 +9,7 @@ import {MapContext} from "~/core/app/MapContext";
 import {ITripLocationType} from "~/core/app/ITripLocation";
 
 // OpenStreetMap provider kullanarak GeoSearch ekleme
+const {$L: L} = useNuxtApp();
 const googleProvider = new GoogleProvider({
   apiKey: 'AIzaSyCae-E5TDMSu-LNPlf7AevPHzUDTqft-TU',
   language: 'tr',

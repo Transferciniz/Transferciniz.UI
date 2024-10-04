@@ -6,14 +6,13 @@ import {
     type IUserLocationSearchResult,
     ITripLocationType,
 } from "~/core/app/ITripLocation";
-import L from "leaflet";
 import {GoogleProvider} from "leaflet-geosearch";
 import {useApi} from "~/core/api/useApi";
 import type {IVehicleCombinationPricePair} from "~/core/api/modules/trip/models/IVehicleCombination";
 import {OpenRouteService} from "~/core/OpenRouteService";
 
 export const useCreateTripStore = defineStore('createTripStore', () => {
-
+    const {$L: L} = useNuxtApp();
     const {location} = storeToRefs(useLocationStore())
 
     const tripName = ref('');

@@ -8,7 +8,6 @@
 
 </template>
 <script setup lang="ts">
-import L from 'leaflet';
 import 'leaflet-routing-machine';
 import 'leaflet/dist/leaflet.css'
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css'

@@ -1,4 +1,3 @@
-import L from "leaflet";
 
 export interface ITripLocation{
     id: string;
@@ -7,7 +6,7 @@ export interface ITripLocation{
     title: string
     type: ITripLocationType,
     waitTimeAsMinute: number;
-    marker: L.Marker;
+    marker: any;
 }
 
 export interface ICreateTripLocation{
