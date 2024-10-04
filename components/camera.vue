@@ -1,6 +1,6 @@
 <template>
   <div class="relative">
-    <video id="camera" ref="video" muted autoplay class="w-screen h-screen object-cover"></video>
+    <video id="camera" ref="video" muted autoplay playsinline class="w-screen h-screen object-cover"></video>
     <canvas class="hidden" width="400" height="400" ref="canvas"/>
     <!-- QR Kod tarayıcı çerçevesi -->
     <div v-if="mode === 'qr'" class="absolute inset-0 flex items-center justify-center pointer-events-none">
