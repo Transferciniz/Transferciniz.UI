@@ -1,24 +1,24 @@
 <template>
-  <NuxtLayout v-if="isContentReady">
-    <NuxtPage/>
-  </NuxtLayout>
+  <div>
+    <NuxtLayout v-if="isContentReady">
+      <NuxtPage/>
+    </NuxtLayout>
+    <UNotifications/>
+    <UModals/>
+  </div>
+
 </template>
 
 <script setup lang="ts">
 import {Loader} from "@googlemaps/js-api-loader";
 
-const apiKey = 'AIzaSyAOEIQ_xOdLx2dNwnFMzyJoswwvPCTcGzU';
-const loader = new Loader({
-  apiKey: apiKey,
-  version: 'weekly'
-});
-const isContentReady = ref(false)
-onBeforeMount(() => {
-  loader.load().then(() => {
-    isContentReady.value = true;
-  })
-})
+
+const isContentReady = ref(true);
+useLocationStore();
+
+
 </script>
+
 <style>
 ::-webkit-scrollbar {
   display: none;
