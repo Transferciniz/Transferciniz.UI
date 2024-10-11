@@ -20,6 +20,9 @@ useLocationStore();
 </script>
 
 <style>
+.leaflet-div-icon{
+  border: none;
+}
 ::-webkit-scrollbar {
   display: none;
 }

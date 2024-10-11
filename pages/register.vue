@@ -19,8 +19,10 @@
                 Türünüzü Seçin</label>
               <select v-model="registerForm.accountType" id="countries_disabled"
                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                <option :value="AccountType.Customer">Araç Çağırmak İstiyorum</option>
-                <option :value="AccountType.Driver">Sürücü Olarak Hizmet Vermek İstiyorum</option>
+                <option :value="AccountType.Customer">Araç çağırmak istiyorum.</option>
+                <option :value="AccountType.Driver">Sürücü olarak hizmet vermek istiyorum.</option>
+                <option :value="AccountType.EnterpriseTransporterCompany">Araçları olan bir taşıma firmasıyım.</option>
+                <option :value="AccountType.EnterpriseCustomerCompany">Kurumsal müşteriyim.</option>
               </select>
             </div>
             <div>

@@ -6,8 +6,16 @@ export const useAccountModule = (api: AxiosInstance) => {
         return api.get<IUserLocationSearchResult[]>('/Account/SearchProfileLocation', {params: request});
     }
 
+    async function AddVehicle(vehicleId:string, plate: string): Promise<AxiosResponse<any>> {
+        return api.post<any>('/Account/AddVehicle', {
+            vehicleId: vehicleId,
+            plate: plate
+        })
+    }
+
 
     return {
         SearchProfileLocation,
+        AddVehicle
     }
 }

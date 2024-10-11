@@ -1,4 +1,8 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import {util} from "protobufjs";
+import fs = util.fs;
+import path from "node:path";
+
 export default defineNuxtConfig({
     app: {
         head: {
@@ -10,6 +14,10 @@ export default defineNuxtConfig({
     },
      vite: {
         server: {
+            https: {
+                key: fs.readFileSync(path.resolve(__dirname, 'localhost.key')),
+                cert: fs.readFileSync(path.resolve(__dirname, 'localhost.crt')),
+            },
             proxy: {
                 '/api': {
                     target: 'http://localhost:5142',
@@ -18,8 +26,17 @@ export default defineNuxtConfig({
                         return path.replace(/^\/api/, '')
                     }
                 },
+                '/locationHub': {
+                    target: 'http://localhost:5142',
+
+                    ws: true
+                },
                 '/autocomplete': {
                     target: 'http://localhost:3100',
+                    changeOrigin: true,
+                },
+                '/ors': {
+                    target: 'https://sekerlerteknoloji.com',
                     changeOrigin: true,
                 }
 

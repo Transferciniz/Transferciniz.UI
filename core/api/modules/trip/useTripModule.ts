@@ -4,6 +4,8 @@ import type {
     IVehicleCombinationPricePair
 } from "~/core/api/modules/trip/models/IVehicleCombination";
 import type {ICreateTrip} from "~/core/api/modules/trip/models/ICreateTrip";
+import type {ITripHeaderDto} from "~/core/api/modules/trip/models/ITripHeaderDto";
+import type {ITripDto} from "~/core/api/modules/trip/models/ITripDto";
 
 export const useTripModule = (api: AxiosInstance) => {
     async function GetAvailableVehicles(request: IGetAvailableVehiclesQuery): Promise<AxiosResponse<IVehicleCombinationPricePair[]>> {
@@ -18,11 +20,36 @@ export const useTripModule = (api: AxiosInstance) => {
         return api.get<any>('/Trip/GetMyTrips');
     }
 
+    async function GetTripDetails(tripHeaderId: string): Promise<AxiosResponse<any>> {
+        return api.get<any>('/Trip/GetTripDetails', {params: {tripHeaderId: tripHeaderId}});
+    }
+
+    async function GetVehicleTrips(accountVehicleId: string): Promise<AxiosResponse<any[]>> {
+        return api.get<any[]>('/Trip/GetVehicleTrips', {params: {accountVehicleId: accountVehicleId}})
+    }
+
+    async function StartTrip(tripId: string): Promise<AxiosResponse<any>> {
+        return api.post<any>('/Trip/StartTrip', {tripId: tripId});
+    }
+
+    async function GetTripHeadersForCompany(): Promise<AxiosResponse<ITripHeaderDto[]>> {
+        return api.get<ITripHeaderDto[]>('/Trip/GetTripHeadersForCompany', {})
+    }
+
+    async function GetTripDetailsForCompany(tripHeaderId: string): Promise<AxiosResponse<ITripDto[]>> {
+        return api.get<ITripDto[]>('/Trip/GetTripDetailsForCompany', {params: {tripHeaderId: tripHeaderId}});
+    }
+
 
 
     return {
         GetAvailableVehicles,
         CreateTrip,
-        GetMyTrips
+        GetMyTrips,
+        GetTripDetails,
+        GetVehicleTrips,
+        StartTrip,
+        GetTripHeadersForCompany,
+        GetTripDetailsForCompany
     }
 }

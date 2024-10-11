@@ -15,30 +15,30 @@
 
     <div class="flex flex-col w-full p-4 gap-y-4">
       <template v-for="combination in vehicleCombinations">
-        <div class="bg-white text-white rounded-lg  gap-y-2 flex flex-col p-3" v-for=" vehicle in combination.vehicles">
-          <div class="flex justify-start items-center gap-x-2">
-            <span class="text-sm font-medium inline-block px-2.5 py-0.5 rounded bg-base-700 text-white ">Sizin İçin En Uygun</span>
-            <span class="text-sm font-light text-gray-400 italic">Seçimlerinize göre en iyi seçenek!</span>
-          </div>
-          <div class="flex justify-start gap-x-1 items-center">
-            <span class="text-sm font-medium px-2.5 py-0.5 rounded bg-base-700 text-white whitespace-nowrap">{{vehicle.usage}}x</span>
-            <p class="text-2xl tracking-tighter font-bold text-gray-700">{{vehicle.vehicle.vehicleBrand.name}} {{vehicle.vehicle.vehicleModel.name}}</p>
-            <span class="text-sm font-medium px-2 py-0.5 text-center rounded bg-gray-700 text-white whitespace-nowrap">
-            <div class="flex justify-center items-center">
-            <Icon name="material-symbols:person" size="16" class="bg-white"/>
-            <p class="text-xs font-light text-white">{{vehicle.vehicle.vehicleModel.capacity}} + {{vehicle.vehicle.vehicleModel.extraCapacity}}</p>
-          </div>
-          </span>
+        <div class="bg-white text-white rounded-lg  gap-y-2 flex flex-col p-3">
+          <template v-for="vehicle in combination.vehicles">
+            <img src="/vito.png" alt="vito" class="h-25 w-auto object-contain" v-if="vehicle.vehicle.id === 'e6202475-a5ef-4402-9fc5-93dda07fe2d2'" />
+            <img src="/caravelle.png" alt="vito" class="h-25 w-auto object-contain" v-if="vehicle.vehicle.id === '660d20bc-ab9a-48e6-833a-c30cf77f7ede'" />
+            <img src="/sprinter.png" alt="vito" class="h-25 w-auto object-contain" v-if="vehicle.vehicle.id === '18afc9ab-9926-464d-94a0-a45e0de1701a'" />
+            <div class="flex justify-start gap-x-1 items-center">
+              <span class="text-sm font-medium px-2.5 py-0.5 rounded bg-base-700 text-white whitespace-nowrap">{{vehicle.usage}}x</span>
+              <p class="text-2xl tracking-tighter font-bold text-gray-700">{{vehicle.vehicle.vehicleBrand.name}} {{vehicle.vehicle.vehicleModel.name}}</p>
+              <span class="text-sm font-medium px-2 py-0.5 text-center rounded bg-gray-700 text-white whitespace-nowrap">
+              <div class="flex justify-center items-center">
+                <Icon name="material-symbols:person" size="16" class="bg-white"/>
+                <p class="text-xs font-light text-white">{{vehicle.vehicle.vehicleModel.capacity}} + {{vehicle.vehicle.vehicleModel.extraCapacity}}</p>
+              </div>
+            </span>
 
+            </div>
 
-          </div>
+          </template>
           <!--UCarousel v-slot="{ item }" :items="items" :ui="{ item: 'basis-full' }" class="rounded-lg overflow-hidden">
             <img :src="item" class="w-full" draggable="false">
           </UCarousel-->
 
           <div class="flex justify-between gap-x-2 items-center">
-            <div class="bg-gray-700 text-white text-md font-normal px-4 py-1 rounded-md">Deneyimle</div>
-            <div class="bg-base-700 text-white text-md font-normal px-4 py-1 rounded-md" @click="openPaymentDrawer(combination)">Seç ve {{combination.totalPrice.toFixed(2)}}₺ Ödeme Yap</div>
+            <div class="bg-base-700 text-white text-md w-full text-center font-normal px-4 py-1 rounded-md" @click="openPaymentDrawer(combination)">Seç ve {{combination.totalPrice.toFixed(2)}}₺ Ödeme Yap</div>
           </div>
 
         </div>

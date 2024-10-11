@@ -1,9 +1,8 @@
 <template>
 <div class="w-full h-full flex flex-col">
   <trip-stepper/>
-  <trip-step1 v-if="currentStep==0"/>
-  <trip-step2 class="flex-grow" v-if="currentStep==1"/>
-  <trip-step3 v-if="currentStep==2"/>
+  <trip-step2 class="flex-grow" v-if="currentStep==0"/>
+  <trip-step3 v-if="currentStep==1"/>
 </div>
 
 </template>

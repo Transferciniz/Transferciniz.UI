@@ -1,3 +1,26 @@
+export interface IWaypoint {
+    id: number;
+    name: string;
+    latitude: number;
+    longitude: number;
+    ordering: number;
+    users: IWaypointUser[];
+    marker: any;
+}
+
+export interface IWaypointUser {
+    userId?: string;
+    name: string;
+    surname: string;
+    profilePicture?: string;
+}
+
+
+
+
+
+
+
 
 export interface ITripLocation{
     id: string;

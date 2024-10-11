@@ -4,59 +4,148 @@ import {
     type ILocationSearchResult,
     type ITripLocation,
     type IUserLocationSearchResult,
-    ITripLocationType,
+    ITripLocationType, type IWaypoint, type IWaypointUser,
 } from "~/core/app/ITripLocation";
 import {GoogleProvider} from "leaflet-geosearch";
 import {useApi} from "~/core/api/useApi";
-import type {IVehicleCombinationPricePair} from "~/core/api/modules/trip/models/IVehicleCombination";
+import type {
+    IVehicleCombinationPricePair, IVehicleFillPair,
+    IVehicleUsageInformation
+} from "~/core/api/modules/trip/models/IVehicleCombination";
 import {OpenRouteService} from "~/core/OpenRouteService";
+import type {LatLng} from "leaflet";
+import type {
+    IVehicleRoutePlan,
+    IVehicleRoutePlanWaypoint,
+    IVehicleRoutePlanWaypointUser
+} from "~/core/api/modules/trip/models/ICreateTrip";
 
 export const useCreateTripStore = defineStore('createTripStore', () => {
     const {$L: L} = useNuxtApp();
     const {location} = storeToRefs(useLocationStore())
 
     const tripName = ref('');
-    const startDate = ref<Date>();
-    const endDate = ref<Date>();
-    const totalPeople = ref<number>(0);
-    const tripType = ref<ITripType>(ITripType.OneDirection)
+    const date = ref<Date>();
 
     const map = ref<L.Map>();
-    const markers = ref<ITripLocation[]>([]);
-    const tempMarker = ref<L.Marker>();
-    const circles = ref<L.Circle[]>([]);
-    const routing = ref<L.Routing.Control>();
-    const totalDistance = ref(0);
-    const totalTime = ref(0);
+    const waypoints = ref<IWaypoint[]>([]);
+    const selectedWaypoint = ref<IWaypoint>();
+    const isWaypointEditModalVisible = ref(false);
+    const finalDestination = ref<{latitude: number, longitude: number} | null>(null);
+    const finalDestinationMarker = ref<L.Marker | null>(null);
+    const totalPeople = computed(() => {
+        let amount = 0;
+        waypoints.value.forEach(waypoint => {
+            amount += waypoint.users.length
+        })
+        return amount;
+    })
 
-    const searchProvider = ref(new GoogleProvider({
-        apiKey: 'AIzaSyCae-E5TDMSu-LNPlf7AevPHzUDTqft-TU',
-        region: 'TR',
-        language: 'tr',
-    }))
+    const tempMarker = ref<L.Marker>();
+
+
     const searchInput = ref('');
     const isSearching = ref(false);
     const isSearchPanelVisible = ref(false);
     const searchResults = ref<ILocationSearchResult[]>([]);
     const userSearchResults = ref<IUserLocationSearchResult[]>([])
     const selectedLocation = ref<ILocationSearchResult | null>(null);
-    const isRouteShowing = ref(false);
-    const isRouteCanShow = computed(() => {
-        const lengthCondition = markers.value.length ?? 0 > 1
-        const finalDestinationCondition = markers.value.some(x => x.type === ITripLocationType.finalDestination) ?? false
-        return lengthCondition && finalDestinationCondition
-    })
 
-    const totalDistanceTextAsKilometer = computed(() => (totalDistance.value / 1000).toFixed(2));
-    const totalTimeAsMinute = computed(() => (totalTime.value / 60).toFixed(2));
+
 
     const vehicleCombinations = ref<IVehicleCombinationPricePair[]>([]);
     const selectedVehicleCombination = ref<IVehicleCombinationPricePair>()
+
+    const waypointIcon = L.divIcon({
+        html: '<span class="border-blue-700 border-2 rounded-sm text-sm text-black bg-white py-0.5 px-2 font-black flex items-center justify-center">D</span>',
+    })
+
+    const finalDestinationIcon = L.divIcon({
+        html: '<span class="border-red-700 border-2 rounded-sm text-sm text-white bg-red-700 py-0.5 px-2 font-black flex items-center justify-center">V</span>',
+    })
+
+
     watchDebounced(
         searchInput,
         () => onMapSearchInputChange(),
         {debounce: 300}
     );
+
+    watch(selectedWaypoint, value => {
+        console.log(value)
+        isWaypointEditModalVisible.value = !!value;
+    })
+
+    watch(isWaypointEditModalVisible, value => {
+        console.log(value)
+
+        if(value == false){
+            selectedWaypoint.value = undefined
+        }
+    })
+
+    function createWaypoint(name :string) {
+        const id = Date.now()
+        const marker = L.marker({lat: tempMarker.value!.getLatLng().lat, lng: tempMarker.value!.getLatLng().lng}, {draggable: false, riseOnHover: true, icon: waypointIcon}).addTo(map.value!);
+
+        const waypoint = {
+            id: id,
+            name: name,
+            latitude: tempMarker.value!.getLatLng().lat,
+            longitude: tempMarker.value!.getLatLng().lng,
+            users: [],
+            marker: marker,
+            ordering: waypoints.value.length + 1
+        }
+        waypoints.value.push(waypoint)
+        selectedWaypoint.value = waypoint
+        marker.on('click', event => {
+            console.log('durak click')
+            selectedWaypoint.value = waypoint
+        })
+    }
+
+    function addUserToWaypoint(waypointId: number, name: string, surname: string, userId?: string, profilePicture?: string){
+        if(userId!!){
+            const users = waypoints.value.map(x => x.users).flat(2);
+            const user = users.find(x => x.userId == userId)
+            if(user != null) return;
+        }
+        waypoints.value.find(x => x.id === waypointId)?.users.push({
+            name: name,
+            surname: surname,
+            userId: userId,
+            profilePicture: profilePicture
+        })
+    }
+
+    function deleteUserFromWaypoint(waypointId: number, user: IWaypointUser){
+        const waypoint = waypoints.value.find(x => x.id === waypointId);
+        if(waypoint){
+            waypoint.users = waypoint.users.filter(x => x !== user)
+        }
+    }
+
+    function deleteWaypoint(waypointId: number) {
+        const waypoint = waypoints.value.find(x => x.id === waypointId);
+        if(waypoint){
+            const marker = waypoint.marker as L.Marker;
+            marker.remove()
+            waypoints.value = waypoints.value.filter(x => x.id !== waypointId);
+        }
+    }
+
+    function setFinalDestination(){
+        const {lat, lng} = tempMarker.value!.getLatLng();
+        finalDestination.value = {longitude: lng, latitude: lat};
+        finalDestinationMarker.value = L.marker({lat: lat, lng: lng}, {draggable: false, riseOnHover: true, icon: finalDestinationIcon}).addTo(map.value!);
+    }
+
+
+
+
+
+
 
     function onMapSearchInputChange(): void{
         if(searchInput.value == ""){
@@ -96,6 +185,13 @@ export const useCreateTripStore = defineStore('createTripStore', () => {
             worldCopyJump: false
         });
 
+
+        map.value.on('click', e => {
+            tempMarker.value?.setLatLng(e.latlng)
+            console.log(e);
+
+        })
+
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map.value);
         const icon = L.divIcon({
             html: '<span></span>',
@@ -107,6 +203,9 @@ export const useCreateTripStore = defineStore('createTripStore', () => {
             draggable: true,
             title: '',
         }).addTo(map.value);
+        tempMarker.value?.on('dragend', (e: any) => {
+            console.log(e)
+        })
         setView();
 
     }
@@ -173,37 +272,6 @@ export const useCreateTripStore = defineStore('createTripStore', () => {
         }
     }
 
-    function calculateRoute(){
-        if(routing.value){
-            routing.value.remove()
-        }
-        routing.value = undefined;
-        const finalDestination = <ITripLocation>markers.value.find(x => x.type === ITripLocationType.finalDestination);
-        const wayPoints = markers.value.filter(x => x.type !== ITripLocationType.finalDestination).map(x => {
-            return x.marker.getLatLng()
-        })
-
-
-        routing.value =  L.Routing.control({
-            router: new OpenRouteService({}),
-            show: false,
-            routeWhileDragging: false,
-            waypoints: [...wayPoints, finalDestination.marker.getLatLng()]
-        }).addTo(<L.Map>map.value)
-
-        routing.value.on('routesfound', e =>  {
-            const routes = e.routes;
-            totalDistance.value = routes[0].summary.totalDistance
-            totalTime.value = routes[0].summary.totalTime;
-            const bounds = L.latLngBounds(routes[0].coordinates[0], routes[0].coordinates[1]);// Sınırlar için boş bir obje oluştur
-            routes[0].coordinates.forEach((coord: any) => {
-                bounds.extend(L.latLng(coord.lat, coord.lng)); // Tüm koordinatları sınırlara ekle
-            });
-            map.value?.fitBounds(bounds, {animate: true, duration: 2}); // Haritayı sınırlarla ortala ve zoom'u ayarla
-        });
-        isRouteShowing.value = true;
-
-    }
 
     function selectLocation(payload: ILocationSearchResult){
         setTempMarker(payload.latitude, payload.longitude)
@@ -214,7 +282,7 @@ export const useCreateTripStore = defineStore('createTripStore', () => {
     function getAvailableVehicleCombinations(){
         useApi().trip.GetAvailableVehicles({
             extraServices: [],
-            totalLengthOfRoad: totalDistance.value,
+            totalLengthOfRoad: 1473,
             totalPerson: totalPeople.value,
             segments: [],
             types: []
@@ -228,46 +296,175 @@ export const useCreateTripStore = defineStore('createTripStore', () => {
     }
 
     async function createTrip(){
-        const waypoints = markers.value.map(x => {
+        const name = tripName.value;
+        const tripDate = date.value;
+        const vehicleUsages = selectedVehicleCombination.value!.vehicles.map(x => {
+            return <IVehicleUsageInformation>{
+                id: x.vehicle.id,
+                usage: x.usage,
+                capacity: x.vehicle.vehicleModel.capacity,
+                basePrice: x.vehicle.basePrice
+            }
+        });
+        const vehicleIds = selectedVehicleCombination.value!.vehicles.map(x => x.vehicle.id)
+
+        const adjustedWaypointsVehiclePair = adjustWaypoints(vehicleUsages, waypoints.value)
+        const finalLat = finalDestination.value!.latitude;
+        const finalLng = finalDestination.value!.longitude
+        setCosts(adjustedWaypointsVehiclePair, finalLat, finalLng).then(() => {
+            const vehicleRoutePlans = adjustedWaypointsVehiclePair.map(x => {
+                return <IVehicleRoutePlan>{
+                    vehicleId: x.id,
+                    totalLengthOfRoad: x.totalLengthOfRoad,
+                    waypoints: x.waypoints.map(y => {
+                        return <IVehicleRoutePlanWaypoint>{
+                            latitude: y.latitude,
+                            name: y.name,
+                            longitude: y.longitude,
+                            users: y.users.map(z => {
+                                return <IVehicleRoutePlanWaypointUser>{
+                                    name: z.name ?? "",
+                                    surname: z.surname ?? "",
+                                    userId: z.userId,
+                                }
+                            }),
+
+                        }
+                    })
+                }
+            })
+            useApi().trip.CreateTrip({
+                startDate: new Date(date!.value!.toString()),
+                name: tripName.value,
+                vehicleIds: vehicleIds,
+                vehicleRoutePlans: vehicleRoutePlans
+            })
+        })
+
+
+
+       /* const waypoints = markers.value.map(x => {
             const {lat: latitude, lng: longitude} = x.marker.getLatLng()
             return {latitude, longitude};
         });
         if(selectedVehicleCombination.value){
             return useApi().trip.CreateTrip({
                 waypoints: waypoints,
-                startDate: <Date>startDate.value,
+                startDate: <Date>date.value,
                 selectedVehicleCombinations:  [selectedVehicleCombination.value],
                 name: tripName.value
             })
-        }
+        }*/
+    }
 
+
+    function setCosts(payload: IVehicleFillPair[], finalLat: number, finalLng: number): Promise<void>{
+        return new Promise((resolve, reject) => {
+            let processedCount = 0;
+            payload.forEach((x, index) => {
+                x.waypoints.push({
+                    id: Date.now(),
+                    users: [],
+                    name: "Varış Noktası",
+                    longitude: finalLng,
+                    latitude: finalLat,
+                    ordering: 9999,
+                    marker: {}
+                })
+                const waypointLatLangs = x.waypoints.map(y => {
+                    return {lat: y.latitude, lng: y.longitude};
+                });
+                const routing =  L.Routing.control({
+                    router: new OpenRouteService({}),
+                    show: false,
+                    routeWhileDragging: false,
+                    waypoints: waypointLatLangs as LatLng[]
+                }).addTo(map.value!)
+
+                routing.on('routesfound', e =>  {
+                    const routes = e.routes;
+                    x.totalLengthOfRoad = routes[0].summary.totalDistance
+                    x.totalTime = routes[0].summary.totalTime;
+                    processedCount++;
+                    if(processedCount === payload.length){
+                        resolve()
+                    }
+                });
+            })
+        })
+    }
+
+
+    function adjustWaypoints(vehicleUsages: IVehicleUsageInformation[], waypoints: IWaypoint[]): IVehicleFillPair[]{
+        const vehicles: IVehicleFillPair[] = [];
+        vehicleUsages.sort((a,b) => b.capacity - a.capacity);
+        vehicleUsages.forEach(vehicleUsage => {
+            for (let i =1; vehicleUsage.usage >= i; i++){
+                vehicles.push({
+                    id: vehicleUsage.id,
+                    capacity: vehicleUsage.capacity,
+                    basePrice: vehicleUsage.basePrice,
+                    filled: 0,
+                    waypoints: [],
+                    totalLengthOfRoad: 0,
+                    totalTime: 0
+                })
+            }
+        })
+        waypoints.forEach((waypoint, index) => {
+            for(let user of waypoint.users){
+                for(let vehicle of vehicles){
+                    if(vehicle.filled === vehicle.capacity) continue;
+                    if (vehicle.waypoints.some(x => x.id === waypoint.id)) {
+                        vehicle.waypoints.find(x => x.id === waypoint.id)!.users.push(user)
+                        vehicle.filled++
+                        break;
+                    }else{
+                        vehicle.waypoints.push({
+                            id: waypoint.id,
+                            name: waypoint.name,
+                            latitude: waypoint.latitude,
+                            longitude: waypoint.longitude,
+                            marker: waypoint.marker,
+                            ordering: index,
+                            users: [user]
+                        })
+                        vehicle.filled++
+                        break;
+                    }
+                }
+            }
+        })
+
+        return vehicles;
     }
 
     return {
         tripName,
-        startDate,
-        endDate,
-        totalPeople,
-        tripType,
         selectedLocation,
-        isRouteCanShow,
-        isRouteShowing,
-        totalDistanceTextAsKilometer,
-        totalTimeAsMinute,
         searchInput,
         isSearching,
         isSearchPanelVisible,
         searchResults,
         vehicleCombinations,
         userSearchResults,
+        waypoints,
+        selectedWaypoint,
+        isWaypointEditModalVisible,
+        totalPeople,
+        date,
 
         createMap,
         setView,
         addLocation,
         selectLocation,
-        calculateRoute,
         getAvailableVehicleCombinations,
         setSelectedVehicleCombination,
-        createTrip
+        createTrip,
+        createWaypoint,
+        addUserToWaypoint,
+        deleteUserFromWaypoint,
+        deleteWaypoint,
+        setFinalDestination
     }
 })

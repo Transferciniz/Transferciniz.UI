@@ -1,3 +1,5 @@
+import type {IWaypoint} from "~/core/app/ITripLocation";
+
 export interface IGetAvailableVehiclesQuery{
     segments: string[];
     extraServices: string[];
@@ -9,6 +11,23 @@ export interface IGetAvailableVehiclesQuery{
 export interface IVehicleCombinationPricePair{
     vehicles: ICombinationVehicle[];
     totalPrice: number;
+}
+
+export interface IVehicleUsageInformation{
+    id: string;
+    usage: number;
+    capacity: number;
+    basePrice: number
+}
+
+export interface  IVehicleFillPair{
+    id: string;
+    capacity: number;
+    basePrice: number;
+    filled: number;
+    totalLengthOfRoad: number;
+    totalTime: number;
+    waypoints: IWaypoint[]
 }
 
 export interface ICombinationVehicle {

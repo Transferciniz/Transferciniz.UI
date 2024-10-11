@@ -15,7 +15,7 @@ export class OpenRouteService implements L.Routing.IRouter {
 
     constructor(options: Partial<OpenRouteServiceOptions>) {
         this.options = {
-            serviceUrl: 'http://localhost:3400/ors/v2/directions/driving-car',
+            serviceUrl: '/ors/v2/directions/driving-car/geojson',
             apiKey: '', // Kendi OpenRouteService API anahtarınızı buraya koyun
             timeout: 30 * 1000,
             ...options
@@ -29,14 +29,32 @@ export class OpenRouteService implements L.Routing.IRouter {
         context?: {},
         options?: L.Routing.RoutingOptions
     ): void {
-        const url = this.buildRouteUrl(waypoints);
+        const url = this.options.serviceUrl;
+        const coordinates = waypoints.map(wp => [wp.latLng.lng, wp.latLng.lat]); // Koordinatları [lng, lat] olarak hazırlıyoruz
         let timedOut = false;
+
+        // Zaman aşımı kontrolü
         const timer = setTimeout(() => {
             timedOut = true;
-            callback.call(context || callback, {status: 'Timeout', message: 'Timeout'});
+            callback.call(context || callback, { status: 'Timeout', message: 'Timeout' });
         }, this.options.timeout);
 
-        fetch(url)
+        // POST isteği için gövdeyi hazırlıyoruz
+        const body = {
+            coordinates: coordinates,
+            profile: 'driving-car',
+            format: 'geojson'
+        };
+
+        // POST isteği atıyoruz
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': this.options.apiKey // API key'i header'a ekliyoruz
+            },
+            body: JSON.stringify(body)
+        })
             .then(response => response.json())
             .then(data => {
                 clearTimeout(timer);

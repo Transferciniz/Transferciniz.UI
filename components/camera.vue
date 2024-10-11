@@ -88,7 +88,6 @@ function detectQR(){
   const image = getImage()
   const qrData = jsQR(image!.data, image!.width, image!.height);
   if(qrData){
-    useRouter().push('/vehicle-online-request')
     emit('onQrReaded', qrData.data)
   }
 }
