@@ -25,6 +25,11 @@ export const useAuthStore = defineStore('authStore', () => {
         })
     }
 
+    function logout() {
+        token.value = ''
+        useRouter().push('/')
+    }
+
     function getToken(): string{
         return token.value;
     }
@@ -33,6 +38,7 @@ export const useAuthStore = defineStore('authStore', () => {
         user,
         register,
         getToken,
-        login
+        login,
+        logout
     }
 })
