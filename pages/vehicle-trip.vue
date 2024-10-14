@@ -1,7 +1,7 @@
 <template>
   <div class="h-screen w-screen">
     <div id="driver-map" class="h-screen w-screen fixed top-0 left-0"></div>
-    <div class="fixed bg-gray-900 bottom-0 left-0 w-screen h-1/2">
+    <div class="fixed bg-gray-900 bottom-0 left-0 w-screen h-1/2" v-if="isWaypointUsersVisible">
       <div class="flex flex-col w-full">
         <p>Duraktaki Kişileri Onaylayın</p>
         <div v-for="user in waypointUsers">{{user.name}} {{user.surname}}</div>
