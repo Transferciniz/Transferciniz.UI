@@ -41,6 +41,7 @@ export const useCustomerTripStore = defineStore('useCustomerTripStore', () => {
         tripHeaders,
         tripDetails,
         myWaypoint,
+        vehicleCoordinate,
 
         getTripHeaders,
         goTripDetails,

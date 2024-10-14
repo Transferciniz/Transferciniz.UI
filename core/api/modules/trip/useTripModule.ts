@@ -6,6 +6,7 @@ import type {
 import type {ICreateTrip} from "~/core/api/modules/trip/models/ICreateTrip";
 import type {ITripHeaderDto} from "~/core/api/modules/trip/models/ITripHeaderDto";
 import type {ITripDto} from "~/core/api/modules/trip/models/ITripDto";
+import type {IGetVehicleTripsResponse} from "~/core/api/modules/trip/models/IGetVehicleTripsResponse";
 
 export const useTripModule = (api: AxiosInstance) => {
     async function GetAvailableVehicles(request: IGetAvailableVehiclesQuery): Promise<AxiosResponse<IVehicleCombinationPricePair[]>> {
@@ -24,8 +25,8 @@ export const useTripModule = (api: AxiosInstance) => {
         return api.get<any>('/Trip/GetTripDetails', {params: {tripHeaderId: tripHeaderId}});
     }
 
-    async function GetVehicleTrips(accountVehicleId: string): Promise<AxiosResponse<any[]>> {
-        return api.get<any[]>('/Trip/GetVehicleTrips', {params: {accountVehicleId: accountVehicleId}})
+    async function GetVehicleTrips(accountVehicleId: string): Promise<AxiosResponse<IGetVehicleTripsResponse[]>> {
+        return api.get<IGetVehicleTripsResponse[]>('/Trip/GetVehicleTrips', {params: {accountVehicleId: accountVehicleId}})
     }
 
     async function StartTrip(tripId: string): Promise<AxiosResponse<any>> {

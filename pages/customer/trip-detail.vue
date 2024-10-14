@@ -19,6 +19,7 @@ import {useMapIcon} from "~/composables/useMapIcon";
 
 const {$L:L} = useNuxtApp()
 const map = ref<L.Map>();
+const vehicleMarker = ref<L.Marker>();
 onMounted(() => {
   map.value = useMap('customerMap')
   tripDetails.value.forEach((route, index) => {
@@ -28,7 +29,17 @@ onMounted(() => {
 })
 const {
   tripDetails,
-  myWaypoint
-} = storeToRefs(useCustomerTripStore())
+  myWaypoint,
+    vehicleCoordinate
+} = storeToRefs(useCustomerTripStore());
+
+watchDebounced(vehicleCoordinate, value => {
+  if(vehicleMarker.value != null){
+    vehicleMarker.value.setLatLng(new L.LatLng(value.latitude, value.longitude));
+  }else{
+    vehicleMarker.value =  L.marker({lat: value.latitude, lng: value.longitude}, {draggable: false, riseOnHover: true, icon: useMapIcon().carIcon}).addTo(map.value!);
+
+  }
+}, { debounce: 500})
 
 </script>

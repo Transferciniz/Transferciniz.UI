@@ -5,10 +5,15 @@ export const useSocketStore = defineStore('useSocketStore', () => {
     const socket = ref(new signalR.HubConnectionBuilder()
         .withUrl("/locationHub", {skipNegotiation: true, transport: HttpTransportType.WebSockets}) // Sunucudaki hub URL'si
         .withAutomaticReconnect() // Otomatik yeniden bağlanma
-        .build())
+        .build());
+
+    const groupIds = ref<string[]>([])
 
     function initConnection(): Promise<any>{
         return socket.value.start().then(() => {
+            socket.value.onreconnected(() => {
+                reJoinGroups();
+            })
                 setTimeout(() => {
                     setDefaultEvents();
                 }, 2000)
@@ -25,7 +30,14 @@ export const useSocketStore = defineStore('useSocketStore', () => {
         })
     }
 
+    function reJoinGroups(){
+        groupIds.value.forEach(groupName => {
+            socket.value.invoke('JoinGroup', groupName);
+        })
+    }
+
     function joinGroup(groupName: string){
+        groupIds.value.push(groupName);
         socket.value.invoke('JoinGroup', groupName);
     }
 

@@ -1,20 +1,17 @@
 import {useApi} from "~/core/api/useApi";
 import {IVehicleStatus} from "~/core/api/modules/accountVehicle/models/IUpdateVehicleStatusCommand";
 import type {IAccountVehicle} from "~/core/api/modules/accountVehicle/models/IAccountVehicle";
+import type {IGetVehicleTripsResponse} from "~/core/api/modules/trip/models/IGetVehicleTripsResponse";
 
 
 export const useDriverStore = defineStore('driverStore', () => {
     const { location} = storeToRefs(useLocationStore())
     const accountVehicle = ref<IAccountVehicle | null>(null)
-    const isUpdateIntervalEnabled = ref(false);
-    const trips = ref<any[]>([]);
-    const selectedTrip = ref<any>();
 
-    watch(location, value => {
-        if(isUpdateIntervalEnabled.value) {
-            updateLocation(value.latitude, value.longitude)
-        }
-    })
+    const trips = ref<IGetVehicleTripsResponse[]>([]);
+    const selectedTrip = ref<IGetVehicleTripsResponse>();
+
+
 
     async function setAccountVehicle(vehicleId: string): Promise<void> {
         return new Promise(resolve => {
@@ -40,22 +37,14 @@ export const useDriverStore = defineStore('driverStore', () => {
         })
     }
 
-    function startTrip(trip: any){
+    function startTrip(trip: IGetVehicleTripsResponse){
         selectedTrip.value = trip;
         useApi().trip.StartTrip(trip.trip.id).then(() => {
             useRouter().push('/vehicle-trip')
         })
     }
 
-    function updateLocation(lat: number, long: number){
-        const waypoints = selectedTrip.value.wayPoints
-        useApi().accountVehicle.UpdateAccountVehicleStatus({
-            id: accountVehicle.value!.id,
-            longitude: long,
-            latitude: lat,
-            status: IVehicleStatus.Online
-        })
-    }
+
     return {
         accountVehicle,
         trips,
@@ -64,7 +53,6 @@ export const useDriverStore = defineStore('driverStore', () => {
         setAccountVehicle,
         setVehicleOnline,
         getVehicleTrips,
-        updateLocation,
         startTrip
     }
 })
