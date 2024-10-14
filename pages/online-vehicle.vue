@@ -28,7 +28,6 @@ const {
 const {user} = storeToRefs(useAuthStore())
 
 function startTrip(trip: any){
-  console.log(trip);
   useDriverStore().startTrip(trip)
 }
 

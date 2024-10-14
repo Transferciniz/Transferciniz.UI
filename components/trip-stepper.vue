@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-between items-center px-5 py-5 w-full text-gray-400 bg-gray-800">
+  <div class="flex justify-between items-center px-5 py-5 w-full text-gray-400 bg-gray-900">
     <div class="flex items-center gap-x-1" v-if="currentStep !== 0" @click="prevStep">
       <Icon name="material-symbols:arrow-back-ios-rounded" class="w-5 h-5"></Icon>
       <p>Önceki</p>

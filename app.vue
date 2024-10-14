@@ -15,6 +15,7 @@ import {Loader} from "@googlemaps/js-api-loader";
 
 const isContentReady = ref(true);
 useLocationStore();
+useAuthStore();
 
 
 </script>

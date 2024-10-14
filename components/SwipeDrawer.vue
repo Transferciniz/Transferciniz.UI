@@ -9,6 +9,5 @@ const container = ref(null);
 const {lengthY} = useSwipe(container);
 
 watch(lengthY, value => {
-  console.log(value)
 })
 </script>

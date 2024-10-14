@@ -48,7 +48,7 @@ const props = defineProps<{
   vehicle: any
   chipColor: string
 }>()
-const qrImage = useQRCode(props.vehicle.vehicle.id, {
+const qrImage = useQRCode(props.vehicle.id, {
   scale:20
 })
 

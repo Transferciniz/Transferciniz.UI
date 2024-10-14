@@ -13,9 +13,17 @@ export const useAccountModule = (api: AxiosInstance) => {
         })
     }
 
+    async function UpdateLocation(latitude: number, longitude: number): Promise<AxiosResponse<any>> {
+        return api.post<any>('/Account/UpdateLocation', {
+            latitude: latitude,
+            longitude: longitude
+        })
+    }
+
 
     return {
         SearchProfileLocation,
-        AddVehicle
+        AddVehicle,
+        UpdateLocation
     }
 }

@@ -242,12 +242,8 @@
 </template>
 
 <script setup lang="ts">
-import {MapContext} from "~/core/app/MapContext";
-import {GoogleProvider} from "leaflet-geosearch";
 import {
   type ILocationSearchResult,
-  ITripLocationType,
-  type IWaypoint,
   type IWaypointUser
 } from "~/core/app/ITripLocation";
 
@@ -277,13 +273,11 @@ const {
 } = storeToRefs(useCreateTripStore())
 
 const {
-  addLocation,
     selectLocation,
     createMap,
     createWaypoint,
     addUserToWaypoint,
     deleteUserFromWaypoint,
-    deleteWaypoint,
     setFinalDestination
 } = useCreateTripStore();
 
@@ -294,7 +288,6 @@ function addWaypoint(){
 }
 
 function selectUser(e: any){
-  console.log(e)
   addUserToWaypoint(selectedWaypoint!.value!.id, e.name, e.surname, e.id, e.profilePicture)
 }
 

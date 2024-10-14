@@ -5,5 +5,6 @@ export interface IWayPointDto {
     name: string;
     latitude: number;
     longitude: number;
+    ordering: number;
     users: IWayPointsUserDto[]
 }

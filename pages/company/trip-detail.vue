@@ -1,12 +1,12 @@
 <template>
-  <div class="h-screen w-screen fixed top-0 left-0">
-    <div class="absolute inset-0 w-full top-0 left-0 z-[11]">
+  <div class="h-full w-full relative">
+    <div id="company-map" class="h-screen w-screen"></div>
+    <div class="absolute w-full top-0 left-0 z-[10000] ">
       <div class="flex justify-between items-center p-4">
         <div class="bg-gray-900 px-2 py-1 text-center text-xs" @click="isVehiclesModalVisible = true">Araçları Göster</div>
         <div class="bg-gray-900 px-2 py-1 text-center text-xs">Seçili Rotaları Göster</div>
       </div>
     </div>
-    <div id="company-map" class="h-screen w-screen z-[10]"></div>
     <UModal v-model="isVehiclesModalVisible" :overlay="true" :prevent-close="false" :class="'z-[10000]'" :ui="{height: 'h-full'}">
       <UCard>
         <template #header>

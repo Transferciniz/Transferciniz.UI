@@ -70,7 +70,6 @@ function setRouting() {
 
   routing.on('routesfound', e =>  {
     const routes = e.routes;
-    console.log(routes);
     const bounds = L.latLngBounds(routes[0].coordinates[0], routes[0].coordinates[routes[0].coordinates.length - 1]);// Sınırlar için boş bir obje oluştur
     routes[0].coordinates.forEach((coord: any) => {
       bounds.extend(L.latLng(coord.lat, coord.lng)); // Tüm koordinatları sınırlara ekle

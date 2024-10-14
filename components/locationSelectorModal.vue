@@ -26,14 +26,12 @@ const map = ref<L.Map | null>(null);
 async function search(q: string) {
   if (q == '') return [];
   const response = await googleProvider.search({query: q});
-  console.log(response)
   return response.map(x => {
     return {...x, id: x.raw.place_id}
   })
 }
 
 watch(selected, (value: any) => {
-  console.log(value)
   marker.value?.setLatLng({lat: value.y, lng: value.x});
   map.value?.setView({lat: value.y, lng: value.x}, 17, {animate: true, duration: 1});
 })

@@ -74,7 +74,6 @@ onMounted(() => {
   if(props.mode === 'qr'){
     interval = setInterval(() => {
       detectQR();
-      console.log('çalışıyor')
     },500)
   }
 })

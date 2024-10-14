@@ -1,117 +1,17 @@
 <template>
   <div class="flex flex-col w-full h-full">
+
     <NuxtLink to="/vehicle-mode-confirmation" v-if="user.accountType == 'Driver'">
       <div class="flex justify-center items-center gap-x-2 bg-yellow-400 text-black px-4 py-2 shadow-yellow-400 shadow-2xl">
         <Icon name="ri:steering-2-line" class=" animate-pulse" size="40" />
         <p class="animate-pulse">Sürüş Modunu Başlatmak İçin Dokunun</p>
       </div>
     </NuxtLink>
+
     <EnterpriseTransporterHome v-if="user.accountType == 'EnterpriseTransporterCompany'"/>
 
-    <!--
-    <div class="relative flex flex-col overflow-hidden" v-else>
-      <div>
-        <img :src="user.profilePicture" class="h-[170px] w-full object-cover object-center filter blur-[3px] brightness-[0.3]" alt="profilePicture">
-      </div>
-      <div class="absolute inset-0 flex flex-col p-4">
-        <div class="flex justify-start items-center gap-x-2">
-          <UAvatar :src="user.profilePicture" size="xl"/>
-          <div class="flex flex-col justify-start items-start">
-            <p class="text-xl">{{user.name}} {{user.surname}}</p>
-            <p class="text-sm">{{user.username}}</p>
-          </div>
-          <div class="flex justify-end items-center flex-grow gap-x-2">
-            <Icon name="material-symbols:notifications-sharp" size="30" />
-            <Icon name="material-symbols:settings-rounded" size="30" />
-          </div>
-        </div>
-        <div class="flex justify-start gap-x-4 items-center mt-5">
-          <Icon name="hugeicons:wallet-03" size="50"/>
-          <div class="flex flex-col">
-            <p class="text-xs">Cüzdan Bakiyesi:</p>
-            <p class="text-2xl">0,00₺</p>
-          </div>
-          <div class="flex flex-col gap-y-2 flex-grow">
-            <div class="bg-white text-black text-xs px-4 py-1 rounded-md text-center">Kendin İçin Yükleme Yap</div>
-            <div class="bg-white text-black text-xs px-4 py-1 rounded-md text-center">Başkası İçin Yükleme Yap</div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <CustomerHome v-if="user.accountType == 'Customer' || user.accountType == 'Driver'"></CustomerHome>
 
-    <div class="p-4 flex flex-col gap-y-2">
-      <p class="text-sm opacity-50">Yaklaşan Transferleriniz</p>
-      <div class="bg-gray-700 flex gap-x-4 justify-between items-center p-2 rounded-md" v-for="tripHeader in trips">
-        <div class="w-1/2 flex flex-col">
-          <p>{{tripHeader.name}}</p>
-          <p class="text-xs">{{formatDate(tripHeader.startDate)}}</p>
-        </div>
-        <div class="w-1/2">
-          <div class="bg-red-800 py-2 text-white text-center rounded-md" @click="selectTrip(tripHeader)">Canlı Takip</div>
-        </div>
-
-      </div>
-    </div>
-    -->
-
-
-    <!--
-
-    <NuxtLink to="/vehicle-mode-confirmation">
-      <div class="flex justify-center items-center gap-x-2 bg-yellow-400 text-black px-4 py-2 shadow-yellow-400 shadow-2xl">
-        <Icon name="ri:steering-2-line" class=" animate-pulse" size="40" />
-        <p class="animate-pulse">Sürüş Modunu Başlatmak İçin Dokunun</p>
-      </div>
-    </NuxtLink>
-
-    <div class="bg-gray-700 text-white p-4 flex flex-col rounded-b-2xl gap-y-2 shadow-2xl">
-      <div class="flex justify-start gap-x-2 items-center">
-        <UAvatar :src="user.profilePicture" :alt="user.name" :chip-color="'green'" size="lg" />
-        <div class="flex flex-col">
-          <p>{{user.name}} {{user.surname}}</p>
-          <p class="text-xs opacity-50">erdogansonmez</p>
-        </div>
-        <div class="flex flex-grow justify-around">
-          <div class="flex flex-col items-center justify-center">
-            <p class="text-md">0</p>
-            <p class="text-xs opacity-50">Takipçi</p>
-          </div>
-          <div class="flex flex-col items-center justify-center">
-            <p class="text-md">0</p>
-            <p class="text-xs opacity-50">Takip</p>
-          </div>
-        </div>
-
-      </div>
-
-      <div class=" py-1">
-        <p class="text-xs">Burası benim biyografi alanım aynı instagramda olduğu gibi burayı kişiselleştirebiliyorum</p>
-      </div>
-      <div class="flex justify-around items-center gap-x-2">
-        <div class="bg-gray-900 text-white text-sm flex-grow px-4 py-1 text-center rounded">Profili Düzenle</div>
-        <div class="bg-gray-900 text-white text-sm flex-grow px-4 py-1 text-center rounded">Profesyonel Pano</div>
-      </div>
-
-    </div>
-
-    <div class="flex flex-col justify-start items-start p-4">
-      <p class="text-sm opacity-50">Hesap Bakiyeniz</p>
-      <p class="text-5xl text-white font-medium">120.00₺</p>
-    </div>
-    <VChart class="max-h-[200px] mt-[-80px]" :option="option"/>
-    <div class="flex flex-col gap-y-4 px-4 mt-2">
-      <p class="text-sm opacity-50">Yaklaşan Transferleriniz</p>
-      <div class="bg-gray-700 rounded px-4 py-2 flex justify-between items-center text-white" v-for="trip in trips" @click="selectTrip(trip)">
-        <div class="flex flex-col justify-start items-start">
-          <p class="text-md">{{trip.name}}</p>
-          <p class="text-xs opacity-50">{{formatDate(trip.startDate)}}</p>
-        </div>
-        <div>
-          <UBadge color="gray" variant="solid">Onay Bekliyor</UBadge>
-        </div>
-      </div>
-    </div>
-    -->
   </div>
 </template>
 <script setup lang="ts">
@@ -124,7 +24,6 @@ import {AccountType} from "~/core/api/modules/auth/models/AccountType";
 
 
 const {user} = storeToRefs(useAuthStore())
-echarts.use;
 moment.locale("tr");
 const trips = ref<any[]>([]);
 onMounted(() => {
@@ -218,7 +117,6 @@ const myTrips = ref([])
 onMounted(() => {
   useApi().trip.GetMyTrips().then(res => {
     myTrips.value = res.data;
-    console.log(res.data)
   })
 })
 

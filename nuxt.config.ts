@@ -28,8 +28,11 @@ export default defineNuxtConfig({
                 },
                 '/locationHub': {
                     target: 'http://localhost:5142',
-
-                    ws: true
+                    ws: true,
+                    changeOrigin: true,
+                    rewrite: (path) => {
+                        return 'http://localhost:5142/locationHub'
+                    }
                 },
                 '/autocomplete': {
                     target: 'http://localhost:3100',

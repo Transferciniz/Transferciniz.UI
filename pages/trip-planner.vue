@@ -11,12 +11,10 @@ import 'leaflet-routing-machine';
 import 'leaflet/dist/leaflet.css'
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css'
 import 'leaflet-routing-machine/dist/leaflet.routing.icons.png'
-import TripStep1 from "~/components/trip-step-1.vue";
 import {useTripPlannerStore} from "~/stores/trip-planner.store";
 import TripStep2 from "~/components/trip-step-2.vue";
 import TripStep3 from "~/components/trip-step-3.vue";
 
-const {location} = storeToRefs(useLocationStore())
 const {currentStep} = storeToRefs(useTripPlannerStore())
 
 

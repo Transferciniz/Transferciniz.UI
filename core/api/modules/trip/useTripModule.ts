@@ -40,6 +40,14 @@ export const useTripModule = (api: AxiosInstance) => {
         return api.get<ITripDto[]>('/Trip/GetTripDetailsForCompany', {params: {tripHeaderId: tripHeaderId}});
     }
 
+    async function GetTripHeadersForCustomer(): Promise<AxiosResponse<ITripHeaderDto[]>> {
+        return api.get<ITripHeaderDto[]>('/Trip/GetTripHeadersForCustomer', {})
+    }
+
+    async function GetTripDetailsForCustomer(tripHeaderId: string): Promise<AxiosResponse<ITripDto[]>> {
+        return api.get<ITripDto[]>('/Trip/GetTripDetailsForCustomer', {params: {tripHeaderId: tripHeaderId}});
+    }
+
 
 
     return {
@@ -50,6 +58,8 @@ export const useTripModule = (api: AxiosInstance) => {
         GetVehicleTrips,
         StartTrip,
         GetTripHeadersForCompany,
-        GetTripDetailsForCompany
+        GetTripDetailsForCompany,
+        GetTripHeadersForCustomer,
+        GetTripDetailsForCustomer
     }
 }

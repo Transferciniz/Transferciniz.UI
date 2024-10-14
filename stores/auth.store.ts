@@ -10,6 +10,16 @@ export const useAuthStore = defineStore('authStore', () => {
     const user = computed(() => jwtDecode<ISession>(token.value));
     const isAuthenticated = computed(() => token.value != '');
 
+    //@ts-ignore
+    if(window.ReactNativeWebView == null && isAuthenticated.value){
+        setInterval(() => {
+            useLocationStore().updateLocation()
+        },5000)
+    }
+
+    if(isAuthenticated.value){
+        useSocketStore().initConnection().then(() => {});
+    }
 
     function register(payload: IRegisterRequest){
         useApi().auth.Register(payload).then((result) => {
@@ -21,6 +31,15 @@ export const useAuthStore = defineStore('authStore', () => {
     function login(payload: ILoginRequest) {
         useApi().auth.Login(payload).then((result) => {
             token.value = result.data.token;
+            //@ts-ignore
+            if(window.ReactNativeWebView){
+                usePushReactNative('onLogin', {token: result.data.token});
+            }else{
+                setInterval(() => {
+                    useLocationStore().updateLocation()
+                },5000)
+            }
+            useSocketStore().initConnection().then(() => {});
             useRouter().push('/')
         })
     }

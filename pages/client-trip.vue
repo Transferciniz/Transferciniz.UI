@@ -29,7 +29,6 @@ setInterval(() => {
 }, 1000)
 function changeStatus(){
   if(myLatLang.value && vehicleMarker.value){
-    console.log('Giriyor')
     const distance = vehicleMarker.value?.getLatLng()?.distanceTo(myLatLang!.value!)
     if(distance > 1000) return "Aracınız yolda lütfen bekleyin"
     if(distance < 100) return  "Aracınız durakta sizi bekliyor"
@@ -67,7 +66,6 @@ onMounted(() => {
     title: 'Konumunuz',
     icon: icon
   }).addTo(map.value);
-  console.log(trip.value);
   setRouting();
 })
 
@@ -94,7 +92,6 @@ function setRouting() {
 
   routing.on('routesfound', e =>  {
     const routes = e.routes;
-    console.log(routes);
     const bounds = L.latLngBounds(routes[0].coordinates[0], routes[0].coordinates[routes[0].coordinates.length - 1]);// Sınırlar için boş bir obje oluştur
     routes[0].coordinates.forEach((coord: any) => {
       bounds.extend(L.latLng(coord.lat, coord.lng)); // Tüm koordinatları sınırlara ekle
@@ -112,17 +109,13 @@ function connectSocket() {
       .build();
   connection.start().then(res => {
     connection.invoke('JoinGroup', `clients@${trip.value.id}`)
-    console.log(res);
   })
   connection.on('onVehicleLocationChange', value => {
     const vehicleLatLang = new L.LatLng(value.latitude, value.longitude)
     vehicleMarker.value?.setLatLng(vehicleLatLang);
-    console.log('Araç Uzaklığı', vehicleLatLang.distanceTo(myLatLang.value!))
     if (vehicleLatLang.distanceTo(myLatLang.value!) < 100) {
       statusText.value = "Aracınız durağınıza gelmek üzere."
-      console.log(statusText.value)
     }
-    console.log(value);
 
   })
 

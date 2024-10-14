@@ -2,7 +2,6 @@
 export const useClientTripStore = defineStore('useClientTripStore', () => {
     const trip = ref<any>(null)
     const waypoints = computed(() => {
-        console.log(trip.value)
         if (trip.value == null) return [];
         return trip.value.trips[0].waypoints
     });

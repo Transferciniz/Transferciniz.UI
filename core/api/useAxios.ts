@@ -8,11 +8,9 @@ export const useAxios = () => {
         }
     });
     axiosInstance.interceptors.request.use(request => {
-        console.log('Request:', request);
         return request;
     })
     axiosInstance.interceptors.response.use(response => {
-        console.log('Response:', response)
         return response;
     })
     return axiosInstance;

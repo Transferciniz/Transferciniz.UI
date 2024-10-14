@@ -26,7 +26,6 @@ watch(tripDetail, value => {
     tripDetail.value.forEach(x => {
       x.wayPoints.sort((a: any, b: any) => a.ordering - b.ordering);
     })
-    console.log('SORTED',tripDetail.value)
     tripDetail.value.forEach((tripDetail, index) => {
       const dbWaypoints = tripDetail.wayPoints.map((x: any) => {
         return new L.LatLng(x.latitude, x.longitude)
@@ -44,7 +43,6 @@ watch(tripDetail, value => {
 
       routing.on('routesfound', e =>  {
         const routes = e.routes;
-        console.log(routes);
         const bounds = L.latLngBounds(routes[0].coordinates[0], routes[0].coordinates[routes[0].coordinates.length - 1]);// Sınırlar için boş bir obje oluştur
         routes[0].coordinates.forEach((coord: any) => {
           bounds.extend(L.latLng(coord.lat, coord.lng)); // Tüm koordinatları sınırlara ekle

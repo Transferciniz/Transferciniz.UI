@@ -1,12 +1,8 @@
-import {ITripType} from "~/core/app/ITripType";
 import {
-    type ICreateTripLocation,
     type ILocationSearchResult,
-    type ITripLocation,
     type IUserLocationSearchResult,
-    ITripLocationType, type IWaypoint, type IWaypointUser,
+    type IWaypoint, type IWaypointUser,
 } from "~/core/app/ITripLocation";
-import {GoogleProvider} from "leaflet-geosearch";
 import {useApi} from "~/core/api/useApi";
 import type {
     IVehicleCombinationPricePair, IVehicleFillPair,
@@ -19,6 +15,7 @@ import type {
     IVehicleRoutePlanWaypoint,
     IVehicleRoutePlanWaypointUser
 } from "~/core/api/modules/trip/models/ICreateTrip";
+import {useMapIcon} from "~/composables/useMapIcon";
 
 export const useCreateTripStore = defineStore('createTripStore', () => {
     const {$L: L} = useNuxtApp();
@@ -26,42 +23,28 @@ export const useCreateTripStore = defineStore('createTripStore', () => {
 
     const tripName = ref('');
     const date = ref<Date>();
-
     const map = ref<L.Map>();
     const waypoints = ref<IWaypoint[]>([]);
     const selectedWaypoint = ref<IWaypoint>();
     const isWaypointEditModalVisible = ref(false);
     const finalDestination = ref<{latitude: number, longitude: number} | null>(null);
     const finalDestinationMarker = ref<L.Marker | null>(null);
-    const totalPeople = computed(() => {
-        let amount = 0;
-        waypoints.value.forEach(waypoint => {
-            amount += waypoint.users.length
-        })
-        return amount;
-    })
-
     const tempMarker = ref<L.Marker>();
-
-
     const searchInput = ref('');
     const isSearching = ref(false);
     const isSearchPanelVisible = ref(false);
     const searchResults = ref<ILocationSearchResult[]>([]);
     const userSearchResults = ref<IUserLocationSearchResult[]>([])
     const selectedLocation = ref<ILocationSearchResult | null>(null);
-
-
-
     const vehicleCombinations = ref<IVehicleCombinationPricePair[]>([]);
     const selectedVehicleCombination = ref<IVehicleCombinationPricePair>()
 
-    const waypointIcon = L.divIcon({
-        html: '<span class="border-blue-700 border-2 rounded-sm text-sm text-black bg-white py-0.5 px-2 font-black flex items-center justify-center">D</span>',
-    })
-
-    const finalDestinationIcon = L.divIcon({
-        html: '<span class="border-red-700 border-2 rounded-sm text-sm text-white bg-red-700 py-0.5 px-2 font-black flex items-center justify-center">V</span>',
+    const totalPeople = computed(() => {
+        let amount = 0;
+        waypoints.value.forEach(waypoint => {
+            amount += waypoint.users.length
+        })
+        return amount;
     })
 
 
@@ -72,13 +55,10 @@ export const useCreateTripStore = defineStore('createTripStore', () => {
     );
 
     watch(selectedWaypoint, value => {
-        console.log(value)
         isWaypointEditModalVisible.value = !!value;
     })
 
     watch(isWaypointEditModalVisible, value => {
-        console.log(value)
-
         if(value == false){
             selectedWaypoint.value = undefined
         }
@@ -86,7 +66,7 @@ export const useCreateTripStore = defineStore('createTripStore', () => {
 
     function createWaypoint(name :string) {
         const id = Date.now()
-        const marker = L.marker({lat: tempMarker.value!.getLatLng().lat, lng: tempMarker.value!.getLatLng().lng}, {draggable: false, riseOnHover: true, icon: waypointIcon}).addTo(map.value!);
+        const marker = L.marker({lat: tempMarker.value!.getLatLng().lat, lng: tempMarker.value!.getLatLng().lng}, {draggable: false, riseOnHover: true, icon: useMapIcon().waypointIcon}).addTo(map.value!);
 
         const waypoint = {
             id: id,
@@ -100,7 +80,6 @@ export const useCreateTripStore = defineStore('createTripStore', () => {
         waypoints.value.push(waypoint)
         selectedWaypoint.value = waypoint
         marker.on('click', event => {
-            console.log('durak click')
             selectedWaypoint.value = waypoint
         })
     }
@@ -138,14 +117,8 @@ export const useCreateTripStore = defineStore('createTripStore', () => {
     function setFinalDestination(){
         const {lat, lng} = tempMarker.value!.getLatLng();
         finalDestination.value = {longitude: lng, latitude: lat};
-        finalDestinationMarker.value = L.marker({lat: lat, lng: lng}, {draggable: false, riseOnHover: true, icon: finalDestinationIcon}).addTo(map.value!);
+        finalDestinationMarker.value = L.marker({lat: lat, lng: lng}, {draggable: false, riseOnHover: true, icon: useMapIcon().finalDestinationIcon}).addTo(map.value!);
     }
-
-
-
-
-
-
 
     function onMapSearchInputChange(): void{
         if(searchInput.value == ""){
@@ -188,7 +161,6 @@ export const useCreateTripStore = defineStore('createTripStore', () => {
 
         map.value.on('click', e => {
             tempMarker.value?.setLatLng(e.latlng)
-            console.log(e);
 
         })
 
@@ -197,14 +169,12 @@ export const useCreateTripStore = defineStore('createTripStore', () => {
             html: '<span></span>',
             className: 'rounded-full ring-1 ring-white flex items-center justify-center text-white font-medium whitespace-nowrap h-2 min-w-[0.5rem] text-[7px] p-0.5 transform bg-blue-500 ',
         });
-        L.circle({lat: location.value.latitude, lng: location.value.longitude}, {radius: location.value.accuracy, fillColor: '#3b82f6', fillOpacity: 0.5, interactive:false}).addTo(map.value);
         L.marker({lat: location.value.latitude, lng: location.value.longitude}, {draggable: false, riseOnHover: true, title: 'Konumunuz', icon: icon}).addTo(map.value);
         tempMarker.value = L.marker([location.value.latitude, location.value.longitude], {
             draggable: true,
             title: '',
         }).addTo(map.value);
         tempMarker.value?.on('dragend', (e: any) => {
-            console.log(e)
         })
         setView();
 
@@ -221,57 +191,6 @@ export const useCreateTripStore = defineStore('createTripStore', () => {
     function setView(latitude: number = location.value.latitude, longitude: number = location.value.longitude) {
         map?.value?.setView([latitude, longitude], 17, {animate: true, duration: 1});
     }
-
-    function addLocation(type: ITripLocationType) {
-        const markerLocation = <L.LatLng>tempMarker.value?.getLatLng();
-        addMarker({
-            type: type,
-            waitTimeAsMinute: 0,
-            latitude: markerLocation!.lat,
-            longitude: markerLocation!.lng,
-            title: '',
-            id: `marker-${markers.value.length+1}`
-        })
-        searchResults.value = [];
-        isSearching.value = false;
-        isSearchPanelVisible.value = false;
-        selectedLocation.value = null
-    }
-
-    function addMarker(payload: ICreateTripLocation, isDraggable: boolean = false){
-        if(payload.type === ITripLocationType.finalDestination && markers.value.some(x => x.type === ITripLocationType.finalDestination)) {
-            markers.value.find(x => x.type === ITripLocationType.finalDestination)!.marker.setLatLng({
-                lat: payload.latitude,
-                lng: payload.longitude
-            })
-        }else{
-            const marker  = L.marker([payload.latitude, payload.longitude], {
-                draggable: isDraggable,
-                title: payload.title,
-            }).addTo(<L.Map>map.value);
-
-            markers.value.push({...payload, marker});
-            if(payload.type === ITripLocationType.station){
-                const circle = L.circle([payload.latitude, payload.longitude], {
-                    color: 'green',        // Dairenin kenar rengi
-                    fillColor: 'green',    // Dairenin iç rengi
-                    fillOpacity: 0.5,      // Dairenin opaklık seviyesi (0-1 arası değer alır)
-                    radius: 50             // Dairenin yarıçapı (metre cinsinden)
-                }).addTo(<L.Map>map.value);
-                circles.value.push(circle);
-            }
-            if(payload.type === ITripLocationType.waitPoint){
-                const circle = L.circle([payload.latitude, payload.longitude], {
-                    color: 'gray',        // Dairenin kenar rengi
-                    fillColor: 'gray',    // Dairenin iç rengi
-                    fillOpacity: 0.5,      // Dairenin opaklık seviyesi (0-1 arası değer alır)
-                    radius: 50             // Dairenin yarıçapı (metre cinsinden)
-                }).addTo(<L.Map>map.value);
-                circles.value.push(circle);
-            }
-        }
-    }
-
 
     function selectLocation(payload: ILocationSearchResult){
         setTempMarker(payload.latitude, payload.longitude)
@@ -357,7 +276,6 @@ export const useCreateTripStore = defineStore('createTripStore', () => {
         }*/
     }
 
-
     function setCosts(payload: IVehicleFillPair[], finalLat: number, finalLng: number): Promise<void>{
         return new Promise((resolve, reject) => {
             let processedCount = 0;
@@ -393,7 +311,6 @@ export const useCreateTripStore = defineStore('createTripStore', () => {
             })
         })
     }
-
 
     function adjustWaypoints(vehicleUsages: IVehicleUsageInformation[], waypoints: IWaypoint[]): IVehicleFillPair[]{
         const vehicles: IVehicleFillPair[] = [];
@@ -456,7 +373,6 @@ export const useCreateTripStore = defineStore('createTripStore', () => {
 
         createMap,
         setView,
-        addLocation,
         selectLocation,
         getAvailableVehicleCombinations,
         setSelectedVehicleCombination,

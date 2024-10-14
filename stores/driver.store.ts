@@ -11,7 +11,6 @@ export const useDriverStore = defineStore('driverStore', () => {
     const selectedTrip = ref<any>();
 
     watch(location, value => {
-        console.log('Lokasyon Değişti', `LAT: ${location.value.latitude} | LONG: ${location.value.longitude}`)
         if(isUpdateIntervalEnabled.value) {
             updateLocation(value.latitude, value.longitude)
         }
@@ -50,7 +49,6 @@ export const useDriverStore = defineStore('driverStore', () => {
 
     function updateLocation(lat: number, long: number){
         const waypoints = selectedTrip.value.wayPoints
-        console.log(waypoints)
         useApi().accountVehicle.UpdateAccountVehicleStatus({
             id: accountVehicle.value!.id,
             longitude: long,
