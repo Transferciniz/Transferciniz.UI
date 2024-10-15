@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@gegeweb/leaflet-routing-machine-openroute": "^0.1.10",
+    "vue3-lottie": "3.3.1",
+    "nuxt-tour": "0.0.24",
     "@googlemaps/js-api-loader": "^1.16.8",
     "@googlemaps/places": "1.6.0",
     "@microsoft/signalr": "8.0.7",
@@ -43,6 +45,7 @@
     "gapi": "0.0.3",
     "nuxt-echarts": "^0.2.3",
     "pinia": "^2.2.0",
-    "sass": "^1.77.8"
+    "sass": "^1.77.8",
+    "typescript": "5.6.3"
   }
 }

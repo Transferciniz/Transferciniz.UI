@@ -5,7 +5,6 @@
     </div>
     <Camera mode="capture" v-if="isCameraVisible" @on-image-captured="onImageCaptured"/>
 
-    <p class="text-md text-center mt-5">Seçilen Araç: {{accountVehicle?.plate}}</p>
     <p class=" p-4 text-sm text-center">Lütfen belirtilen talimatlara göre aracınızın fotoğraflarını yükleyiniz.</p>
 
     <div class="flex flex-col gap-y-4 p-4">
@@ -44,7 +43,6 @@
 definePageMeta({
   layout: "fullscreen",
 })
-const {accountVehicle} = storeToRefs(useDriverStore());
 const isCameraVisible = ref(false);
 const selectedCategory = ref('');
 const isRulesCompleted = ref(false);
@@ -115,8 +113,6 @@ function checkRules(){
 }
 
 function onFinish(){
-  useDriverStore().setVehicleOnline().then(() => {
-    useRouter().push('/online-vehicle')
-  })
+  useVehicleModeStore().setVehicleOnline()
 }
 </script>

@@ -184,12 +184,13 @@ const paymentDrawer = ref(null);
 
 function openPaymentDrawer(combination: IVehicleCombinationPricePair) {
   useCreateTripStore().setSelectedVehicleCombination(combination);
-  paymentDrawer.value.open();
+  useCreateTripStore().createTrip();
+  //paymentDrawer.value.open();
 }
 
 function doPayment() {
   useCreateTripStore().createTrip().then(() => {
-    paymentDrawer.value.close();
+   // paymentDrawer.value.close();
   })
 }
 </script>

@@ -27,7 +27,7 @@ export default defineNuxtConfig({
                     }
                 },
                 '/locationHub': {
-                    target: 'https://sekerlerteknoloji.com/locationHub',
+                    target: 'http://localhost:5142/locationHub',
                     ws: true,
                     changeOrigin: true,
                 },
@@ -49,7 +49,7 @@ export default defineNuxtConfig({
     compatibilityDate: '2024-04-03',
     ssr: false,
     devtools: {enabled: true},
-    modules: ['@nuxt/ui', '@nuxtjs/color-mode' , '@nuxtjs/google-fonts', '@nuxt/scripts', '@pinia/nuxt', '@vueuse/nuxt', 'nuxt-echarts'],
+    modules: ['@nuxt/ui', '@nuxtjs/color-mode' , '@nuxtjs/google-fonts', '@nuxt/scripts', '@pinia/nuxt', '@vueuse/nuxt', 'nuxt-echarts', 'nuxt-tour'],
     colorMode: {
         preference: 'dark', // Varsayılan olarak 'dark' modunu ayarla
         fallback: 'light',  // Tarayıcı desteklemiyorsa fallback olarak 'light'

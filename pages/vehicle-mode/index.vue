@@ -24,14 +24,14 @@
 const {
   accountVehicle,
   trips
-} = storeToRefs(useDriverStore());
+} = storeToRefs(useVehicleModeStore());
 const {user} = storeToRefs(useAuthStore())
 
 function startTrip(trip: any){
-  useDriverStore().startTrip(trip)
+  useVehicleModeStore().startTrip(trip)
 }
 
 onMounted(() => {
-  useDriverStore().getVehicleTrips()
+  useVehicleModeStore().getVehicleTrips()
 })
 </script>

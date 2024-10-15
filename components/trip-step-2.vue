@@ -1,12 +1,13 @@
 <template>
   <div class="m-0 p-0 relative">
     <div id="map" class="h-full w-full "></div>
+    <VTour :steps="tourSteps" ref="tour" :nextButton="{label: 'Sonraki'}" :prevButton="{label:'Önceki'}" :skipButton="{label: 'Öğreticiyi Atla'}" :finishButton="{label: 'Öğreticiyi Bitir'}" :highlight="true" />
     <div class="absolute top-0 right-0 w-full z-[1000] flex justify-between gap-x-4 items-start p-2">
-      <div class="bg-gray-900 rounded text-white flex justify-center items-center p-2" @click="isSearchOpen = true">
+      <div class="bg-gray-900 rounded text-white flex justify-center items-center p-2" @click="isSearchOpen = true" id="searchButton">
         <Icon name="ic:outline-search" size="20"/>
       </div>
       <div class="flex flex-col flex-grow items-center">
-        <div class="bg-gray-900 rounded text-white w-full flex justify-center p-2">
+        <div class="bg-gray-900 rounded text-white w-full flex justify-center p-2" id="tripNameButton">
           <p class="text-md px-2" @click="openNamePopup">{{tripName == '' ? 'İsimsiz Etkinlik' : tripName}}</p>
         </div>
         <div class="bg-gray-900 mt-[-10px] rounded-b-3xl text-white flex  justify-center items-center pb-2">
@@ -14,14 +15,14 @@
         </div>
       </div>
 
-      <div class="bg-gray-900 rounded text-white flex justify-center items-center p-2" @click="openDateEditPopup">
+      <div class="bg-gray-900 rounded text-white flex justify-center items-center p-2" @click="openDateEditPopup" id="dateButton">
         <Icon name="material-symbols:date-range" size="20"/>
       </div>
     </div>
     <div class="absolute bottom-0 right-0 w-full z-[1000]">
         <div class="flex justify-center items-center">
-          <p class="text-sm text-center p-2 mb-2 rounded-md w-2/6 m-auto bg-gray-900" @click="isAddWaypointModalOpen = true">Durak Ekle</p>
-          <p class="text-sm text-center p-2 mb-2 rounded-md w-2/6 m-auto bg-gray-900" @click="setFinalDestination">Varış Noktası Ekle</p>
+          <p class="text-sm text-center p-2 mb-2 rounded-md w-2/6 m-auto bg-gray-900" id="addWaypointButton" @click="isAddWaypointModalOpen = true">Durak Ekle</p>
+          <p class="text-sm text-center p-2 mb-2 rounded-md w-2/6 m-auto bg-gray-900" id="addFinishButton" @click="setFinalDestination">Varış Noktası Ekle</p>
       </div>
     </div>
 
@@ -247,6 +248,32 @@ import {
   type IWaypointUser
 } from "~/core/app/ITripLocation";
 
+import type { TourStep } from "#nuxt-tour/props";
+import type {VTour} from "#components";
+const tourSteps: TourStep[] = [
+  {
+    target: '#searchButton',
+    body: 'Buradan istediğiniz bir mekan, cadde, sokak arayıp o konumu haritada gösterebilirsiniz.'
+  },
+  {
+    target: '#dateButton',
+    body: 'Buradan transferinizin tarih ve saatini ayarlayın.'
+  },
+  {
+    target: '#tripNameButton',
+    body: 'Transferinizin adını buraya dokunarak düzenleyebilirsiniz.'
+  },
+  {
+    target: '#addWaypointButton',
+    body: 'Harita üzerindeki pinlemiş olduğunuz yere bir durak oluşturun ve durağa kişiler ekleyin.'
+  },
+  {
+    target:'#addFinishButton',
+    body: 'Harita üzerindeki pinlemiş olduğunuz noktayı varış noktanız olarak ayarlayın'
+  }
+]
+const tour = ref<InstanceType<typeof VTour> | null>(null);
+
 const isSearchOpen = ref(false)
 const isAddWaypointModalOpen = ref(false);
 const newWaypointName = ref<string>("")
@@ -309,6 +336,7 @@ function openDateEditPopup(){
 }
 
 onMounted(() => {
+  tour.value?.startTour();
   nextTick(() => {
     createMap();
   })

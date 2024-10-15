@@ -1,8 +1,5 @@
 export interface IUpdateVehicleStatusCommand {
     id: string;
-    status: IVehicleStatus;
-    latitude: number;
-    longitude: number;
 }
 
 export enum IVehicleStatus{

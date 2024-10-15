@@ -240,6 +240,7 @@ export const useCreateTripStore = defineStore('createTripStore', () => {
                             latitude: y.latitude,
                             name: y.name,
                             longitude: y.longitude,
+                            ordering: y.ordering,
                             users: y.users.map(z => {
                                 return <IVehicleRoutePlanWaypointUser>{
                                     name: z.name ?? "",
@@ -257,6 +258,8 @@ export const useCreateTripStore = defineStore('createTripStore', () => {
                 name: tripName.value,
                 vehicleIds: vehicleIds,
                 vehicleRoutePlans: vehicleRoutePlans
+            }).then(x => {
+                useRouter().push('/')
             })
         })
 

@@ -2,10 +2,13 @@ import {useApi} from "~/core/api/useApi";
 import {IVehicleStatus} from "~/core/api/modules/accountVehicle/models/IUpdateVehicleStatusCommand";
 import type {IAccountVehicle} from "~/core/api/modules/accountVehicle/models/IAccountVehicle";
 import type {IGetVehicleTripsResponse} from "~/core/api/modules/trip/models/IGetVehicleTripsResponse";
-
+import { useStorage } from '@vueuse/core'
 
 export const useDriverStore = defineStore('driverStore', () => {
-    const { location} = storeToRefs(useLocationStore())
+    const { location} = storeToRefs(useLocationStore());
+
+
+
     const accountVehicle = ref<IAccountVehicle | null>(null)
 
     const trips = ref<IGetVehicleTripsResponse[]>([]);

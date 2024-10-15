@@ -1,5 +1,6 @@
 import type {AxiosInstance, AxiosResponse} from "axios";
 import type {IUserLocationSearchQuery, IUserLocationSearchResult} from "~/core/app/ITripLocation";
+import type {INotification} from "~/core/api/modules/account/models/INotification";
 
 export const useAccountModule = (api: AxiosInstance) => {
     async function SearchProfileLocation(request: IUserLocationSearchQuery): Promise<AxiosResponse<IUserLocationSearchResult[]>> {
@@ -20,10 +21,15 @@ export const useAccountModule = (api: AxiosInstance) => {
         })
     }
 
+    async function GetNotifications(): Promise<AxiosResponse<INotification[]>> {
+        return api.get<INotification[]>('/Account/GetNotifications')
+    }
+
 
     return {
         SearchProfileLocation,
         AddVehicle,
-        UpdateLocation
+        UpdateLocation,
+        GetNotifications
     }
 }

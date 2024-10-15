@@ -7,8 +7,8 @@ export const useAccountVehicleModule = (api: AxiosInstance) => {
         return api.get<IAccountVehicle>('/AccountVehicle/GetAccountVehicle', {params: {id: id}});
     }
 
-    async function UpdateAccountVehicleStatus(request: IUpdateVehicleStatusCommand): Promise<AxiosResponse<any>> {
-        return api.post<any>('/AccountVehicle/UpdateAccountVehicleStatus', request)
+    async function OnlineVehicle(request: IUpdateVehicleStatusCommand): Promise<AxiosResponse<any>> {
+        return api.post<any>('/AccountVehicle/OnlineVehicle', request)
     }
 
     async function GetMyVehicles(): Promise<AxiosResponse<any[]>>{
@@ -19,7 +19,7 @@ export const useAccountVehicleModule = (api: AxiosInstance) => {
 
     return {
         GetAccountVehicle,
-        UpdateAccountVehicleStatus,
+        OnlineVehicle,
         GetMyVehicles
     }
 }
