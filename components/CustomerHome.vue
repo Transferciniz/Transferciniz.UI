@@ -33,12 +33,12 @@
         </div>
       </div>
     </div>
-    <div class="bg-white flex flex-col">
+    <div class="bg-white flex flex-col" v-if="liveTrips.length > 0">
       <Vue3Lottie
           animationLink="/animations/car-animation.json"
           :width="'100%'"
       />
-      <div class="flex flex-col p-4" v-if="liveTrips.length > 0">
+      <div class="flex flex-col p-4">
         <p class="text-black text-3xl mt-[-41px]">Sana Geliyoruz!</p>
         <p class="text-black text-md">Hemen aracını canlı olarak takip edebilir, sana ne zaman geleceğimizi öğrenebilirsin.</p>
         <div class="flex flex-col gap-y-2 mt-2">
