@@ -173,6 +173,7 @@ export const useCreateTripStore = defineStore('createTripStore', () => {
         tempMarker.value = L.marker([location.value.latitude, location.value.longitude], {
             draggable: true,
             title: '',
+            icon: useMapIcon().tempMarkerIcon
         }).addTo(map.value);
         tempMarker.value?.on('dragend', (e: any) => {
         })
