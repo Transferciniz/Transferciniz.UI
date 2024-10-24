@@ -66,7 +66,7 @@ export const useCreateTripStore = defineStore('createTripStore', () => {
 
     function createWaypoint(name :string) {
         const id = Date.now()
-        const marker = L.marker({lat: tempMarker.value!.getLatLng().lat, lng: tempMarker.value!.getLatLng().lng}, {draggable: false, riseOnHover: true, icon: useMapIcon().waypointIcon}).addTo(map.value!);
+        const marker = L.marker({lat: tempMarker.value!.getLatLng().lat, lng: tempMarker.value!.getLatLng().lng}, {draggable: false, riseOnHover: true, icon: useMapIcon().waypointIcon(3)}).addTo(map.value!);
 
         const waypoint = {
             id: id,
@@ -82,6 +82,49 @@ export const useCreateTripStore = defineStore('createTripStore', () => {
         marker.on('click', event => {
             selectedWaypoint.value = waypoint
         })
+    }
+
+    function createBasicTransferWaypoints(locations: ILocationSearchResult[]) {
+        if(locations.length == 1){
+            const {location} = storeToRefs(useLocationStore())
+            const fromMarker = L.marker({lat:  location.value.latitude, lng:  location.value.longitude}, {draggable: false, riseOnHover: true, icon: useMapIcon().waypointIcon});
+            const fromWaypoint = {
+                id: Date.now(),
+                name: 'Başlangıç Noktası',
+                latitude: location.value.latitude,
+                longitude: location.value.longitude,
+                users: [],
+                marker: fromMarker,
+                ordering: waypoints.value.length + 1
+            }
+            waypoints.value.push(fromWaypoint);
+            const toMarker = L.marker({lat: locations[0].latitude, lng: locations[0].longitude}, {draggable: false, riseOnHover: true, icon: useMapIcon().waypointIcon});
+            const toWaypoint = {
+                id: Date.now(),
+                name: 'Varış Noktası',
+                latitude: locations[0].latitude,
+                longitude: locations[0].longitude,
+                users: [],
+                marker: toMarker,
+                ordering: 9999
+            }
+            waypoints.value.push(toWaypoint);
+        }else{
+            locations.forEach((location, index) => {
+                const iteratorMarker = L.marker({lat:  location.latitude, lng:  location.longitude}, {draggable: false, riseOnHover: true, icon: useMapIcon().waypointIcon});
+                const iteratorWaypoint = {
+                    id: Date.now(),
+                    name: index == 0 ? 'Başlangıç Noktası' : 'Varış Noktası',
+                    latitude: location.latitude,
+                    longitude: location.longitude,
+                    users: [],
+                    marker: iteratorMarker,
+                    ordering: index + 1
+                }
+                waypoints.value.push(iteratorWaypoint);
+            })
+        }
+        useRouter().push('/basic-transfer-preview')
     }
 
     function addUserToWaypoint(waypointId: number, name: string, surname: string, userId?: string, profilePicture?: string){
@@ -151,12 +194,7 @@ export const useCreateTripStore = defineStore('createTripStore', () => {
     }
 
     function createMap(id: string = 'map'){
-        map.value = L.map(id, {
-            zoomControl: false,
-            zoomAnimation: true,            // Yakınlaştırma animasyonunu etkinleştirir
-            fadeAnimation: true,            // Katmanların solma animasyonunu etkinleştirir
-            worldCopyJump: false
-        });
+        map.value = useMap(id);
 
 
         map.value.on('click', e => {
@@ -164,7 +202,6 @@ export const useCreateTripStore = defineStore('createTripStore', () => {
 
         })
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map.value);
         const icon = L.divIcon({
             html: '<span></span>',
             className: 'rounded-full ring-1 ring-white flex items-center justify-center text-white font-medium whitespace-nowrap h-2 min-w-[0.5rem] text-[7px] p-0.5 transform bg-blue-500 ',
@@ -385,6 +422,7 @@ export const useCreateTripStore = defineStore('createTripStore', () => {
         addUserToWaypoint,
         deleteUserFromWaypoint,
         deleteWaypoint,
-        setFinalDestination
+        setFinalDestination,
+        createBasicTransferWaypoints
     }
 })

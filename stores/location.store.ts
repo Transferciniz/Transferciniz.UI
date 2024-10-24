@@ -5,7 +5,7 @@ export const useLocationStore = defineStore('locationStore', () => {
         enableHighAccuracy: true,
         immediate: true
     });
-    const dbLocation = useStorage('location',{latitude: 0, longitude: 0});
+    const dbLocation = useStorage('location',{latitude: useAuthStore().user.latitude, longitude: useAuthStore().user.longitude});
     const location = computed(() => {
         return {
             latitude: dbLocation.value.latitude != 0 ? dbLocation.value.latitude : coords.value.latitude,

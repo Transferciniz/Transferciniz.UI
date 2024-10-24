@@ -9,4 +9,6 @@ export interface ISession {
     sessionId: string;
     profilePicture: string;
     accountType: AccountType;
+    longitude: number;
+    latitude: number;
 }

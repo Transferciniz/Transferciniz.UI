@@ -7,7 +7,14 @@ import type {ILoginRequest} from "~/core/api/modules/auth/models/ILoginRequest";
 
 export const useAuthStore = defineStore('authStore', () => {
     const token = useStorage('token', '');
-    const user = computed(() => jwtDecode<ISession>(token.value));
+    const user = computed(() => {
+        try{
+            return jwtDecode<ISession>(token.value)
+        }catch(e){
+            console.error('Error on token decode')
+            return {} as ISession;
+        }
+    });
     const isAuthenticated = computed(() => token.value != '');
 
     //@ts-ignore
@@ -24,6 +31,8 @@ export const useAuthStore = defineStore('authStore', () => {
     function register(payload: IRegisterRequest){
         useApi().auth.Register(payload).then((result) => {
             token.value = result.data.token;
+            const decodedToken = jwtDecode<ISession>(token.value);
+            useLocationStore().setDbLocation(decodedToken.latitude, decodedToken.longitude);
             useRouter().push('/')
         })
     }

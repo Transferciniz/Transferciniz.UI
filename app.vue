@@ -51,4 +51,13 @@ useAuthStore();
   position: absolute;
   left: 0;
 }
+.leaflet-div-icon {
+  background: unset !important;
+}
+.leaflet-routing-container{
+  display: none;
+}
+.mapboxgl-ctrl-logo{
+  display: none !important;
+}
 </style>

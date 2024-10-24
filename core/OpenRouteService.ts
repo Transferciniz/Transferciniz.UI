@@ -59,7 +59,7 @@ export class OpenRouteService implements L.Routing.IRouter {
             .then(data => {
                 clearTimeout(timer);
                 if (!timedOut) {
-                    callback.call(context || callback, undefined, this.convertRoute(data));
+                    callback.call(context || callback, undefined, data);
                 }
             })
             .catch(err => {

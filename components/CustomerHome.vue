@@ -1,10 +1,8 @@
 <template>
   <div class="flex flex-col">
     <div class="relative flex flex-col overflow-hidden">
-      <div>
-        <img :src="user.profilePicture" class="h-[170px] w-full object-cover object-center filter blur-[3px] brightness-[0.3]" alt="profilePicture">
-      </div>
-      <div class="absolute inset-0 flex flex-col p-4">
+
+      <div class="flex flex-col p-4">
         <div class="flex justify-start items-center gap-x-2">
           <UAvatar :src="user.profilePicture" size="xl"/>
           <div class="flex flex-col justify-start items-start">
@@ -20,6 +18,7 @@
             <Icon name="material-symbols:settings-rounded" size="30" />
           </div>
         </div>
+        <!--
         <div class="flex justify-start gap-x-4 items-center mt-5">
           <Icon name="hugeicons:wallet-03" size="50"/>
           <div class="flex flex-col">
@@ -31,8 +30,12 @@
             <div class="bg-white text-black text-xs px-4 py-1 rounded-md text-center">Başkası İçin Yükleme Yap</div>
           </div>
         </div>
+        -->
       </div>
+      <BasicTransfer/>
     </div>
+
+    <!--
     <div class="bg-white flex flex-col" v-if="liveTrips.length > 0">
       <Vue3Lottie
           animationLink="/animations/car-animation.json"
@@ -66,6 +69,7 @@
 
       </div>
     </div>
+    -->
 
   </div>
 
@@ -74,6 +78,7 @@
 <script setup lang="ts">
 import { Vue3Lottie } from 'vue3-lottie'
 import {TripStatus} from "~/core/api/modules/trip/models/ITripHeaderDto";
+import BasicTransfer from "~/components/BasicTransfer.vue";
 
 const {user} =  storeToRefs(useAuthStore())
 const {unreadCount} = storeToRefs(useNotificationStore())

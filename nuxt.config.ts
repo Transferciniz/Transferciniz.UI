@@ -4,6 +4,9 @@ import fs = util.fs;
 import path from "node:path";
 
 export default defineNuxtConfig({
+    css: [
+        'mapbox-gl/dist/mapbox-gl.css'
+    ],
     app: {
         head: {
             viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no'

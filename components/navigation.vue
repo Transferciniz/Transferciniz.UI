@@ -1,5 +1,5 @@
 <template>
-  <div class="z-1 w-full h-16 bg-gray-900 shadow-2xl  border-t border-gray-700 py-2">
+  <div class="z-1 w-full bg-gray-900 shadow-2xl  border-t border-gray-700 pt-4 pb-6">
     <div class="flex justify-around items-center h-full bg-gray-900">
       <NuxtLink to="/" active-class="!text-white" class="text-gray-600 transition ease-in-out duration-300">
       <Icon :name="currentRoute.path == '/' ? 'ion:home' : 'ion:home-outline'" size="30" mode="css" />
