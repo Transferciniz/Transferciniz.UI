@@ -1,3 +1,5 @@
+import mapboxgl from "mapbox-gl";
+
 export interface IWaypoint {
     id: number;
     name: string;

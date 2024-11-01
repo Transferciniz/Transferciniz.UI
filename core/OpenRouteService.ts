@@ -30,7 +30,8 @@ export class OpenRouteService implements L.Routing.IRouter {
         options?: L.Routing.RoutingOptions
     ): void {
         const url = this.options.serviceUrl;
-        const coordinates = waypoints.map(wp => [wp.latLng.lng, wp.latLng.lat]); // Koordinatları [lng, lat] olarak hazırlıyoruz
+        //@ts-ignore
+        const coordinates = waypoints.map(wp => [wp.lng, wp.lat]); // Koordinatları [lng, lat] olarak hazırlıyoruz
         let timedOut = false;
 
         // Zaman aşımı kontrolü

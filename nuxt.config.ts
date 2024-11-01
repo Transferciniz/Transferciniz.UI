@@ -17,10 +17,6 @@ export default defineNuxtConfig({
     },
      vite: {
         server: {
-            https: {
-                key: fs.readFileSync(path.resolve(__dirname, 'localhost.key')),
-                cert: fs.readFileSync(path.resolve(__dirname, 'localhost.crt')),
-            },
             proxy: {
                 '/api': {
                     target: 'http://localhost:5142',
@@ -46,9 +42,6 @@ export default defineNuxtConfig({
             }
         }
      },
-    plugins: [
-        '~/plugins/leaflet.client.ts'
-    ],
     compatibilityDate: '2024-04-03',
     ssr: false,
     devtools: {enabled: true},

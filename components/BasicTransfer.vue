@@ -76,9 +76,8 @@ const {
     searchResults,
     isSearchPanelVisible,
     isSearching
-} = storeToRefs(useCreateTripStore());
+} = storeToRefs(useLocationSearchStore());
 
-const {selectLocation} = useCreateTripStore()
 
 function openSearch(mode: 'from' | 'to'): void{
   searchInput.value = '';
@@ -105,6 +104,6 @@ function changeDirections(){
 
 function searchTransfer(){
   const locations = fromLocation.value != undefined ? [fromLocation.value, toLocation.value] : [toLocation.value]
-  useCreateTripStore().createBasicTransferWaypoints(locations as ILocationSearchResult[])
+  useCreateTransferStore().createBasicTransferWaypoints(locations as ILocationSearchResult[])
 }
 </script>

@@ -1,5 +1,7 @@
 <template>
   <div class="h-full w-full relative">
+    <h1>Hazırlanıyor</h1>
+    <!--
     <div id="customerMap" class="h-screen w-screen"></div>
     <div class="absolute w-full top-0 left-0 z-[10000] ">
       <div class="flex justify-between items-center p-4">
@@ -10,17 +12,15 @@
         <p class="bg-gray-900 text-sm px-2 py-1 rounded-md">{{statusText}}</p>
       </div>
     </div>
+    -->
   </div>
 </template>
 
-<script setup lang="ts">
-
-import {useMapIcon} from "~/composables/useMapIcon";
+<script setup lang="ts">/*
 import moment from "moment/moment";
 import 'moment/locale/tr'
 
 moment.locale('tr');
-const {$L:L} = useNuxtApp()
 const map = ref<L.Map>();
 const vehicleMarker = ref<L.Marker>();
 const vehicleArrivalDate = ref<Date>();
@@ -55,5 +55,5 @@ watchDebounced(vehicleCoordinate, value => {
     vehicleArrivalDate.value = date;
   })
 }, { debounce: 500})
-
+*/
 </script>
