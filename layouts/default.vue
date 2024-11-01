@@ -8,7 +8,6 @@
 
 </template>
 <script setup lang="ts">
-import Header from "~/components/header.vue";
 import Navigation from "~/components/navigation.vue";
 
 </script>

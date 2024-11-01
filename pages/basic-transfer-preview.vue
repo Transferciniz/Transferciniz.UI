@@ -289,7 +289,7 @@ function selectUser(e: any){
   addUserToWaypoint(selectedWaypoint!.value!, {
     name: e.name,
     surname: e.surname,
-    userId: e.userId,
+    userId: e.id,
     profilePicture: e.profilePicture,
   })
 }

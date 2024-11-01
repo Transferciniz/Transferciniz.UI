@@ -11,7 +11,7 @@ export function useMapbox(){
             container: container,
             style: 'mapbox://styles/erdogansonmez/cm2kgqzz4009501qs6hf8coxt',
             center: [initLocation.latitude, initLocation.longitude],
-            zoom: 10,
+            zoom: 0,
             attributionControl: false,
             logoPosition: 'top'
         })
@@ -100,12 +100,20 @@ export function useMapbox(){
         return htmlElement;
     }
 
+    function createVehicleMarker(plate: string){
+        const innerHtml = '<div class="bg-white text-black rounded-md text-xs border-2 border-black px-2 py-1 flex justify-center items-center gap-x-2 min-w-[70px]">' + plate + '</div>';
+        const htmlElement = document.createElement('div');
+        htmlElement.innerHTML = innerHtml;
+        return htmlElement;
+    }
+
     return {
         createMap,
         fetchRouteData,
         drawRoute,
         onMapClickPosition,
         createMarker,
-        createWaypointMarker
+        createWaypointMarker,
+        createVehicleMarker
     }
 }

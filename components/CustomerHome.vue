@@ -18,19 +18,7 @@
             <Icon name="material-symbols:settings-rounded" size="30" />
           </div>
         </div>
-        <!--
-        <div class="flex justify-start gap-x-4 items-center mt-5">
-          <Icon name="hugeicons:wallet-03" size="50"/>
-          <div class="flex flex-col">
-            <p class="text-xs">Cüzdan Bakiyesi:</p>
-            <p class="text-2xl">0,00₺</p>
-          </div>
-          <div class="flex flex-col gap-y-2 flex-grow">
-            <div class="bg-white text-black text-xs px-4 py-1 rounded-md text-center">Kendin İçin Yükleme Yap</div>
-            <div class="bg-white text-black text-xs px-4 py-1 rounded-md text-center">Başkası İçin Yükleme Yap</div>
-          </div>
-        </div>
-        -->
+
       </div>
       <BasicTransfer/>
     </div>
@@ -38,13 +26,10 @@
 
     <div class="p-4">
       <div class="bg-white flex flex-col rounded-md" v-if="liveTrips.length > 0">
-        <Vue3Lottie
-            animationLink="/animations/car-animation.json"
-            :width="'100%'"
-        />
+
         <div class="flex flex-col p-4">
-          <p class="text-black text-3xl mt-[-41px]">Sana Geliyoruz!</p>
-          <p class="text-black text-md">Hemen aracını canlı olarak takip edebilir, sana ne zaman geleceğimizi öğrenebilirsin.</p>
+          <p class="text-black text-3xl">Aracın Yola Çıktı!</p>
+          <p class="text-black text-md">Hemen aracını canlı olarak takip edebilir, sana varış süresini öğrenebilirsin.</p>
           <div class="flex flex-col gap-y-2 mt-2">
             <div class="text-black flex gap-x-4 justify-between items-center p-2 rounded-md" v-for="trip in liveTrips.slice(0,1)">
               <div class="w-1/2 flex flex-col">

@@ -27,6 +27,11 @@
           <Icon name="tdesign:arrow-up-down-2" size="28"/>
         </div>
       </div>
+      <p class="mt-2">Tarih</p>
+      <div class="flex justify-start items-center">
+        <input type="datetime-local"  v-model="formattedDate" @change="onDateChange"
+               class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+      </div>
       <div class="flex justify-center items-center" @click="searchTransfer">
         <div class="bg-white text-gray-900 text-lg px-8 py-2 rounded-md relative top-[30px]">Transfer Ara</div>
       </div>
@@ -77,6 +82,19 @@ const {
     isSearchPanelVisible,
     isSearching
 } = storeToRefs(useLocationSearchStore());
+
+
+
+const {date} = storeToRefs(useCreateTransferStore())
+
+const formattedDate = computed(() => {
+  date.value.setMinutes(date.value.getMinutes() - date.value.getTimezoneOffset());
+  return date.value.toISOString().slice(0, 16); // YYYY-MM-DDTHH:MM
+});
+
+function onDateChange(event: Event) {
+  date.value = new Date(event.target.value)
+}
 
 
 function openSearch(mode: 'from' | 'to'): void{

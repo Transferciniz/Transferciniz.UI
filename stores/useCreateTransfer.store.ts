@@ -9,14 +9,15 @@ import type {
     IVehicleRoutePlanWaypoint,
     IVehicleRoutePlanWaypointUser
 } from "~/core/api/modules/trip/models/ICreateTrip";
+import moment from "moment/moment";
 
 export const useCreateTransferStore = defineStore('useCreateTransferStore', () => {
     const waypoints = ref<IWaypoint[]>([]);
     const totalWaypoints = computed<IWaypoint[]>((): IWaypoint[] =>  {
         return [...waypoints.value, finalDestination.value] as IWaypoint[]
     })
+    const date = ref(new Date(moment().startOf("day").add("day", 1).toDate().toString()))
     const finalDestination = ref<IWaypoint>();
-    const transferDate = ref<Date>(new Date());
     const preDefinedPeopleCount = ref(4);
     const totalAddedPeopleCount = computed(() => waypoints.value.map(x => x.users.length).reduce((a, b) => a + b));
     const routingSummary = ref<any>();
@@ -68,11 +69,14 @@ export const useCreateTransferStore = defineStore('useCreateTransferStore', () =
             segments: [],
             types: []
         }).then(x => {
+            //TODO: Burada hesaplama lazım
             vehicleCombinations.value = x.data
         })
     }
 
     function createBasicTransferWaypoints(locations: ILocationSearchResult[]) {
+        waypoints.value = [];
+        finalDestination.value = undefined;
         if(locations.length == 1){
             const {location} = storeToRefs(useLocationStore())
             const fromWaypoint = {
@@ -116,7 +120,6 @@ export const useCreateTransferStore = defineStore('useCreateTransferStore', () =
 
     async function createTrip(selectedVehicleCombination: IVehicleCombinationPricePair){
         const name = `${waypoints.value[0].name} - ${finalDestination.value?.name}`;
-        const tripDate = new Date();
         const vehicleUsages = selectedVehicleCombination.vehicles.map(x => {
             return <IVehicleUsageInformation>{
                 id: x.vehicle.id,
@@ -142,6 +145,7 @@ export const useCreateTransferStore = defineStore('useCreateTransferStore', () =
                             longitude: y.longitude,
                             ordering: y.ordering,
                             users: y.users.map(z => {
+                                console.log('user', z)
                                 return <IVehicleRoutePlanWaypointUser>{
                                     name: z.name ?? "",
                                     surname: z.surname ?? "",
@@ -154,7 +158,7 @@ export const useCreateTransferStore = defineStore('useCreateTransferStore', () =
                 }
             })
             useApi().trip.CreateTrip({
-                startDate: new Date(),
+                startDate: new Date(date.value.toString()),
                 name: name,
                 vehicleIds: vehicleIds,
                 vehicleRoutePlans: vehicleRoutePlans
@@ -240,12 +244,12 @@ export const useCreateTransferStore = defineStore('useCreateTransferStore', () =
 
     return {
         waypoints,
-        transferDate,
         preDefinedPeopleCount,
         vehicleCombinations,
         routingSummary,
         totalWaypoints,
         totalAddedPeopleCount,
+        date,
 
         addWaypoint,
         setFinalDestination,
