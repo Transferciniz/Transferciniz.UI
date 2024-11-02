@@ -61,6 +61,14 @@ export const useCreateTransferStore = defineStore('useCreateTransferStore', () =
         routingSummary.value = payload;
     }
 
+    function updateWaypointLatLang(latitude: number, longitude: number, waypointId: number){
+        const waypoint = waypoints.value.find(x => x.id === waypointId);
+        if(waypoint){
+            waypoint.latitude = latitude;
+            waypoint.longitude = longitude;
+        }
+    }
+
     function getVehicleCombinations(){
         useApi().trip.GetAvailableVehicles({
             extraServices: [],
@@ -259,7 +267,8 @@ export const useCreateTransferStore = defineStore('useCreateTransferStore', () =
         increasePeopleCount,
         decreasePeopleCount,
         setRoutingSummary,
-        createTrip
+        createTrip,
+        updateWaypointLatLang
     }
 })
 

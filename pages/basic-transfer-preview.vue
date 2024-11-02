@@ -251,25 +251,34 @@ const {
     addUserToWaypoint,
     deleteUserFromWaypoint,
     addWaypoint,
-    createTrip
+    createTrip,
+    updateWaypointLatLang
 } = useCreateTransferStore();
 
 watch(waypoints, value => {
   if(isRouteDefined.value){
     drawWaypointMarkers(value);
+    drawRoute();
   }
 }, {deep: true})
 
 function drawWaypointMarkers(value: IWaypoint[]){
   waypointMarkers.value.forEach((item) => {
-    item.remove();
+    item.marker.remove();
   })
   value.forEach((waypoint) => {
-    waypointMarkers.value.push(new mapboxgl.Marker({
+    const marker = new mapboxgl.Marker({
       element: useMapbox().createWaypointMarker(waypoint.users.length),
-      draggable: false,
+      draggable: true,
 
-    }).setLngLat([waypoint.longitude, waypoint.latitude]).addTo(mapbox.value!));
+    }).setLngLat([waypoint.longitude, waypoint.latitude]).addTo(mapbox.value!);
+    marker.on('dragend', event => {
+      updateWaypointLatLang(event.target._lngLat.lat, event.target._lngLat.lng, waypoint.id)
+    })
+    waypointMarkers.value.push({
+      marker: marker,
+      waypointId: waypoint.id
+    });
   })
 }
 
@@ -305,6 +314,10 @@ function addNewWaypoint(location: ILocationSearchResult){
     marker: {}
   });
   isAddWaypointModalVisible.value = false;
+  drawRoute();
+}
+
+function drawRoute(){
   useMapbox().fetchRouteData(totalWaypoints.value).then(res => {
     setRoutingSummary(res.features[0].properties.summary);
     useMapbox().drawRoute(mapbox.value!, res);
