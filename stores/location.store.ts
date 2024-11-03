@@ -5,6 +5,7 @@ export const useLocationStore = defineStore('locationStore', () => {
         enableHighAccuracy: true,
         immediate: true
     });
+    const bearing = computed(() => coords.value.heading)
     const dbLocation = useStorage('location',{latitude: useAuthStore().user.latitude, longitude: useAuthStore().user.longitude});
     const location = computed(() => {
         return {
@@ -25,6 +26,7 @@ export const useLocationStore = defineStore('locationStore', () => {
     }
     return {
         location,
+        bearing,
 
         updateLocation,
         setDbLocation

@@ -285,12 +285,15 @@ function drawWaypointMarkers(value: IWaypoint[]){
 
 onMounted(() => {
   mapbox.value = useMapbox().createMap(mapboxContainer.value, location.value);
-  useMapbox().fetchRouteData(totalWaypoints.value).then(res => {
-    setRoutingSummary(res.features[0].properties.summary);
-    useMapbox().drawRoute(mapbox.value!, res);
-    isRouteDefined.value = true;
-    drawWaypointMarkers(waypoints.value);
+  mapbox.value.on('load', () => {
+    useMapbox().fetchRouteData(totalWaypoints.value).then(res => {
+      setRoutingSummary(res.features[0].properties.summary);
+      useMapbox().drawRoute(mapbox.value!, res);
+      isRouteDefined.value = true;
+      drawWaypointMarkers(waypoints.value);
+    })
   })
+
 })
 
 

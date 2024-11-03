@@ -91,7 +91,13 @@ const categories = ref<{id: string; name: string, images: string[], minSize: num
     images: [],
     minSize: 1,
     description: "Lütfen kendizi yüzünüz ve kıyafetiniz görünür biçimde bir öz çekim yükleyiniz."
-
+  },
+  {
+    id: 'vehicleKilometer',
+    name: 'Araç Güncel Kilometresi',
+    images: [],
+    minSize: 1,
+    description: "Lütfen aracınızın güncel KM bilgisini gösterecek bir fotoğraf çekiniz."
   }
 ]);
 

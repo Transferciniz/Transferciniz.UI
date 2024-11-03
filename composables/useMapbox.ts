@@ -63,29 +63,31 @@ export function useMapbox(){
             map.removeSource('route')
         } catch (e) {
 
+        }finally {
+            map.addSource('route', {
+                type: 'geojson',
+                data: geoJsonData,
+            });
+            map.addLayer({
+                id: 'routeLayer',
+                type: 'line',
+                source: 'route',
+                layout: {
+                    'line-join': 'round',
+                    'line-cap': 'round'
+                },
+                paint: {
+                    'line-color': '#3b9ddd',
+                    'line-width': 6
+                }
+            });
+            const coordinates = geoJsonData.features[0].geometry.coordinates;
+            const bounds = coordinates.reduce((bounds: any, coord: any) => bounds.extend(coord), new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
+            map.fitBounds(bounds, {
+                padding: 50
+            });
         }
-         map.addSource('route', {
-            type: 'geojson',
-            data: geoJsonData,
-        });
-        map.addLayer({
-            id: 'routeLayer',
-            type: 'line',
-            source: 'route',
-            layout: {
-                'line-join': 'round',
-                'line-cap': 'round'
-            },
-            paint: {
-                'line-color': '#3b9ddd',
-                'line-width': 6
-            }
-        });
-        const coordinates = geoJsonData.features[0].geometry.coordinates;
-        const bounds = coordinates.reduce((bounds: any, coord: any) => bounds.extend(coord), new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
-        map.fitBounds(bounds, {
-            padding: 50
-        });
+
     }
 
     function createMarker(longitude: number, latitude: number): mapboxgl.Marker{
@@ -107,6 +109,21 @@ export function useMapbox(){
         return htmlElement;
     }
 
+    function createStartMarker(){
+        const innerHtml='<div><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="#ff0000" d="m10.65 15.75l4.875-3.125q.35-.225.35-.625t-.35-.625L10.65 8.25q-.375-.25-.763-.038t-.387.663v6.25q0 .45.388.663t.762-.038M12 22q-2.075 0-3.9-.788t-3.175-2.137T2.788 15.9T2 12t.788-3.9t2.137-3.175T8.1 2.788T12 2t3.9.788t3.175 2.137T21.213 8.1T22 12t-.788 3.9t-2.137 3.175t-3.175 2.138T12 22"/></svg></div>';
+        const htmlElement = document.createElement('div');
+        htmlElement.innerHTML = innerHtml;
+        return htmlElement;
+
+    }
+
+    function createFinishMarker(){
+        const innerHtml = '<div><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 100 100"><path fill="#ff0000" d="M50 0a3.5 3.5 0 0 0-3.5 3.5v80A3.5 3.5 0 0 0 50 87a3.5 3.5 0 0 0 3.5-3.5V47h43a3.5 3.5 0 0 0 3.5-3.5v-40A3.5 3.5 0 0 0 96.5 0h-46a4 4 0 0 0-.254.01A4 4 0 0 0 50 0m13.8 7h9.8v7.43h9.8V7H93v7.43h-9.6v9.799H93v9.8h-9.6V40h-9.8v-5.97h-9.8V40H54v-5.97h9.8v-9.801H54v-9.8h9.8zm0 7.43v9.799h9.8v-9.8zm9.8 9.799v9.8h9.8v-9.8z" color="#ff0000"/><path fill="#ff0000" d="M38.004 76.792C27.41 78.29 20 81.872 20 87.143C20 94.243 32.381 100 50 100s30-5.756 30-12.857c0-5.272-7.41-8.853-18.003-10.35l-1.468 2.499C68.514 80.399 74 82.728 74 85.429c0 3.787-10.745 6.857-24 6.857s-24-3.07-24-6.857c-.001-2.692 5.45-5.018 13.459-6.13z" color="#ff0000"/></svg></div>';
+        const htmlElement = document.createElement('div');
+        htmlElement.innerHTML = innerHtml;
+        return htmlElement;
+    }
+
     return {
         createMap,
         fetchRouteData,
@@ -114,6 +131,8 @@ export function useMapbox(){
         onMapClickPosition,
         createMarker,
         createWaypointMarker,
-        createVehicleMarker
+        createVehicleMarker,
+        createStartMarker,
+        createFinishMarker
     }
 }

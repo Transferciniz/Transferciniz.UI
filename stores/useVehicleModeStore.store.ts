@@ -33,9 +33,12 @@ export const useVehicleModeStore = defineStore('useVehicleModeStore', () => {
         })
     }
 
-    function getVehicleTrips(){
-        useApi().trip.GetVehicleTrips(accountVehicle.value!.id).then((response) => {
-            trips.value = response.data
+    function getVehicleTrips(): Promise<void> {
+        return new Promise((resolve, reject) => {
+            useApi().trip.GetVehicleTrips(accountVehicle.value!.id).then((response) => {
+                trips.value = response.data
+                resolve();
+            })
         })
     }
 
