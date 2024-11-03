@@ -284,7 +284,7 @@ function drawWaypointMarkers(value: IWaypoint[]){
 
 
 onMounted(() => {
-  mapbox.value = useMapbox().createMap(mapboxContainer.value, location.value);
+  mapbox.value = useMapbox().createMap(map.value, {latitude: 0, longitude: 0})
   mapbox.value.on('load', () => {
     useMapbox().fetchRouteData(totalWaypoints.value).then(res => {
       setRoutingSummary(res.features[0].properties.summary);
