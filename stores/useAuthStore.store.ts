@@ -41,7 +41,7 @@ export const useAuthStore = defineStore('authStore', () => {
         useApi().auth.Login(payload).then((result) => {
             token.value = result.data.token;
             //@ts-ignore
-            if(window.ReactNativeWebView){
+            if( window.webkit.messageHandlers.messageHandler){
                 usePushReactNative('onLogin', {token: result.data.token});
             }else{
                 setInterval(() => {
