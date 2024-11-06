@@ -42,7 +42,7 @@ export const useAuthStore = defineStore('authStore', () => {
             token.value = result.data.token;
             //@ts-ignore
             if( window.webkit.messageHandlers.messageHandler){
-                usePushReactNative('onLogin', {token: result.data.token});
+                usePushReactNative('onLogin', result.data.token);
             }else{
                 setInterval(() => {
                     useLocationStore().updateLocation()
