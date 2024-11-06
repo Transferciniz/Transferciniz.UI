@@ -1,6 +1,6 @@
 <template>
   <div class="h-screen w-screen">
-    <div id="driver-map" class="h-screen w-screen fixed top-0 left-0"></div>
+    <div ref="mapBoxContainer"  class="h-screen w-screen fixed top-0 left-0"></div>
     <div class="fixed bg-gray-900 bottom-0 left-0 w-screen h-1/2 rounded-t-2xl" v-if="isWaypointUsersVisible">
       <div class="flex flex-col h-full w-full px-4 pt-4 gap-y-2">
         <p>Duraktaki Kişileri Onaylayın</p>
@@ -26,8 +26,8 @@
 definePageMeta({
   layout: "fullscreen",
 })
-const {$L: L} = useNuxtApp();
-const map = ref<L.Map>();
+const mapBoxContainer = ref();
+const mapboxgl = ref()
 
 const waypointIndex = ref(0);
 const isWaypointUsersVisible = ref(false);
@@ -42,8 +42,10 @@ const {
 } = storeToRefs(useLocationStore());
 
 onMounted(() => {
-  map.value = useMap('driver-map');
-  useRouting(map.value!, selectedTrip.value!.trip.waypoints)
+  mapboxgl.value = useMapbox().createMap(mapBoxContainer.value, {latitude: 0, longitude:0});
+  useMapbox().fetchRouteData(selectedTrip.value!.trip.waypoints as any[]).then((res) => {
+    useMapbox().drawRoute(mapboxgl.value, res)
+  })
 })
 
 watch(location, (newLocation) => {
@@ -55,7 +57,6 @@ watch(location, (newLocation) => {
     const distance = currentLocation.distanceTo(new L.LatLng(latitude, longitude))
     if(distance < 100) isWaypointUsersVisible.value = true
   }
-
 })
 
 function nextWaypoint() {

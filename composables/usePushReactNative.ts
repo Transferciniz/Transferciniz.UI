@@ -1,11 +1,13 @@
 export function usePushReactNative(eventName: string, payload: any): void{
     //@ts-ignore
-    if (window.ReactNativeWebView) {
+    if(window.webkit){
         //@ts-ignore
-        window.ReactNativeWebView.postMessage(JSON.stringify({
+        window.webkit.messageHandlers.messageHandler.postMessage(JSON.stringify({
             type: eventName,
             payload: payload
         }));
     }
+
+
 
 }

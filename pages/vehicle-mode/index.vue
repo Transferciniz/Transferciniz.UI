@@ -11,7 +11,7 @@
         <p class="text-lg">{{trips[0].name}}</p>
         <p class="text-xs">{{trips[0].trip.startDate}}</p>
         <div ref="map" class="w-full rounded-md h-[300px] mt-2"></div>
-        <div class="bg-red-600 text-white text-center px-8 py-2 rounded-md mt-2">Transferi Başlat</div>
+        <div class="bg-red-600 text-white text-center px-8 py-2 rounded-md mt-2" @click="startTrip(trips[0])">Transferi Başlat</div>
       </div>
     </div>
 
@@ -22,7 +22,6 @@
           <p>{{trip.name}}</p>
           <p class="text-xs opacity-50">{{trip.trip.waypoints.length}} Durak</p>
         </div>
-        <div class="bg-gray-900 rounded-lg px-2 py-1 text-sm" @click="startTrip(trip)">Transferi Başlat</div>
       </div>
     </div>
 
