@@ -12,12 +12,21 @@ export const useCustomerTripStore = defineStore('useCustomerTripStore', () => {
 
     const tripHeaders = ref<ITripHeaderDto[]>([]);
     const tripDetails = ref<ITripDto[]>([]);
-    const vehicleCoordinate = ref({latitude: 0, longitude: 0})
     const myWaypoint = computed((): IWayPointDto => {
-       return tripDetails.value
+        return tripDetails.value
             .flatMap(trip => trip.waypoints)
             .find(waypoint => waypoint.users.some(x => x.accountId == user.value.id))!;
     })
+    const myTrip = computed(() => {
+        const foundedTrip = tripDetails.value.filter(x => x.waypoints.some(y => y == myWaypoint.value))
+        if(foundedTrip){
+            return foundedTrip[0] as ITripDto
+        }
+        return null;
+    })
+
+    const vehicleCoordinate = ref({latitude: 0, longitude: 0})
+
 
     function getTripHeaders() {
         GetTripHeadersForCustomer().then(res => {
@@ -42,6 +51,7 @@ export const useCustomerTripStore = defineStore('useCustomerTripStore', () => {
         tripDetails,
         myWaypoint,
         vehicleCoordinate,
+        myTrip,
 
         getTripHeaders,
         goTripDetails,

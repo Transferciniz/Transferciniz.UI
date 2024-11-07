@@ -19,7 +19,7 @@ export default defineNuxtConfig({
         server: {
             proxy: {
                 '/api': {
-                    target: 'http://localhost:5142',
+                    target: 'https://sekerlerteknoloji.com/api',
                     changeOrigin: true,
                     rewrite: (path) => {
                         return path.replace(/^\/api/, '')

@@ -1,28 +1,51 @@
 <template>
   <div class="h-full w-full relative">
-    <h1>Hazırlanıyor</h1>
-    <!--
-    <div id="customerMap" class="h-screen w-screen"></div>
+    <div ref="mapContainer" class="h-screen w-screen"></div>
     <div class="absolute w-full top-0 left-0 z-[10000] ">
-      <div class="flex justify-between items-center p-4">
-        <div class="bg-gray-900 px-2 py-1 text-center text-xs">Durağıma Yol Tarifi Al</div>
-        <div class="bg-gray-900 px-2 py-1 text-center text-xs">Canlı Konum Paylaşımı Açık</div>
-      </div>
+
       <div class="flex justify-center items-center">
-        <p class="bg-gray-900 text-sm px-2 py-1 rounded-md">{{statusText}}</p>
+        <p class="bg-gray-900 text-sm px-2 py-1 rounded-md mt-2">{{statusText}}</p>
       </div>
     </div>
-    -->
   </div>
 </template>
 
-<script setup lang="ts">/*
+<script setup lang="ts">
 import moment from "moment/moment";
 import 'moment/locale/tr'
+import mapboxgl from "mapbox-gl";
 
 moment.locale('tr');
-const map = ref<L.Map>();
-const vehicleMarker = ref<L.Marker>();
+const mapContainer = ref();
+const mapbox = ref<mapboxgl.Map>();
+
+const {
+  tripDetails,
+  myWaypoint,
+  vehicleCoordinate,
+    myTrip
+} = storeToRefs(useCustomerTripStore());
+
+onMounted(() => {
+  mapbox.value = useMapbox().createMap(mapContainer.value, {latitude: 0, longitude: 0});
+  mapbox.value.on('load',() => {
+    useMapbox().fetchRouteData(myTrip.value!.waypoints as any[]).then((res) => {
+      useMapbox().drawRoute(mapbox.value!, res)
+      new mapboxgl.Marker({
+        element: useMapbox().createDefaultMarker(),
+        draggable: false,
+
+      }).setLngLat([myWaypoint.value.longitude, myWaypoint.value.latitude]).addTo(mapbox.value!);
+      vehicleMarker.value = new mapboxgl.Marker({
+        element: useMapbox().createCustomerCarMarker(),
+        draggable: false,
+      }).setLngLat([0,0]).addTo(mapbox.value!);
+
+    })
+  })
+})
+
+const vehicleMarker = ref<mapboxgl.Marker>();
 const vehicleArrivalDate = ref<Date>();
 const statusText = computed(() => {
 
@@ -32,28 +55,13 @@ const statusText = computed(() => {
     return 'Araç Bilgisi Bekleniyor...'
   }
 })
-onMounted(() => {
-  map.value = useMap('customerMap')
-  tripDetails.value.forEach((route, index) => {
-    useRouting(map.value!, route.waypoints, index)
-  });
-  L.marker({lat: myWaypoint.value.latitude, lng: myWaypoint.value.longitude}, {draggable: false, riseOnHover: true, icon: useMapIcon().waypointIcon}).addTo(map.value!);
-})
-const {
-  tripDetails,
-  myWaypoint,
-  vehicleCoordinate
-} = storeToRefs(useCustomerTripStore());
+
+
 
 watchDebounced(vehicleCoordinate, value => {
-  if(vehicleMarker.value != null){
-    vehicleMarker.value.setLatLng(new L.LatLng(value.latitude, value.longitude));
-  }else{
-    vehicleMarker.value =  L.marker({lat: value.latitude, lng: value.longitude}, {draggable: false, riseOnHover: true, icon: useMapIcon().carIcon}).addTo(map.value!);
+  if(vehicleMarker.value != undefined){
+    vehicleMarker.value.setLngLat([value.longitude, value.latitude])
   }
-  useRouteCalculation(new L.LatLng(myWaypoint.value.latitude, myWaypoint.value.longitude), vehicleMarker.value?.getLatLng()).then((date: Date) => {
-    vehicleArrivalDate.value = date;
-  })
-}, { debounce: 500})
-*/
+})
+
 </script>

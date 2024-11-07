@@ -45,6 +45,7 @@ onMounted(() => {
   mapboxgl.value = useMapbox().createMap(mapBoxContainer.value, {latitude: 0, longitude:0});
   useMapbox().fetchRouteData(selectedTrip.value!.trip.waypoints as any[]).then((res) => {
     useMapbox().drawRoute(mapboxgl.value, res)
+
   })
 })
 

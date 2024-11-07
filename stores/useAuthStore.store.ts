@@ -18,7 +18,7 @@ export const useAuthStore = defineStore('authStore', () => {
     const isAuthenticated = computed(() => token.value != '');
 
     //@ts-ignore
-    if(window.ReactNativeWebView == null && isAuthenticated.value){
+    if(window.webkit?.messageHandlers?.messageHandler == null && isAuthenticated.value){
         setInterval(() => {
             useLocationStore().updateLocation()
         },5000)
@@ -41,7 +41,7 @@ export const useAuthStore = defineStore('authStore', () => {
         useApi().auth.Login(payload).then((result) => {
             token.value = result.data.token;
             //@ts-ignore
-            if( window.webkit.messageHandlers.messageHandler){
+            if( window.webkit?.messageHandlers?.messageHandler){
                 usePushReactNative('onLogin', result.data.token);
             }else{
                 setInterval(() => {
