@@ -42,18 +42,18 @@ watch(location, value => {
   }
 })
 
-/*
+
 watch(bearing, value => {
-  if(isNavigationStarted.value){
+  if(isNavigationStarted.value && value){
     mapbox.value?.easeTo({
       center: [location.value.longitude, location.value.latitude],
-      bearing: value ?? 0,
-      pitch: 60,  // Navigasyon gibi bir bakış açısı için eğim
+      bearing: value,
+      //pitch: 60,  // Navigasyon gibi bir bakış açısı için eğim
       duration: 1000,
-      zoom: 18
+      //zoom: 18
     })
   }
-})*/
+})
 
 function getRouteForStartPoint(){
   useMapbox().fetchRouteData([
@@ -75,16 +75,7 @@ function getRouteForStartPoint(){
 onMounted(() => {
   mapbox.value = useMapbox().createMap(mapBoxContainer.value, {latitude: 0, longitude:0});
   useMapbox().fetchRouteData(selectedTrip.value!.trip.waypoints as any[]).then((res) => {
-   /* useMapbox().drawRoute(mapbox.value, res)
-    setTimeout(() => {
-      mapbox.value?.easeTo({
-        center: [selectedTrip.value!.trip.waypoints[0].longitude, selectedTrip.value!.trip.waypoints[0].latitude],
-        bearing: bearing.value ?? 0,
-        pitch: 60,  // Navigasyon gibi bir bakış açısı için eğim
-        duration: 3000,
-        zoom: 18
-      })
-    }, 5000)*/
+    useMapbox().drawRoute(mapbox.value, res)
   })
 })
 
