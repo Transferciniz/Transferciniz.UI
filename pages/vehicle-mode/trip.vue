@@ -35,9 +35,9 @@ watch(location, value => {
     mapbox.value?.easeTo({
       center: [value.longitude, value.latitude],
       bearing: bearing.value ?? 0,
-      pitch: 60,  // Navigasyon gibi bir bakış açısı için eğim
+     // pitch: 60,  // Navigasyon gibi bir bakış açısı için eğim
       duration: 1000,
-      zoom: 18
+    //  zoom: 18
     })
   }
 })
