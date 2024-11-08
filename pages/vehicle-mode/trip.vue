@@ -1,21 +1,8 @@
 <template>
   <div class="h-screen w-screen">
     <div ref="mapBoxContainer"  class="h-screen w-screen fixed top-0 left-0"></div>
-    <div class="fixed bg-gray-900 bottom-0 left-0 w-screen h-1/2 rounded-t-2xl" v-if="isWaypointUsersVisible">
-      <div class="flex flex-col h-full w-full px-4 pt-4 gap-y-2">
-        <p>Duraktaki Kişileri Onaylayın</p>
-        <div v-for="user in waypointUsers" class="bg-gray-800 rounded-md px-4 py-2 flex justify-between items-center">
-          <p>{{user.name}} {{user.surname}}</p>
-          <label class="inline-flex items-center me-5 cursor-pointer">
-            <input type="checkbox" :value="false" class="sr-only peer" >
-            <div class="relative w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-focus:ring-4 peer-focus:ring-green-300 dark:peer-focus:ring-green-800 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
-            <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">Geldi</span>
-          </label>
-        </div>
-        <div class="flex-grow flex justify-center items-end">
-          <div class="bg-green-900 text-white w-1/2 my-2 text-center rounded-md py-2" @click="nextWaypoint">Onayla</div>
-        </div>
-      </div>
+    <div class="fixed w-screen bottom-10 left-0 flex justify-center">
+      <div class="bg-red-600 text-white text-center px-8 py-2" @click="getRouteForStartPoint">Başlangıç Konumuna Navigasyon Başlat</div>
     </div>
   </div>
 </template>
@@ -27,7 +14,7 @@ definePageMeta({
   layout: "fullscreen",
 })
 const mapBoxContainer = ref();
-const mapboxgl = ref()
+const mapbox = ref()
 
 const waypointIndex = ref(0);
 const isWaypointUsersVisible = ref(false);
@@ -38,14 +25,40 @@ const {
 } = storeToRefs(useVehicleModeStore());
 
 const {
-  location
+  location,
+  bearing
 } = storeToRefs(useLocationStore());
 
-onMounted(() => {
-  mapboxgl.value = useMapbox().createMap(mapBoxContainer.value, {latitude: 0, longitude:0});
-  useMapbox().fetchRouteData(selectedTrip.value!.trip.waypoints as any[]).then((res) => {
-    useMapbox().drawRoute(mapboxgl.value, res)
+function getRouteForStartPoint(){
 
+  useMapbox().fetchRouteData([
+      {latitude: location.value.latitude, longitude: location.value.longitude},
+      {longitude: selectedTrip.value!.trip.waypoints[0].longitude, latitude: selectedTrip.value!.trip.waypoints[0].latitude},
+  ]).then(res => {
+    useMapbox().drawRoute(mapbox.value!, res, 'startNavigationSource', 'startNavigationLayer', false);
+    mapbox.value?.easeTo({
+      center: [location.value.longitude, location.value.latitude],
+      bearing: bearing.value ?? 0,
+      pitch: 60,  // Navigasyon gibi bir bakış açısı için eğim
+      duration: 3000,
+      zoom: 18
+    })
+  })
+}
+
+onMounted(() => {
+  mapbox.value = useMapbox().createMap(mapBoxContainer.value, {latitude: 0, longitude:0});
+  useMapbox().fetchRouteData(selectedTrip.value!.trip.waypoints as any[]).then((res) => {
+   /* useMapbox().drawRoute(mapbox.value, res)
+    setTimeout(() => {
+      mapbox.value?.easeTo({
+        center: [selectedTrip.value!.trip.waypoints[0].longitude, selectedTrip.value!.trip.waypoints[0].latitude],
+        bearing: bearing.value ?? 0,
+        pitch: 60,  // Navigasyon gibi bir bakış açısı için eğim
+        duration: 3000,
+        zoom: 18
+      })
+    }, 5000)*/
   })
 })
 

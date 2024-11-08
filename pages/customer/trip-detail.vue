@@ -31,7 +31,6 @@ onMounted(() => {
   mapbox.value.on('load',() => {
     useMapbox().fetchRouteData(myTrip.value!.waypoints as any[]).then((res) => {
       useMapbox().drawRoute(mapbox.value!, res)
-
       new mapboxgl.Marker({
         element: useMapbox().createDefaultMarker(),
         draggable: false,

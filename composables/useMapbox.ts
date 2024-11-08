@@ -1,5 +1,4 @@
 import mapboxgl from "mapbox-gl";
-import {latLng} from "leaflet";
 import type {IWaypoint} from "~/core/app/ITripLocation";
 import {OpenRouteService} from "~/core/OpenRouteService";
 
@@ -15,7 +14,7 @@ export function useMapbox(){
             attributionControl: false,
             logoPosition: 'top'
         })
-        map.addControl(new mapboxgl.GeolocateControl({
+        const geoLocatePlugin = new mapboxgl.GeolocateControl({
             positionOptions: {
                 enableHighAccuracy: true
             },
@@ -23,16 +22,18 @@ export function useMapbox(){
             showUserLocation: true,
             trackUserLocation: true,
             showAccuracyCircle: true
-        }), 'top-right');
+        });
+        map.addControl(geoLocatePlugin, 'top-right');
         map.addControl(new mapboxgl.FullscreenControl({
 
         }), 'top-right');
         map.addControl( new mapboxgl.NavigationControl({
                 showCompass: true,
             showZoom: false,
-            visualizePitch: true
-            }), 'top-left')
+            visualizePitch: true,
 
+            }), 'top-left')
+        //map.on('load', () => {     geoLocatePlugin.trigger(); });
         return map;
     }
 
@@ -57,21 +58,21 @@ export function useMapbox(){
         })
     }
 
-    function drawRoute(map: mapboxgl.Map, geoJsonData: any){
+    function drawRoute(map: mapboxgl.Map, geoJsonData: any, sourceId: string = "route", layerId: string = "routeLayer", center:boolean = true){
         try{
-            map.removeLayer('routeLayer')
-            map.removeSource('route')
+            map.removeLayer(layerId)
+            map.removeSource(sourceId)
         } catch (e) {
 
         }finally {
-            map.addSource('route', {
+            map.addSource(sourceId, {
                 type: 'geojson',
                 data: geoJsonData,
             });
             map.addLayer({
-                id: 'routeLayer',
+                id: layerId,
                 type: 'line',
-                source: 'route',
+                source: sourceId,
                 layout: {
                     'line-join': 'round',
                     'line-cap': 'round'
@@ -83,9 +84,12 @@ export function useMapbox(){
             });
             const coordinates = geoJsonData.features[0].geometry.coordinates;
             const bounds = coordinates.reduce((bounds: any, coord: any) => bounds.extend(coord), new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
-            map.fitBounds(bounds, {
-                padding: 50
-            });
+            if(center){
+                map.fitBounds(bounds, {
+                    padding: 50
+                });
+            }
+
         }
 
     }
@@ -114,9 +118,7 @@ export function useMapbox(){
         const htmlElement = document.createElement('div');
         htmlElement.innerHTML = innerHtml;
         return htmlElement;
-
     }
-
 
     function createDefaultMarker(){
         const innerHtml='<div><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="#000000" d="M12 22c5.523 0 10-2.014 10-4.5c0-1.266-1.163-2.41-3.035-3.229c-1.142 2.096-2.883 3.903-5.095 4.848a4.78 4.78 0 0 1-3.74 0c-2.212-.945-3.953-2.752-5.095-4.847C3.163 15.089 2 16.234 2 17.5C2 19.986 6.477 22 12 22"/><path fill="#000000" fill-rule="evenodd" d="M5 8.515C5 4.917 8.134 2 12 2s7 2.917 7 6.515c0 3.57-2.234 7.735-5.72 9.225a3.28 3.28 0 0 1-2.56 0C7.234 16.25 5 12.084 5 8.515M12 11a2 2 0 1 0 0-4a2 2 0 0 0 0 4" clip-rule="evenodd"/></svg></div>';
@@ -125,12 +127,12 @@ export function useMapbox(){
         return htmlElement;
 
     }
+
     function createCustomerCarMarker(){
         const innerHtml='<div><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="#000000" d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01l-1.97 5.67c-.07.21-.11.43-.11.66v7.16c0 .83.67 1.5 1.5 1.5S6 20.33 6 19.5V19h12v.5c0 .82.67 1.5 1.5 1.5c.82 0 1.5-.67 1.5-1.5v-7.16c0-.22-.04-.45-.11-.66zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16m11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5s1.5.67 1.5 1.5s-.67 1.5-1.5 1.5M5 11l1.27-3.82c.14-.4.52-.68.95-.68h9.56c.43 0 .81.28.95.68L19 11z"/></svg></div>';
         const htmlElement = document.createElement('div');
         htmlElement.innerHTML = innerHtml;
         return htmlElement;
-
     }
 
     function createFinishMarker(){
