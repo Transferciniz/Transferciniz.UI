@@ -18,6 +18,7 @@ const mapbox = ref()
 
 const waypointIndex = ref(0);
 const isWaypointUsersVisible = ref(false);
+const isNavigationStarted = ref(false);
 const waypointUsers = computed(() => selectedTrip.value?.trip.waypoints[waypointIndex.value].users)
 
 const {
@@ -29,8 +30,32 @@ const {
   bearing
 } = storeToRefs(useLocationStore());
 
-function getRouteForStartPoint(){
+watch(location, value => {
+  if(isNavigationStarted.value){
+    mapbox.value?.easeTo({
+      center: [value.longitude, value.latitude],
+      bearing: bearing.value ?? 0,
+      pitch: 60,  // Navigasyon gibi bir bakış açısı için eğim
+      duration: 1000,
+      zoom: 18
+    })
+  }
+})
 
+/*
+watch(bearing, value => {
+  if(isNavigationStarted.value){
+    mapbox.value?.easeTo({
+      center: [location.value.longitude, location.value.latitude],
+      bearing: value ?? 0,
+      pitch: 60,  // Navigasyon gibi bir bakış açısı için eğim
+      duration: 1000,
+      zoom: 18
+    })
+  }
+})*/
+
+function getRouteForStartPoint(){
   useMapbox().fetchRouteData([
       {latitude: location.value.latitude, longitude: location.value.longitude},
       {longitude: selectedTrip.value!.trip.waypoints[0].longitude, latitude: selectedTrip.value!.trip.waypoints[0].latitude},
@@ -43,6 +68,7 @@ function getRouteForStartPoint(){
       duration: 3000,
       zoom: 18
     })
+    isNavigationStarted.value = true;
   })
 }
 
