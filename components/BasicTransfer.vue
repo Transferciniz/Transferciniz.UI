@@ -36,33 +36,35 @@
         <div class="bg-white text-gray-900 text-lg px-8 py-2 rounded-md relative top-[30px]">Transfer Ara</div>
       </div>
     </div>
-    <USlideover :overlay="true"  side="top" v-model="isSearchPopoverVisible" :ui="{overlay:{background: '!bg-black/50 backdrop-blur'}}">
-      <div class="flex flex-col bg-gray-900 rounded-md p-2 mt-2">
-        <UInput
-            icon="i-heroicons-magnifying-glass-20-solid"
-            size="xl"
-            class="w-full"
-            color="white"
-            v-model="searchInput"
-            :trailing="false"
-            @click="isSearchPanelVisible = true"
-            placeholder="Bir yer arayın..."
-        />
-        <div class="p-4 flex flex-col justify-center items-center" v-if="isSearchPanelVisible">
-          <Icon name="eos-icons:bubble-loading" :size="30" v-if="isSearching" />
-          <div v-else class="flex flex-col items-start justify-start gap-y-2 w-full">
-            <div class="flex flex-col max-h-[300px] overflow-y-scroll gap-y-2">
-              <div v-for="location in searchResults" class="text-xs" @click="selectWaypoint(location)">
-                <p>{{location.name}}</p>
-                <p class="opacity-50">{{location.address}}</p>
+    <UDrawer should-scale-background  :direction="'top'" v-model:open="isSearchPopoverVisible">
+      <template #body>
+        <div class="flex flex-col rounded-md p-2 mt-2">
+          <UInput
+              icon="i-heroicons-magnifying-glass-20-solid"
+              size="xl"
+              class="w-full"
+              color="white"
+              v-model="searchInput"
+              :trailing="false"
+              @click="isSearchPanelVisible = true"
+              placeholder="Bir yer arayın..."
+          />
+          <div class="flex flex-col mt-2 justify-center items-center" v-if="isSearchPanelVisible">
+            <Icon name="eos-icons:bubble-loading" :size="30" v-if="isSearching" />
+            <div v-else class="flex flex-col items-start justify-start w-full">
+              <div class="flex flex-col  overflow-y-scroll gap-y-2">
+                <div v-for="location in searchResults" class="text-xs bg-gray-800 p-2 rounded-md" @click="selectWaypoint(location)">
+                  <p>{{location.name}}</p>
+                  <p class="opacity-50">{{location.address}}</p>
+                </div>
               </div>
-            </div>
 
+            </div>
           </div>
         </div>
-      </div>
+      </template>
 
-    </USlideover>
+    </UDrawer>
   </div>
 </template>
 

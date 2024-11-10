@@ -5,7 +5,7 @@ import {OpenRouteService} from "~/core/OpenRouteService";
 export function useMapbox(){
     mapboxgl.accessToken = 'pk.eyJ1IjoiZXJkb2dhbnNvbm1leiIsImEiOiJjbTJrZ2xqd3IwMTB2MnFxc3FqY2xyM3I3In0.DwavTLYFuZs-BDfuA9RR6w';
 
-    function createMap(container: any, initLocation: any){
+    function createMap(container: any, initLocation: any, showGeoLocatePlugin: boolean = true){
         const map = new mapboxgl.Map({
             container: container,
             style: 'mapbox://styles/erdogansonmez/cm2kgqzz4009501qs6hf8coxt',
@@ -14,16 +14,19 @@ export function useMapbox(){
             attributionControl: false,
             logoPosition: 'top'
         })
-        const geoLocatePlugin = new mapboxgl.GeolocateControl({
-            positionOptions: {
-                enableHighAccuracy: true
-            },
-            showUserHeading: true,
-            showUserLocation: true,
-            trackUserLocation: true,
-            showAccuracyCircle: true
-        });
-        map.addControl(geoLocatePlugin, 'top-right');
+        if(showGeoLocatePlugin){
+            const geoLocatePlugin = new mapboxgl.GeolocateControl({
+                positionOptions: {
+                    enableHighAccuracy: true
+                },
+                showUserHeading: true,
+                showUserLocation: true,
+                trackUserLocation: true,
+                showAccuracyCircle: true
+            });
+            map.addControl(geoLocatePlugin, 'top-right');
+        }
+
         map.addControl(new mapboxgl.FullscreenControl({
 
         }), 'top-right');

@@ -5,9 +5,15 @@ import path from "node:path";
 
 export default defineNuxtConfig({
     css: [
-        'mapbox-gl/dist/mapbox-gl.css'
+        'mapbox-gl/dist/mapbox-gl.css',
+        '~/assets/css/main.css'
     ],
+
     app: {
+        rootAttrs: {
+            'vaul-drawer-wrapper': '',
+            'class': 'bg-[var(--ui-bg)]'
+        },
         head: {
             viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no'
         },

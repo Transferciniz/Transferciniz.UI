@@ -1,32 +1,33 @@
 <template>
   <div>
-    <NuxtLayout v-if="isContentReady">
-      <NuxtPage/>
-    </NuxtLayout>
-    <UNotifications/>
-    <UModals/>
+    <UApp>
+      <div class="bg-[var(--ui-bg)]" vaul-drawer-wrapper>
+        <NuxtLayout>
+          <NuxtPage/>
+        </NuxtLayout>
+      </div>
+    </UApp>
+
+
   </div>
 
 </template>
 
 <script setup lang="ts">
-import {Loader} from "@googlemaps/js-api-loader";
 
-
-const isContentReady = ref(true);
 useLocationStore();
 useAuthStore();
-
-
 </script>
 
 <style>
-.leaflet-div-icon{
+.leaflet-div-icon {
   border: none;
 }
+
 ::-webkit-scrollbar {
   display: none;
 }
+
 .slide-enter-active,
 .slide-leave-active {
   transition: all 0.2s ease-in-out;
@@ -51,13 +52,16 @@ useAuthStore();
   position: absolute;
   left: 0;
 }
+
 .leaflet-div-icon {
   background: unset !important;
 }
-.leaflet-routing-container{
+
+.leaflet-routing-container {
   display: none;
 }
-.mapboxgl-ctrl-logo{
+
+.mapboxgl-ctrl-logo {
   display: none !important;
 }
 </style>

@@ -19,7 +19,12 @@ export const useCreateTransferStore = defineStore('useCreateTransferStore', () =
     const date = ref(new Date(moment().startOf("day").add("day", 1).toDate().toString()))
     const finalDestination = ref<IWaypoint>();
     const preDefinedPeopleCount = ref(4);
-    const totalAddedPeopleCount = computed(() => waypoints.value.map(x => x.users.length).reduce((a, b) => a + b));
+    const totalAddedPeopleCount = computed(() => {
+        if(waypoints.value.length > 0){
+            return waypoints.value?.map(x => x.users.length)?.reduce((a, b) => a + b)
+        }
+        return 0;
+    });
     const routingSummary = ref<any>();
 
     const vehicleCombinations = ref<IVehicleCombinationPricePair[]>([])
