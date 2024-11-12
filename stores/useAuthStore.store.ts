@@ -37,20 +37,26 @@ export const useAuthStore = defineStore('authStore', () => {
         })
     }
 
-    function login(payload: ILoginRequest) {
-        useApi().auth.Login(payload).then((result) => {
-            token.value = result.data.token;
-            //@ts-ignore
-            if( window.webkit?.messageHandlers?.messageHandler){
-                usePushReactNative('onLogin', result.data.token);
-            }else{
-                setInterval(() => {
-                    useLocationStore().updateLocation()
-                },5000)
-            }
-            useSocketStore().initConnection().then(() => {});
-            useRouter().push('/')
+    async function login(payload: ILoginRequest): Promise<void> {
+        return new Promise((resolve, reject) => {
+            useApi().auth.Login(payload).then((result) => {
+                token.value = result.data.token;
+                //@ts-ignore
+                if( window.webkit?.messageHandlers?.messageHandler){
+                    usePushReactNative('onLogin', result.data.token);
+                }else{
+                    setInterval(() => {
+                        useLocationStore().updateLocation()
+                    },5000)
+                }
+                useSocketStore().initConnection().then(() => {});
+                useRouter().push('/')
+                resolve()
+            }).catch(() => {
+                reject()
+            })
         })
+
     }
 
     function logout() {

@@ -1,7 +1,7 @@
 <template>
   <div>
     <UApp>
-      <div class="bg-[var(--ui-bg)]" vaul-drawer-wrapper>
+      <div class="bg-[var(--ui-bg)] !antialiased" vaul-drawer-wrapper>
         <NuxtLayout>
           <NuxtPage/>
         </NuxtLayout>

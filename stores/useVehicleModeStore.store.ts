@@ -13,7 +13,7 @@ export const useVehicleModeStore = defineStore('useVehicleModeStore', () => {
 
 
     const trips = ref<IGetVehicleTripsResponse[]>([]);
-    const selectedTrip = ref<IGetVehicleTripsResponse>();
+    const selectedTrip =  useStorage('selectedTripVehicleMode', <IGetVehicleTripsResponse>{});
 
 
 
