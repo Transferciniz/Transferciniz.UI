@@ -94,7 +94,7 @@ const carMarker = ref<mapboxgl.Marker>();
 const selectedWaypoint = ref<IWayPointDto>();
 const isWaypointDrawerOpen = ref(false);
 const lastWaypointId = ref("");
-const isFinishDrawerOpen = ref(true);
+const isFinishDrawerOpen = ref(false);
 const {
   selectedTrip
 } = storeToRefs(useVehicleModeStore());
@@ -164,6 +164,19 @@ async function confirmWaypoint(waypoint: IWayPointDto): Promise<void>{
       resolve();
     }).catch((e) => {reject()})
 
+  })
+}
+
+async function finishTrip(): Promise<void>{
+  return new Promise((resolve, reject) => {
+    useApi().trip.FinishTrip({
+      tripId: selectedTrip.value.trip.id
+    })
+        .then(() => {
+          resolve();
+          useRouter().push('/')
+        })
+        .catch(() => reject())
   })
 }
 
