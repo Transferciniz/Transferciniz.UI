@@ -11,13 +11,16 @@
         <p class="text-lg">{{trips[0].name}}</p>
         <p class="text-xs">{{trips[0].trip.startDate}}</p>
         <div ref="map" class="w-full rounded-md h-[300px] mt-2"></div>
-        <div class="bg-red-600 text-white text-center px-8 py-2 rounded-md mt-2" @click="startTrip(trips[0])">Transferi Başlat</div>
+        <div class="bg-red-600 text-white text-center px-8 py-2 rounded-md mt-2" @click="startTrip(trips[0])">
+          <span v-if="trips[0].trip.status == 1">Transferi Başlat</span>
+          <span v-if="trips[0].trip.status == 2">Transfere Devam Et</span>
+        </div>
       </div>
     </div>
 
-    <div class="p-4 flex flex-col gap-y-2">
-      <div class="text-lg">Yaklaşan İşleriniz ({{trips.length}})</div>
-      <div v-for="trip in trips" class="bg-gray-700 p-2 px-4 rounded-md flex justify-between">
+    <div class="p-4 flex flex-col gap-y-2" v-if="incomingTrips.length > 0">
+      <div class="text-lg">Yaklaşan İşleriniz ({{incomingTrips.length}})</div>
+      <div v-for="trip in incomingTrips" class="bg-gray-700 p-2 px-4 rounded-md flex justify-between">
         <div class="flex justify-start items-center gap-x-2">
           <p>{{trip.name}}</p>
           <p class="text-xs opacity-50">{{trip.trip.waypoints.length}} Durak</p>
@@ -34,11 +37,16 @@
 
 
 import mapboxgl from "mapbox-gl";
+import {TripStatus} from "~/core/api/modules/trip/models/ITripHeaderDto";
 
 const {
   accountVehicle,
   trips
 } = storeToRefs(useVehicleModeStore());
+
+const incomingTrips = computed(() => {
+  return trips.value.filter(x => x.trip.status == TripStatus.Approved)
+})
 
 const {user} = storeToRefs(useAuthStore());
 

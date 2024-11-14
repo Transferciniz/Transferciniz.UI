@@ -6,7 +6,7 @@
       <p>{{vehicle.vehicle.vehicleModel.name}}</p>
       <div class="bg-white border border-black text-xs text-black px-2 py-1 rounded">{{vehicle.plate}}</div>
     </div>
-    <template #panel>
+    <template #content>
       <div class="p-2 flex flex-col w-[300px] gap-y-2">
         <div class="flex justify-center items-center gap-x-4">
           <div class="bg-gray-700 w-1/2 rounded-md px-4 text-sm py-2 text-center flex-grow" @click="openQR($event)">QR Kod</div>
@@ -19,24 +19,20 @@
       </div>
     </template>
   </UPopover>
-  <!-- Add Waypoint -->
-  <UModal v-model="isQRVisible" :overlay="true" :prevent-close="false" :class="'z-[10000]'" :ui="{height: 'h-full'}">
-    <UCard>
+
+  <UDrawer should-scale-background v-model:open="isQRVisible">
       <template #header>
         <p>Araç QR Kodu</p>
       </template>
-      <template class="p-0 h-40" #default>
+      <template class="p-0 h-40" #body>
         <img :src="qrImage" class="w-full" alt="QRCode">
       </template>
       <template #footer>
-        <div class="flex justify-between">
-          <div class="bg-gray-700 text-white px-10 py-2 w-full text-center text-sm rounded-lg" @click="saveQR">QR Kodu Kaydet</div>
+          <div class="bg-gray-700 text-white px-10 py-2 w-full text-center text-sm rounded-lg" @click="saveQR">QR Kodu İndir</div>
           <div class="bg-gray-700 text-white px-10 py-2 w-full text-center text-sm rounded-lg" @click="isQRVisible = false">Onayla</div>
-        </div>
       </template>
 
-    </UCard>
-  </UModal>
+  </UDrawer>
 </template>
 
 <script setup lang="ts">

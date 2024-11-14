@@ -1,8 +1,10 @@
 <template>
   <div class="h-screen w-screen">
     <div ref="mapBoxContainer"  class="h-screen w-screen"></div>
-    <div class="fixed w-screen bottom-10 left-0 flex justify-center">
-      <div class="bg-red-600 text-white text-center px-8 py-2 rounded-md" v-if="isNavigationStarted === false" @click="getRouteForStartPoint">Navigasyon Başlat</div>
+    <div class="fixed w-screen bottom-10 left-0 flex justify-center gap-x-4">
+      <UButton color="neutral" class="justify-center font-bold" trailing-icon="i-lucide-arrow-right" v-if="isNavigationStarted === false" @click="getRouteForStartPoint">Navigasyonu Başlat</UButton>
+      <UButton color="neutral" class="justify-center font-bold" v-if="isNavigationStarted === true" @click="isNavigationStarted = false">Navigasyonu Durdur</UButton>
+      <UButton color="error" class="justify-center font-bold" @click="navigateToVehicleMode">Araç Moduna Dön</UButton>
     </div>
 
     <UDrawer
@@ -138,6 +140,10 @@ function checkWaypointDistances(value: any){
       }
     }
   })
+}
+
+function navigateToVehicleMode(){
+  useRouter().push('/vehicle-mode');
 }
 
 function getRouteForStartPoint(){

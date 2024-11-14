@@ -37,13 +37,9 @@
 
 
     <!-- Add Vehicle -->
-    <UModal v-model="isAddVehicleModalOpen" :overlay="true" :prevent-close="false" :class="'z-[10000]'"
-            :ui="{height: 'h-full'}">
-      <UCard>
-        <template #header>
-          <p>Araç Ekle</p>
-        </template>
-        <template class="p-0 h-40" #default>
+    <UDrawer should-scale-background v-model:open="isAddVehicleModalOpen" >
+
+        <template class="p-0 h-40" #body>
           <div class="flex flex-col h-fit gap-x-2 gap-y-5">
             <div>
               <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Araç Seçin:</label>
@@ -70,8 +66,7 @@
           </div>
         </template>
 
-      </UCard>
-    </UModal>
+    </UDrawer>
     <!-- Add Vehicle -->
 
   </div>

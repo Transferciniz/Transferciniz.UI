@@ -9,15 +9,32 @@
             <p class="text-xl">{{user.name}} {{user.surname}}</p>
             <p class="text-sm">{{user.username}}</p>
           </div>
-          <div class="flex justify-end items-center flex-grow gap-x-2">
+          <div class="flex justify-end items-center flex-grow flex-1 gap-x-2">
             <NuxtLink to="/notifications">
-              <UChip :text="unreadCount" size="2xl">
+              <UChip :text="unreadCount" size="3xl">
             <Icon name="material-symbols:notifications-sharp" size="30" />
               </UChip>
             </NuxtLink>
-            <Icon name="material-symbols:settings-rounded" size="30" />
           </div>
         </div>
+
+      </div>
+      <div class="p-4">
+        <UAlert
+            title="Merhaba Sürücü!"
+            description="Hemen sürüş modunu başlatarak, iş almaya başlayabilirsin."
+            color="neutral"
+            icon="ri:steering-2-line"
+            variant="subtle"
+            :actions="[
+      {
+        label: 'Sürüş moduna geçiş yap',
+         onClick(event) {
+          onVehicleModeClick();
+        },
+      },
+    ]"
+        />
 
       </div>
       <BasicTransfer/>
@@ -91,6 +108,10 @@ onMounted(() => {
 onUnmounted(() => {
   clearInterval(interval)
 })
+
+function onVehicleModeClick(){
+  useVehicleModeStore().startVehicleMode();
+}
 
 
 </script>

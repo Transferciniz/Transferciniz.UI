@@ -11,6 +11,11 @@
 import moment from "moment/moment";
 import 'moment/locale/tr'
 
+definePageMeta({
+  layout: "title-layout",
+})
+usePageTitleStore().setTitle("Bildirimler")
+
 moment.locale('tr');
 const {
   notifications,
