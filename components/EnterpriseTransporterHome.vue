@@ -1,19 +1,18 @@
 <template>
     <div class="h-full w-full">
-      <div class="flex flex-col w-full p-4 bg-gradient-to-b from-black/80 to-black/20 fixed top-0 right-0 z-10 backdrop-blur">
+      <div class="flex flex-col w-full p-4  fixed top-0 right-0 z-10 bg-gray-900">
         <div class="flex justify-start items-center gap-x-2">
           <UAvatar :src="user.profilePicture" size="xl"/>
           <div class="flex flex-col justify-start items-start">
             <p class="text-xl">{{user.name}} {{user.surname}}</p>
             <p class="text-sm">{{user.username}}</p>
           </div>
-          <div class="flex justify-end items-center flex-grow gap-x-2">
+          <div class="flex justify-end items-center flex-1 flex-grow gap-x-2">
             <NuxtLink to="/notifications">
               <UChip :text="unreadCount" size="2xl">
                 <Icon name="material-symbols:notifications-sharp" size="30" />
               </UChip>
             </NuxtLink>
-            <Icon name="material-symbols:settings-rounded" size="30" />
           </div>
         </div>
       </div>
@@ -48,19 +47,6 @@ import mapboxgl from "mapbox-gl";
 
 const map = ref<HTMLElement>()
 const mapbox = ref<mapboxgl.Map>()
-onMounted(() => {
-  mapbox.value = useMapbox().createMap(map.value, {latitude: 0, longitude: 0})
-  useApi().account.GetAccountVehiclesForMap().then(res => {
-    res.data.forEach(vehicle => {
-
-      new mapboxgl.Marker({
-        element: useMapbox().createVehicleMarker(vehicle.name),
-        draggable: false,
-
-      }).setLngLat([vehicle.longitude, vehicle.latitude]).addTo(mapbox.value!)
-    })
-  })
-})
 
 const {
   user
@@ -77,5 +63,23 @@ const {
 
 onMounted(() => {
   getTripHeaders();
+  mapbox.value = useMapbox().createMap(map.value, {latitude: 0, longitude: 0}, false)
+  useApi().account.GetAccountVehiclesForMap().then(res => {
+    res.data.forEach(vehicle => {
+      new mapboxgl.Marker({
+        element: useMapbox().createVehicleMarker(vehicle.name),
+        draggable: false,
+
+      }).setLngLat([vehicle.longitude, vehicle.latitude]).addTo(mapbox.value!)
+    })
+  })
 })
+
+onBeforeUnmount(() => {
+  mapbox.value?.remove();
+})
+
+
+
+
 </script>
