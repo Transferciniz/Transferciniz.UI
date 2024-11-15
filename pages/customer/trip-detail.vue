@@ -45,6 +45,10 @@ onMounted(() => {
   })
 })
 
+onBeforeUnmount(() => {
+  mapbox.value?.remove();
+})
+
 const vehicleMarker = ref<mapboxgl.Marker>();
 const vehicleArrivalDate = ref<Date>();
 const statusText = computed(() => {

@@ -299,7 +299,10 @@ onMounted(() => {
       drawWaypointMarkers(waypoints.value);
     })
   })
+})
 
+onBeforeUnmount(() => {
+  mapbox.value?.remove();
 })
 
 

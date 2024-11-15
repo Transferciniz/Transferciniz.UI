@@ -78,4 +78,8 @@ onMounted(() => {
     })
   })
 })
+
+onBeforeUnmount(() => {
+  mapbox.value?.remove();
+})
 </script>
