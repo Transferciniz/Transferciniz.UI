@@ -19,7 +19,7 @@
         </div>
 
       </div>
-      <div class="p-4">
+      <div class="p-4" v-if="user.accountType === 'Driver'">
         <UAlert
             title="Merhaba Sürücü!"
             description="Hemen sürüş modunu başlatarak, iş almaya başlayabilirsin."
@@ -36,6 +36,13 @@
     ]"
         />
 
+      </div>
+      <div class="flex flex-col p-4">
+        <p>Favori Rotalarınız</p>
+        <div class="px-4 py-2 bg-gray-800 text-md rounded-md flex justify-between items-center" v-for="favorite in favoriteTrips">
+          <p>{{favorite.name}}</p>
+          <UButton color="neutral" variant="outline">Seç</UButton>
+        </div>
       </div>
       <BasicTransfer/>
     </div>
@@ -70,6 +77,7 @@
       <div class="bg-gray-700 flex gap-x-4 justify-between items-center p-2 rounded-md" v-for="trip in incomingTrips">
         <div class="flex flex-col">
           <p>{{trip.name}}</p>
+
         </div>
 
 
@@ -82,16 +90,18 @@
 </template>
 
 <script setup lang="ts">
-import { Vue3Lottie } from 'vue3-lottie'
 import {TripStatus} from "~/core/api/modules/trip/models/ITripHeaderDto";
-import BasicTransfer from "~/components/BasicTransfer.vue";
 
 const {user} =  storeToRefs(useAuthStore())
 const {unreadCount} = storeToRefs(useNotificationStore())
 let interval: any;
+
 const{
   tripHeaders
 } = storeToRefs(useCustomerTripStore());
+const {
+  favoriteTrips
+} = storeToRefs(useCreateTransferStore())
 
 const liveTrips = computed(() => tripHeaders.value.filter(x => x.status == TripStatus.Live));
 const incomingTrips = computed(() => tripHeaders.value.filter(x => x.status == TripStatus.Approved))

@@ -10,6 +10,9 @@ import type {
     IVehicleRoutePlanWaypointUser
 } from "~/core/api/modules/trip/models/ICreateTrip";
 import moment from "moment/moment";
+import type {IFavoriteTrip} from "~/core/api/modules/trip/models/IFavoriteTrip";
+import {useStorage} from "@vueuse/core";
+
 
 export const useCreateTransferStore = defineStore('useCreateTransferStore', () => {
     const waypoints = ref<IWaypoint[]>([]);
@@ -26,8 +29,11 @@ export const useCreateTransferStore = defineStore('useCreateTransferStore', () =
         return 0;
     });
     const routingSummary = ref<any>();
-
-    const vehicleCombinations = ref<IVehicleCombinationPricePair[]>([])
+    const vehicleCombinations = ref<IVehicleCombinationPricePair[]>([]);
+    const isAddFavorite = ref(false);
+    const isAddPeople = ref(false);
+    const favoriteName = ref("");
+    const favoriteTrips = useStorage("favoriteTrips", <IFavoriteTrip[]>[])
 
     watchDebounced(preDefinedPeopleCount, value => {
         getVehicleCombinations();
@@ -176,6 +182,16 @@ export const useCreateTransferStore = defineStore('useCreateTransferStore', () =
                 vehicleIds: vehicleIds,
                 vehicleRoutePlans: vehicleRoutePlans
             }).then(x => {
+                if(isAddPeople.value == false){
+                    waypoints.value.forEach(x => {
+                        x.users = [];
+                    })
+                }
+                favoriteTrips.value.push({
+                    name: favoriteName.value,
+                    finalDestination: finalDestination.value!,
+                    waypoints: waypoints.value
+                })
                 useRouter().push('/')
             })
         })
@@ -263,6 +279,10 @@ export const useCreateTransferStore = defineStore('useCreateTransferStore', () =
         totalWaypoints,
         totalAddedPeopleCount,
         date,
+        isAddFavorite,
+        isAddPeople,
+        favoriteName,
+        favoriteTrips,
 
         addWaypoint,
         setFinalDestination,

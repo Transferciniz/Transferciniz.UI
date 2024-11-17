@@ -10,8 +10,11 @@
     </div>
 
     <div v-if="mode === 'qr'" class="absolute top-0 flex flex-col items-center justify-center bg-gray-800/80 p-4 w-full gap-y-1">
-      <p class="text-sm">Lütfen aracınızın QR kodunu okutun ya da plakasını yazınız</p>
-      <UInput color="gray" variant="outline" placeholder="Plaka Yazınız..." v-model="textInput" />
+      <p class="text-sm">Lütfen aracınızın QR kodunu okutun.</p>
+      <div class="flex justify-between items-center">
+        <p>Kullanılan Kamera:</p>
+        <USelect v-model="currentCamera" :items="cameraInputs" class="w-48" />
+      </div>
     </div>
 
     <div v-if="mode === 'capture'" class="absolute bottom-0 flex flex-col items-center justify-center bg-gray-800/50 backdrop-blur-md p-4 w-full gap-y-1">
@@ -50,10 +53,17 @@ let interval: NodeJS.Timeout | undefined = undefined;
 const { videoInputs: cameras } = useDevicesList({
   requestPermissions: true,
   onUpdated() {
+    console.log(cameras.value)
     if (!cameras.value.find(i => i.deviceId === currentCamera.value))
       currentCamera.value = cameras.value[0]?.deviceId
   },
 })
+const cameraInputs = computed(() => cameras.value.map(x => {
+  return {
+    label: x.label,
+    value: x.deviceId,
+  }
+}))
 
 const video = ref<HTMLVideoElement>()
 const { stream, enabled } = useUserMedia({
