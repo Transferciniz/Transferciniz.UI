@@ -35,7 +35,7 @@
       },
     ]"
         />
-        <p>{{test}}</p>
+        <img :src="test" alt="">
 
       </div>
       <div class="flex flex-col p-4">
