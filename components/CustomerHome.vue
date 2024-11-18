@@ -120,7 +120,9 @@ onUnmounted(() => {
 })
 
 function onVehicleModeClick(){
-  useVehicleModeStore().startVehicleMode();
+  useCamera().then(() => {
+    useVehicleModeStore().startVehicleMode();
+  })
 }
 
 
