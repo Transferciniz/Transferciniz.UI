@@ -35,6 +35,7 @@
       },
     ]"
         />
+        <p>{{test}}</p>
 
       </div>
       <div class="flex flex-col p-4">
@@ -95,6 +96,7 @@ import {TripStatus} from "~/core/api/modules/trip/models/ITripHeaderDto";
 const {user} =  storeToRefs(useAuthStore())
 const {unreadCount} = storeToRefs(useNotificationStore())
 let interval: any;
+const test = ref("Gelmedi")
 
 const{
   tripHeaders
@@ -120,8 +122,8 @@ onUnmounted(() => {
 })
 
 function onVehicleModeClick(){
-  useCamera().then(() => {
-    useVehicleModeStore().startVehicleMode();
+  useCamera().then(res => {
+    test.value = res;
   })
 }
 
