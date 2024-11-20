@@ -63,6 +63,7 @@ export const useVehicleModeStore = defineStore('useVehicleModeStore', () => {
         accountVehicle,
         trips,
         selectedTrip,
+        accountVehicleId,
 
         setAccountVehicleId,
         setVehicleOnline,
