@@ -122,8 +122,8 @@ onUnmounted(() => {
 })
 
 function onVehicleModeClick(){
-  useCamera().then(res => {
-    test.value = res;
+  useCamera('qr').then(res => {
+    useVehicleModeStore().setAccountVehicleId(res)
   })
 }
 

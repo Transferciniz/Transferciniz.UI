@@ -3,7 +3,6 @@
     <div class="fixed bottom-5 right-0 z-10 flex items-center justify-center w-full" v-if="isRulesCompleted" @click="onFinish">
       <p class="bg-green-700 rounded border-green-900 border text-gray-900 text-center py-2 px-4">Operasyon Onayı Al</p>
     </div>
-    <Camera mode="capture" v-if="isCameraVisible" @on-image-captured="onImageCaptured"/>
 
     <p class=" p-4 text-sm text-center">Lütfen belirtilen talimatlara göre aracınızın fotoğraflarını yükleyiniz.</p>
 
@@ -101,17 +100,18 @@ const categories = ref<{id: string; name: string, images: string[], minSize: num
   }
 ]);
 
-function onImageCaptured(image: Blob){
-  categories.value.find(x => x.id === selectedCategory.value)?.images.push(URL.createObjectURL(image));
+function onImageCaptured(image: string): void {
+  categories.value.find(x => x.id === selectedCategory.value)?.images.push(image);
   isCameraVisible.value = false;
   checkRules();
 
 }
 
 function openCamera(category: string){
-  window.scroll(0,0)
-  isCameraVisible.value = true;
   selectedCategory.value = category;
+  useCamera('capture').then(res => {
+    onImageCaptured(res);
+  })
 }
 
 function checkRules(){

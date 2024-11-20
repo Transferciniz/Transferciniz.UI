@@ -1,17 +1,25 @@
-export function useCamera(): Promise<string>{
+export function useCamera(method: 'capture' | 'qr'): Promise<string>{
     return new Promise((resolve, reject) => {
-        usePushReactNative("onOpenCamera", "")
+        if(method === 'capture') {
+            usePushReactNative("onOpenCamera", "")
+        }
+        if(method === 'qr'){
+            usePushReactNative("onOpenQrReader", "")
+        }
         //@ts-ignore
         window.onImageCaptured = (message: string) => {
-            alert(message);
             resolve(message)
         }
 
-        window.addEventListener("onQrReaded", (event) => {
+        //@ts-ignore
+        window.onQrReaded = (payload: string) => {
+            resolve(payload);
+        }
 
-        })
-        window.addEventListener("onCameraCancelled", (event) => {
+        //@ts-ignore
+        window.onCancelled = () => {
+            reject()
+        }
 
-        })
     })
 }
