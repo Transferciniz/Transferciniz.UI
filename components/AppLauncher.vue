@@ -14,10 +14,13 @@ function openApp(){
   window.location.href = 'transferciniz://home'
 }
 
-function isWebView() {
-  const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-  const hasMessageHandlers = !!(window.webkit && window.webkit.messageHandlers);
-  const modifiesWindowOpen = typeof window.open !== 'function';
-  return isIOS && hasMessageHandlers && modifiesWindowOpen;
+function isWebView(): boolean {
+  try{
+    return !!window.webkit.messageHandlers.messageHandler;
+
+  }catch{
+    return false;
+  }
+
 }
 </script>
