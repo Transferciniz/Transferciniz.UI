@@ -28,13 +28,19 @@ export const useAuthStore = defineStore('authStore', () => {
         useSocketStore().initConnection().then(() => {});
     }
 
-    function register(payload: IRegisterRequest){
-        useApi().auth.Register(payload).then((result) => {
-            token.value = result.data.token;
-            const decodedToken = jwtDecode<ISession>(token.value);
-            useLocationStore().setDbLocation(decodedToken.latitude, decodedToken.longitude);
-            useRouter().push('/')
+    function register(payload: IRegisterRequest): Promise<void>{
+        return new Promise((resolve, reject) => {
+            useApi().auth.Register(payload).then((result) => {
+                token.value = result.data.token;
+                const decodedToken = jwtDecode<ISession>(token.value);
+                useLocationStore().setDbLocation(decodedToken.latitude, decodedToken.longitude);
+                resolve()
+                useRouter().push('/')
+            }).catch((error) => {
+                reject()
+            })
         })
+
     }
 
     async function login(payload: ILoginRequest): Promise<void> {
