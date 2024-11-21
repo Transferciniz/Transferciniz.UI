@@ -37,7 +37,7 @@ export default defineNuxtConfig({
                     changeOrigin: true,
                 },
                 '/autocomplete': {
-                    target: 'http://localhost:3100',
+                    target: 'https://sekerlerteknoloji.com',
                     changeOrigin: true,
                 },
                 '/ors': {

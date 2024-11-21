@@ -1,16 +1,26 @@
 <template>
   <section class="h-screen w-screen">
-    <div class="flex flex-col items-center justify-center mx-auto md:h-screen lg:py-0">
+    <div class="flex flex-col items-center justify-center ">
       <div class="flex w-full justify-start items-center p-4 gap-x-4">
         <Icon name="i-lucide-chevron-left" size="40" @click="back" />
         <p class="text-2xl font-bold">Kayıt Ol</p>
       </div>
 
+      <div class="w-full p-5" v-if="companyProfile" >
+        <div class="flex w-full justify-start gap-x-2 items-center p-4 rounded-md shadow bg-gray-800 border border-gray-700">
+          <UAvatar :src="companyProfile.profilePicture" size="3xl" />
+          <div class="flex flex-col justify-start items-start gap-y-2">
+            <p class="text-sm">{{companyProfile.name}} {{companyProfile.surname}} sizi kayıt olmaya davet etti.</p>
+            <UBadge variant="soft" size="sm" :label="userType" />
+          </div>
+
+        </div>
+      </div>
+
+
       <div class="w-full">
         <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-
-
-          <form class="space-y-4" action="#">
+          <form class="space-y-4" >
             <div>
 
               <UInputMenu
@@ -52,10 +62,7 @@
               </UFormField>
 
             </div>
-
             <div>
-
-
               <div class="space-y-2">
                 <UFormField label="Parolanız">
                   <UInput
@@ -132,8 +139,6 @@
             </div>
             <UButton color="success" class="w-full justify-center" variant="solid" loading-auto @click="register(registerForm)">Kayıt Ol</UButton>
 
-
-
           </form>
         </div>
       </div>
@@ -146,22 +151,12 @@
 <script setup lang="ts">
 import type {IRegisterRequest} from "~/core/api/modules/auth/models/IRegisterRequest";
 import {AccountType} from "~/core/api/modules/auth/models/AccountType";
+import {useApi} from "~/core/api/useApi";
+import type {IGetProfileResponse} from "~/core/api/modules/account/models/IGetProfileResponse";
 
 definePageMeta({
   layout: "fullscreen",
 })
-const registerForm = ref<IRegisterRequest>({
-  name: '',
-  accountType: AccountType.Customer,
-  email: '',
-  invoiceAddress: '',
-  password: '',
-  surname: '',
-  taxNumber: '',
-  username: ''
-})
-const {register} = useAuthStore();
-
 const accountTypes = ref([
   {
     label: 'Araç çağırmak istiyorum',
@@ -184,24 +179,10 @@ const accountTypes = ref([
     id: 3
   }
 ]);
-
-
 const show = ref(false)
-
-function checkStrength(str: string) {
-  const requirements = [
-    {regex: /.{8,}/, text: 'En az 8 karakter uzunluğunda olmalı'},
-    {regex: /\d/, text: 'En az 1 numerik karakter olmalı'},
-    {regex: /[a-z]/, text: 'En az 1 küçük harf olmalı'},
-    {regex: /[A-Z]/, text: 'En az 1 büyük harf olmalı'}
-  ]
-
-  return requirements.map(req => ({met: req.regex.test(str), text: req.text}))
-}
-
 const strength = computed(() => checkStrength(registerForm.value.password))
 const score = computed(() => strength.value.filter(req => req.met).length)
-
+const companyProfile = ref<IGetProfileResponse | null>(null)
 const color = computed(() => {
   if (score.value === 0) return 'neutral'
   if (score.value <= 1) return 'error'
@@ -216,9 +197,55 @@ const text = computed(() => {
   if (score.value === 3) return 'Tehlikeli parola'
   return 'Güçlü Parola'
 })
+const registerForm = ref<IRegisterRequest>({
+  name: '',
+  accountType: AccountType.Customer,
+  email: '',
+  invoiceAddress: '',
+  password: '',
+  surname: '',
+  taxNumber: '',
+  username: ''
+})
+
+const {register} = useAuthStore();
+const userType = computed(() => {
+  switch (companyProfile.value?.accountType) {
+    case 0:
+      return "Kurumsal Üye"
+    case 1:
+      return "Kurumsal Taşımacılık Firması"
+    case 2:
+      return "Yolcu"
+    case 3:
+      return "Sürücü"
+    default:
+      return "";
+  }
+})
+
+onMounted(() => {
+  const companyId = useRouter().currentRoute.value?.query?.companyId as string;
+  if(companyId){
+    useApi().account.GetProfile(companyId).then((res) => {
+      companyProfile.value = res.data
+    })
+  }
+})
+
+function checkStrength(str: string) {
+  const requirements = [
+    {regex: /.{8,}/, text: 'En az 8 karakter uzunluğunda olmalı'},
+    {regex: /\d/, text: 'En az 1 numerik karakter olmalı'},
+    {regex: /[a-z]/, text: 'En az 1 küçük harf olmalı'},
+    {regex: /[A-Z]/, text: 'En az 1 büyük harf olmalı'}
+  ]
+
+  return requirements.map(req => ({met: req.regex.test(str), text: req.text}))
+}
 
 function back(){
-  useRouter().back();
+  useRouter().push('/');
 }
 
 </script>

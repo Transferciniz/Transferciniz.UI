@@ -59,7 +59,7 @@ const userType = computed(() => {
     case AccountType.EnterpriseCustomerCompany:
       return "Kurumsal Üye Hesabı"
     case AccountType.EnterpriseTransporterCompany:
-      return "Kurumsal Firma Hesabı"
+      return "Kurumsal Taşımacılık Firması"
     case AccountType.Customer:
       return "Yolcu Hesabı"
     case AccountType.Driver:

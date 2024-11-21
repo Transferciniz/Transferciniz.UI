@@ -9,6 +9,25 @@
 definePageMeta({
   layout: "fullscreen",
 })
+useSeoMeta({
+  title: 'Transferciniz',
+  description: 'Transfer bir tık uzağınızda!',
+  ogImage: '/logo.png',
+  twitterImage: '/logo-type.png',
+})
+
+useHead({
+  htmlAttrs: {
+    lang: 'tr'
+  },
+  link: [
+    {
+      rel: 'icon',
+      type: 'image/png',
+      href: '/favicon.png'
+    }
+  ]
+})
 const router = useRouter();
 onMounted(() => {
   const action = router.currentRoute.value.query?.action;
