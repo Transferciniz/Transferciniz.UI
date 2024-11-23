@@ -1,6 +1,6 @@
 import {useApi} from "~/core/api/useApi";
 import {IVehicleStatus} from "~/core/api/modules/accountVehicle/models/IUpdateVehicleStatusCommand";
-import type {IAccountVehicle} from "~/core/api/modules/accountVehicle/models/IAccountVehicle";
+import type {IAccountVehicleDto} from "~/core/api/modules/accountVehicle/models/IAccountVehicle";
 import type {IGetVehicleTripsResponse} from "~/core/api/modules/trip/models/IGetVehicleTripsResponse";
 import {useStorage} from "@vueuse/core";
 
@@ -8,7 +8,7 @@ import {useStorage} from "@vueuse/core";
 export const useVehicleModeStore = defineStore('useVehicleModeStore', () => {
     const { location} = storeToRefs(useLocationStore());
     const accountVehicleId = useStorage('accountVehicleId', '')
-    const accountVehicle = useStorage('accountVehicle', <IAccountVehicle>{})
+    const accountVehicle = useStorage('accountVehicle', <IAccountVehicleDto>{})
 
 
 
