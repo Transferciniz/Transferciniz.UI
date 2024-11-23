@@ -1,7 +1,7 @@
 <template>
   <UPopover  overlay :popper="{ arrow: true }" v-model:open="isPopoverVisible" @click="isPopoverVisible = true">
     <div class="bg-gray-700 rounded p-2 flex flex-col items-center justify-center" >
-      <UAvatar :alt="vehicle.vehicle.vehicleBrand.name + ' ' + vehicle.vehicle.vehicleModel.name" :chip-color="chipColor" size="lg" />
+      <UAvatar :src="vehicle.vehicle.vehicleModel.photo" :alt="vehicle.vehicle.vehicleBrand.name + ' ' + vehicle.vehicle.vehicleModel.name" :chip-color="chipColor" size="3xl" />
       <p class="text-gray-400 text-xs">{{vehicle.vehicle.vehicleBrand.name}}</p>
       <p>{{vehicle.vehicle.vehicleModel.name}}</p>
       <div class="bg-white border border-black text-xs text-black px-2 py-1 rounded">{{vehicle.plate}}</div>

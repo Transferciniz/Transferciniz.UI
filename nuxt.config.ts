@@ -28,7 +28,7 @@ export default defineNuxtConfig({
                     target: 'http://localhost:5142/',
                     changeOrigin: true,
                     rewrite: (path) => {
-                        return path.replace(/^\/api/, '')
+                        return path.replace(/^\/api/, '');
                     }
                 },
                 '/locationHub': {

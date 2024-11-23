@@ -89,6 +89,15 @@
       </div>
     </div>
 
+    <UDrawer should-scale-background :direction="'bottom'" v-model:open="isVehicleCardVisible">
+      <template #body>
+        <div class="flex flex-col rounded-md p-2 mt-2">
+          <img ref="parallaxSource" :src="accountVehicleCard?.photo" :style="cardStyle" alt="vehicle-photo" class="w-full">
+        </div>
+      </template>
+
+    </UDrawer>
+
 
   </div>
 
@@ -96,6 +105,8 @@
 
 <script setup lang="ts">
 import {TripStatus} from "~/core/api/modules/trip/models/ITripHeaderDto";
+import {useApi} from "~/core/api/useApi";
+import type {IAccountVehicleDto} from "~/core/api/modules/accountVehicle/models/IAccountVehicle";
 
 let interval: any;
 
@@ -105,6 +116,16 @@ const {accountVehicleId} = storeToRefs(useVehicleModeStore())
 const {unreadCount} = storeToRefs(useNotificationStore())
 const {user} = storeToRefs(useAuthStore())
 const {favoriteTrips} = storeToRefs(useCreateTransferStore())
+const accountVehicleCard = ref<IAccountVehicleDto | null>(null);
+const isVehicleCardVisible = ref(false);
+const parallaxSource =ref();
+const {roll, tilt} = useParallax(parallaxSource.value)
+const cardStyle = computed(() => ({
+  transition: '.3s ease-out all',
+  transform: `rotateX(${roll.value * 50}deg) rotateY(${
+    tilt.value * 50
+  }deg)`,
+}))
 
 const liveTrips = computed(() => tripHeaders.value.filter(x => x.status == TripStatus.Live));
 const incomingTrips = computed(() => tripHeaders.value.filter(x => x.status == TripStatus.Approved))
@@ -112,6 +133,10 @@ const incomingTrips = computed(() => tripHeaders.value.filter(x => x.status == T
 const {goTripDetails, getTripHeaders} = useCustomerTripStore();
 
 onMounted(() => {
+  useApi().accountVehicle.GetAccountVehicle('4c1bc9fd-b152-448e-8813-9e47b39541ea').then(res => {
+    accountVehicleCard.value = res.data;
+    isVehicleCardVisible.value = true;
+  })
   getTripHeaders();
   interval = setInterval(() => {
     getTripHeaders();
@@ -127,6 +152,9 @@ function onVehicleModeClick() {
     useRouter().push('/vehicle-mode')
   }else{
     useCamera('qr').then(res => {
+      useApi().accountVehicle.GetAccountVehicle(res).then(res => {
+
+      })
       useVehicleModeStore().setAccountVehicleId(res)
     })
   }
