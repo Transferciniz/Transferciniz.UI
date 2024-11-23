@@ -2,7 +2,7 @@
   <div class="flex flex-col bg-black h-full bg-contain bg-no-repeat bg-[linear-gradient(to_bottom,rgba(0,0,0,0.3),rgba(0,0,0,1)),url('/vehicle-mode-background.png')]">
     <div class="w-full flex flex-col p-4">
       <p class="text-lg ">Hoş Geldiniz, {{user.name}} {{user.surname}}</p>
-      <p class="text-xs">{{ accountVehicle?.vehicle.vehicleBrand.name }} {{ accountVehicle?.vehicle.vehicleModel.name }} - {{accountVehicle?.plate}}</p>
+      <p class="text-xs">{{ accountVehicle?.name }} - {{accountVehicle?.plate}}</p>
     </div>
 
     <div class="flex flex-col backdrop-blur-sm p-4 m-4 border-white/20 border rounded-md" v-if="trips.length > 0">

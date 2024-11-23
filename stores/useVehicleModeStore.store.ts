@@ -15,7 +15,10 @@ export const useVehicleModeStore = defineStore('useVehicleModeStore', () => {
     const trips = ref<IGetVehicleTripsResponse[]>([]);
     const selectedTrip =  useStorage('selectedTripVehicleMode', <IGetVehicleTripsResponse>{});
 
-
+    function onLogout(){
+        accountVehicleId.value = '';
+        accountVehicle.value = <IAccountVehicleDto>{};
+    }
 
     function setAccountVehicleId(vehicleId: string): void {
         accountVehicleId.value = vehicleId;
@@ -69,6 +72,7 @@ export const useVehicleModeStore = defineStore('useVehicleModeStore', () => {
         setVehicleOnline,
         getVehicleTrips,
         startTrip,
-        startVehicleMode
+        startVehicleMode,
+        onLogout
     }
 })
