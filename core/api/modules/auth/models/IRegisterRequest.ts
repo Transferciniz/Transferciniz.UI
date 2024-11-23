@@ -9,6 +9,7 @@ export interface IRegisterRequest {
     accountType: AccountType;
     taxNumber: string;
     invoiceAddress: string;
+    parentAccountId: string;
 }
 
 export interface IRegisterResponse {

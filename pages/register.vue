@@ -6,20 +6,20 @@
         <p class="text-2xl font-bold">Kayıt Ol</p>
       </div>
 
-      <div class="w-full p-5" v-if="companyProfile" >
+      <div class="w-full px-5" v-if="companyProfile" >
         <div class="flex w-full justify-start gap-x-2 items-center p-4 rounded-md shadow bg-gray-800 border border-gray-700">
           <UAvatar :src="companyProfile.profilePicture" size="3xl" />
           <div class="flex flex-col justify-start items-start gap-y-2">
             <p class="text-sm">{{companyProfile.name}} {{companyProfile.surname}} sizi kayıt olmaya davet etti.</p>
             <UBadge variant="soft" size="sm" :label="userType" />
           </div>
-
         </div>
+        <p class="text-xs opacity-50 mt-2">Hesabınız {{companyProfile.name}} {{companyProfile.surname}} ile ilişkilendirilmiş şekilde oluşturulacaktır.</p>
       </div>
 
 
       <div class="w-full">
-        <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+        <div class="p-6 space-y-4 ">
           <form class="space-y-4" >
             <div>
 
@@ -205,7 +205,8 @@ const registerForm = ref<IRegisterRequest>({
   password: '',
   surname: '',
   taxNumber: '',
-  username: ''
+  username: '',
+  parentAccountId: ''
 })
 
 const {register} = useAuthStore();
@@ -228,7 +229,8 @@ onMounted(() => {
   const companyId = useRouter().currentRoute.value?.query?.companyId as string;
   if(companyId){
     useApi().account.GetProfile(companyId).then((res) => {
-      companyProfile.value = res.data
+      companyProfile.value = res.data;
+      registerForm.value.parentAccountId = companyId;
     })
   }
 })
