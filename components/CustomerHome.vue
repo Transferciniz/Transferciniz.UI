@@ -9,12 +9,10 @@
             <p class="text-xl">{{ user.name }} {{ user.surname }}</p>
             <p class="text-sm">{{ user.username }}</p>
           </div>
-          <div class="flex justify-end items-center flex-grow flex-1 gap-x-2">
-            <NuxtLink to="/notifications">
-              <UChip :text="unreadCount" size="3xl">
-                <Icon name="material-symbols:notifications-sharp" size="30" />
+          <div class="flex-grow flex justify-end flex-1">
+              <UChip position="top-right" :show="unreadCount > 0" >
+                <UButton to="/notifications" icon="material-symbols:notifications-sharp" color="neutral" size="lg" variant="soft" />
               </UChip>
-            </NuxtLink>
           </div>
         </div>
 
