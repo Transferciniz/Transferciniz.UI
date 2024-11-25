@@ -8,7 +8,7 @@ export function useMapbox(){
     function createMap(container: any, initLocation: any, showGeoLocatePlugin: boolean = true){
         const map = new mapboxgl.Map({
             container: container,
-            style: 'mapbox://styles/erdogansonmez/cm2kgqzz4009501qs6hf8coxt',
+            style: 'mapbox://styles/erdogansonmez/cm3x00h4f001b01sg0lm310p5',
             center: [initLocation.latitude, initLocation.longitude],
             zoom: 0,
             attributionControl: false,

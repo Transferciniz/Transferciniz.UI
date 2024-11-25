@@ -36,12 +36,7 @@
              v-for="combinations in vehicleCombinations">
           <template v-for="vehicle in combinations.vehicles">
             <div class="flex justify-between items-center gap-x-2">
-              <img src="/vito.png" alt="vito" class="w-40 object-contain"
-                   v-if="vehicle.vehicle.id === 'e6202475-a5ef-4402-9fc5-93dda07fe2d2'"/>
-              <img src="/caravelle.png" alt="vito" class="w-40 object-contain"
-                   v-if="vehicle.vehicle.id === '660d20bc-ab9a-48e6-833a-c30cf77f7ede'"/>
-              <img src="/sprinter.png" alt="vito" class="w-40 object-contain"
-                   v-if="vehicle.vehicle.id === '18afc9ab-9926-464d-94a0-a45e0de1701a'"/>
+              <img :src="vehicle.vehicle.vehicleModel.photo" alt="vito" class="w-40 object-contain" />
               <p class="text-3xl">{{ vehicle.usage }}x</p>
               <div class="flex flex-col">
                 <p class="text-xs">{{ vehicle.vehicle.vehicleBrand.name }}</p>
