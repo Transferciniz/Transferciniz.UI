@@ -51,6 +51,7 @@ export interface IVehicleModel {
     extraCapacity: number;
     totalCapacity: number;
     vehicleBrandId: string;
+    photo: string;
 }
 
 export interface IVehicleBrand {

@@ -32,9 +32,9 @@ export default defineNuxtConfig({
                     }
                 },
                 '/locationHub': {
-                    target: 'http://localhost:5142/locationHub',
+                    target: 'https://sekerlerteknoloji.com',
                     ws: true,
-                    changeOrigin: true,
+                    changeOrigin: false,
                 },
                 '/autocomplete': {
                     target: 'https://sekerlerteknoloji.com',

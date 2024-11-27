@@ -49,8 +49,8 @@ export const useTripModule = (api: AxiosInstance) => {
         return api.get<ITripHeaderDto[]>('/Trip/GetTripHeadersForCustomer', {})
     }
 
-    async function GetTripDetailsForCustomer(tripHeaderId: string): Promise<AxiosResponse<ITripDto[]>> {
-        return api.get<ITripDto[]>('/Trip/GetTripDetailsForCustomer', {params: {tripHeaderId: tripHeaderId}});
+    async function GetTripDetailsForCustomer(tripHeaderId: string): Promise<AxiosResponse<ITripDto>> {
+        return api.get<ITripDto>('/Trip/GetTripDetailsForCustomer', {params: {tripHeaderId: tripHeaderId}});
     }
 
     async function UpdateWaypoint(payload: IWayPointDto): Promise<AxiosResponse<any>> {

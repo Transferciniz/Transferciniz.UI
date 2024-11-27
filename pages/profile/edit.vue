@@ -4,7 +4,7 @@
       <p class="text-lg font-medium">Profil Fotoğrafı</p>
       <div class="flex flex-col gap-y-4 justify-center items-center">
         <img :src="user.profilePicture" alt="profile-picture" class="size-40 text-center rounded-full" />
-        <UButton color="primary" variant="solid" class="justify-center w-full" @click="editProfile">Profil Fotoğrafı Yükle</UButton>
+        <UButton color="primary" variant="solid" class="justify-center w-full" @click="uploadPicture">Profil Fotoğrafı Yükle</UButton>
       </div>
     </div>
     <div class="flex flex-col gap-y-2 bg-gray-800 rounded-md p-4">
@@ -33,7 +33,7 @@
         >
           <UInput placeholder="Mail Adresinizi Yazınız" v-model:model-value="form.email" class="w-full" />
         </UFormField>
-        <UButton color="primary" variant="solid" class="justify-center w-full" @click="editProfile">Kaydet</UButton>
+        <UButton color="primary" variant="solid" class="justify-center w-full" >Kaydet</UButton>
       </div>
     </div>
 
@@ -41,15 +41,27 @@
   </div>
 </template>
 <script setup lang="ts">
+import { useApi } from '~/core/api/useApi';
+
 definePageMeta({
   layout: "title-layout",
 })
 usePageTitleStore().setTitle("Profil Düzenle")
 
 const {user} = storeToRefs(useAuthStore())
+const {open, files, onChange} = useFileDialog({accept: 'image/*', directory: false, multiple: false})
+onChange((files) => {
+  useApi().account.UploadProfilePicture(files[0]).then(res => {
+    useAuthStore().onProfilePictureChange(res.data.token);
+  })
+})
 const form = ref({
   name: user.value.name,
   surname: user.value.surname,
   email: user.value.email,
 })
+
+function uploadPicture(){
+  open();
+}
 </script>

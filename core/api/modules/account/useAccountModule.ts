@@ -3,6 +3,7 @@ import type {IUserLocationSearchQuery, IUserLocationSearchResult} from "~/core/a
 import type {INotification} from "~/core/api/modules/account/models/INotification";
 import type {IVehicleMapResponse} from "~/core/api/modules/account/models/IVehicleMapResponse";
 import type {IGetProfileResponse} from "~/core/api/modules/account/models/IGetProfileResponse";
+import type { IChangeProfilePictureResponse } from "./models/IChangeProfilePictureResponse";
 
 export const useAccountModule = (api: AxiosInstance) => {
     async function SearchProfileLocation(request: IUserLocationSearchQuery): Promise<AxiosResponse<IUserLocationSearchResult[]>> {
@@ -37,6 +38,10 @@ export const useAccountModule = (api: AxiosInstance) => {
             }})
     }
 
+    async function UploadProfilePicture(file: any): Promise<AxiosResponse<IChangeProfilePictureResponse>>{
+        return api.postForm<IChangeProfilePictureResponse>('/Account/ChangeProfilePicture', {file: file})
+    }
+
 
     return {
         SearchProfileLocation,
@@ -44,6 +49,7 @@ export const useAccountModule = (api: AxiosInstance) => {
         UpdateLocation,
         GetNotifications,
         GetAccountVehiclesForMap,
-        GetProfile
+        GetProfile,
+        UploadProfilePicture
     }
 }

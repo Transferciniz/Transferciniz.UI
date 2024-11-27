@@ -11,18 +11,15 @@ export const useCustomerTripStore = defineStore('useCustomerTripStore', () => {
     } = useApi().trip
 
     const tripHeaders = ref<ITripHeaderDto[]>([]);
-    const tripDetails = ref<ITripDto[]>([]);
+    const tripDetails = ref<ITripDto>();
     const myWaypoint = computed((): IWayPointDto => {
         return tripDetails.value
-            .flatMap(trip => trip.waypoints)
+            ?.waypoints
             .find(waypoint => waypoint.users.some(x => x.accountId == user.value.id))!;
     })
     const myTrip = computed(() => {
-        const foundedTrip = tripDetails.value.filter(x => x.waypoints.some(y => y == myWaypoint.value))
-        if(foundedTrip){
-            return foundedTrip[0] as ITripDto
-        }
-        return null;
+        return tripDetails.value
+   
     })
 
     const vehicleCoordinate = ref({latitude: 0, longitude: 0})
@@ -37,7 +34,7 @@ export const useCustomerTripStore = defineStore('useCustomerTripStore', () => {
     function goTripDetails(tripId: string) {
         GetTripDetailsForCustomer(tripId).then(res => {
             tripDetails.value = res.data;
-            useSocketStore().joinGroup(`vehicle@${res.data[0].accountVehicleId}`)
+            useSocketStore().joinGroup(`vehicle@${res.data.accountVehicleId}`)
             useRouter().push('/customer/trip-detail');
         })
     }

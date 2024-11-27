@@ -74,12 +74,17 @@ export const useAuthStore = defineStore('authStore', () => {
     function getToken(): string{
         return token.value;
     }
+
+    function onProfilePictureChange(payload: string){
+        token.value = payload;
+    }
     return {
         isAuthenticated,
         user,
         register,
         getToken,
         login,
-        logout
+        logout,
+        onProfilePictureChange
     }
 })
