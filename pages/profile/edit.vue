@@ -2,7 +2,6 @@
   <div class="flex flex-col p-4 gap-y-4">
     <div class="flex flex-col gap-y-2 bg-gray-800 rounded-md p-4">
       <p class="text-lg font-medium">Profil Fotoğrafı</p>
-      <p>{{ test }}</p>
       <div class="flex flex-col gap-y-4 justify-center items-center">
         <img :src="user.profilePicture" alt="profile-picture" class="size-40 text-center rounded-full" />
         <UButton color="primary" variant="solid" class="justify-center w-full" @click="uploadPicture">Profil Fotoğrafı Yükle</UButton>
@@ -50,7 +49,6 @@ definePageMeta({
 })
 usePageTitleStore().setTitle("Profil Düzenle")
 
-const test = ref("Gelmedi")
 
 const {user} = storeToRefs(useAuthStore())
 const {open, files, onChange} = useFileDialog({accept: 'image/*', directory: false, multiple: false})
@@ -65,7 +63,6 @@ const form = ref({
 
 function uploadPicture(){
   useImagePicker().then(file => {
-    test.value = file;
     useApi().account.UploadProfilePicture(file).then(res => {
     useAuthStore().onProfilePictureChange(res.data.token);
   })
