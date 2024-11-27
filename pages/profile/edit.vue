@@ -65,7 +65,7 @@ const form = ref({
 
 function uploadPicture(){
   useImagePicker().then(file => {
-    test.value = file.size.toString();
+    test.value = file;
     useApi().account.UploadProfilePicture(file).then(res => {
     useAuthStore().onProfilePictureChange(res.data.token);
   })

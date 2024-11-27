@@ -39,7 +39,7 @@ export const useAccountModule = (api: AxiosInstance) => {
     }
 
     async function UploadProfilePicture(file: any): Promise<AxiosResponse<IChangeProfilePictureResponse>>{
-        return api.postForm<IChangeProfilePictureResponse>('/Account/ChangeProfilePicture', {file: file})
+        return api.post<IChangeProfilePictureResponse>('/Account/ChangeProfilePicture', {file: file})
     }
 
 
