@@ -41,6 +41,7 @@
   </div>
 </template>
 <script setup lang="ts">
+import { useImagePicker } from '~/composables/useImagePicker';
 import { useApi } from '~/core/api/useApi';
 
 definePageMeta({
@@ -51,9 +52,7 @@ usePageTitleStore().setTitle("Profil Düzenle")
 const {user} = storeToRefs(useAuthStore())
 const {open, files, onChange} = useFileDialog({accept: 'image/*', directory: false, multiple: false})
 onChange((files) => {
-  useApi().account.UploadProfilePicture(files[0]).then(res => {
-    useAuthStore().onProfilePictureChange(res.data.token);
-  })
+
 })
 const form = ref({
   name: user.value.name,
@@ -62,6 +61,10 @@ const form = ref({
 })
 
 function uploadPicture(){
-  open();
+  useImagePicker().then(file => {
+    useApi().account.UploadProfilePicture(file).then(res => {
+    useAuthStore().onProfilePictureChange(res.data.token);
+  })
+  })
 }
 </script>
