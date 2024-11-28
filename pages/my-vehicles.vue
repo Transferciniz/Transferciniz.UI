@@ -36,7 +36,7 @@
 
 
     <!-- Add Vehicle -->
-    <UDrawer should-scale-background v-model:open="isAddVehicleModalOpen" >
+    <UDrawer :overlay="false" v-model:open="isAddVehicleModalOpen" >
 
         <template class="p-0 h-40" #body>
           <div class="flex flex-col h-fit gap-x-2 gap-y-5">
@@ -93,6 +93,14 @@ const offlineVehicles = computed(() => myVehicles.value.filter(x => x.status ===
 const inMaintenanceVehicles = computed(() => myVehicles.value.filter(x => x.status === IVehicleStatus.InMaintenance))
 
 function confirmAddVehicle() {
+  if(addVehicleForm.value.plate == '' || addVehicleForm.value.vehicleId == ''){
+    useToast().add({
+      title: 'Lütfen tüm alanları doldurunuz.',
+      description: 'Araç seçimi ve plaka zorunludur.',
+      color: 'error'
+    });
+    return;
+  }
   addVehicle(addVehicleForm.value.vehicleId, addVehicleForm.value.plate);
   isAddVehicleModalOpen.value = false;
 }
