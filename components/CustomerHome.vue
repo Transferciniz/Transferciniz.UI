@@ -10,9 +10,10 @@
             <p class="text-sm">{{ user.username }}</p>
           </div>
           <div class="flex-grow flex justify-end flex-1">
-              <UChip position="top-right" :show="unreadCount > 0" >
-                <UButton to="/notifications" icon="material-symbols:notifications-sharp" color="neutral" size="lg" variant="soft" />
-              </UChip>
+            <UChip position="top-right" :show="unreadCount > 0">
+              <UButton to="/notifications" icon="material-symbols:notifications-sharp" color="neutral" size="lg"
+                variant="soft" />
+            </UChip>
           </div>
         </div>
 
@@ -71,24 +72,33 @@
     <div class="p-4 flex flex-col gap-y-2">
 
       <p class="text-sm opacity-50" v-if="incomingTrips.length > 0">Yaklaşan Transferleriniz</p>
-      <div class="flex justify-start gap-x-2 items-center rounded-md p-3" v-for="trip in incomingTrips">
-        <div class="flex flex-col justify-center items-center">
-          <p class=text-3xl>{{ getDay(trip.startDate) }}</p>
-          <p class="mt-[-5px] text-xs opacity-80">{{ getMonth(trip.startDate) }}</p>
-        </div>
-        <div class="flex flex-col">
-          <div class="flex justify-start items-center gap-x-1">
-            <UIcon name="material-symbols:nest-clock-farsight-analog-outline"/>
-            <p class="text-lg">{{ getClock(trip.startDate) }}</p>
+      <template v-for="trip in incomingTrips">
+        <div class="flex flex-col gap-y-2">
+          <p class="text-md font-bold">{{ trip.name }}</p>
+          <div class="flex justify-start gap-x-2 items-center rounded-md">
+            <div class="flex flex-col justify-center items-center">
+              <p class=text-3xl>{{ getDay(trip.startDate) }}</p>
+              <p class="mt-[-5px] text-xs opacity-80">{{ getMonth(trip.startDate) }}</p>
+            </div>
+            <div class="flex flex-col">
+              <div class="flex justify-start items-center gap-x-1">
+                <UIcon name="material-symbols:nest-clock-farsight-analog-outline" />
+                <p class="text-lg">{{ getClock(trip.startDate) }}</p>
+              </div>
+              <UBadge :label="trip.plate" variant="subtle" size="sm" />
+            </div>
+            <USeparator orientation="vertical" class="w-4" />
+            <UButtonGroup>
+              <UButton label="İncele" icon="ic:twotone-search" color="neutral" variant="soft" />
+              <UButton label="Gelmeyeceğim" icon="ic:twotone-search" color="warning" variant="soft" />
+            </UButtonGroup>
           </div>
-          <UBadge :label="trip.plate" variant="subtle" size="sm"/>
+          <USeparator orientation="horizontal" />
+
         </div>
-
-        <USeparator orientation="vertical" class="w-4" />
-        <p class="text-xs">{{ trip.name }}</p>
+      </template>
 
 
-      </div>
     </div>
 
     <UDrawer should-scale-background :direction="'bottom'" v-model:open="isVehicleCardVisible">
@@ -108,21 +118,26 @@
           </div>
           <img :src="accountVehicleCard?.photo" alt="vehicle-photo" class="w-full">
 
-          <UAlert color="warning" variant="subtle" title="Araç bakımda!"  v-if="accountVehicleCard?.status === IVehicleStatus.InMaintenance" 
+          <UAlert color="warning" variant="subtle" title="Araç bakımda!"
+            v-if="accountVehicleCard?.status === IVehicleStatus.InMaintenance"
             description="Seçmiş olduğunuz araç bakımda gözüküyor, aracı bakımdan çıkarmak istediğinize emin misiniz?"
             icon="si:warning-duotone" />
-            <UAlert color="error" variant="subtle" title="Araç kullanımda!"  v-if="accountVehicleCard?.status === IVehicleStatus.Busy"
+          <UAlert color="error" variant="subtle" title="Araç kullanımda!"
+            v-if="accountVehicleCard?.status === IVehicleStatus.Busy"
             description="Bu araç şu anda bir transfer gerçekleştiriyor, araç kullanımını kendi üzerinize almak istediğinize emin misiniz?"
             icon="si:warning-duotone" />
-            <UAlert color="neutral" variant="subtle" title="Araç kullanımda!"  v-if="accountVehicleCard?.status === IVehicleStatus.Online"
+          <UAlert color="neutral" variant="subtle" title="Araç kullanımda!"
+            v-if="accountVehicleCard?.status === IVehicleStatus.Online"
             description="Bu araç bir başka sürücü ile çevrim içi durumda. Araç kullanımını kendi üzerinize almak istediğinize emin misiniz?"
             icon="si:warning-duotone" />
         </div>
       </template>
       <template #footer>
         <div class="flex justify-center items-center gap-x-2">
-          <UButton aria-current-value="false" block class="text-center" label="Aracı Benimle İlişkilendir" @click="activateVehicleMode"/>
-          <UButton color="neutral" variant="soft" block class="text-center" aria-current-value="false" label="İptal Et" @click="isVehicleCardVisible=false" />
+          <UButton aria-current-value="false" block class="text-center" label="Aracı Benimle İlişkilendir"
+            @click="activateVehicleMode" />
+          <UButton color="neutral" variant="soft" block class="text-center" aria-current-value="false" label="İptal Et"
+            @click="isVehicleCardVisible = false" />
         </div>
 
 
@@ -184,19 +199,19 @@ function onVehicleModeClick() {
   }
 }
 
-function getDay(date: Date): string{
+function getDay(date: Date): string {
   return moment(date).get('D').toString()
 }
 
-function getMonth(date: Date): string{
+function getMonth(date: Date): string {
   return moment(date).format('MMMM')
 }
 
-function getClock(date: Date): string{
+function getClock(date: Date): string {
   return moment(date).format('HH:mm')
 }
 
-function activateVehicleMode(){
+function activateVehicleMode() {
   useVehicleModeStore().setAccountVehicleId(accountVehicleCard.value!.id)
 }
 
