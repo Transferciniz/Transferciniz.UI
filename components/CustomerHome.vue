@@ -29,8 +29,8 @@
           ]" />
 
       </div>
-      <div class="flex flex-col p-4">
-        <p v-if="favoriteTrips.length > 0">Favori Rotalarınız</p>
+      <div class="flex flex-col p-4" v-if="favoriteTrips.length > 0">
+        <p>Favori Rotalarınız</p>
         <div class="px-4 py-2 bg-gray-800 text-md rounded-md flex justify-between items-center"
           v-for="favorite in favoriteTrips">
           <p>{{ favorite.name }}</p>

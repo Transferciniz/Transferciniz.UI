@@ -34,7 +34,7 @@
         <input type="datetime-local" v-model="formattedDate" @change="onDateChange"
                class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
       </div>
-      <div class="mt-2 flex flex-col gap-y-2">
+      <div class="mt-4 flex flex-col gap-y-2">
         <USwitch label="Rotayı Favoriye Ekle"
                  v-model:model-value="isAddFavorite"
                  description="Sık kullandığınız rotaları favorilerinize ekleyerek zaman kazanın."/>
@@ -46,7 +46,14 @@
                  description="Bu transferi hep aynı kişiler ile yapıyorsanız kişileri de kaydedebilirsiniz."/>
       </div>
       <div class="flex justify-center items-center" @click="searchTransfer">
-        <div class="bg-white text-gray-900 text-lg px-8 py-2 rounded-md relative top-[30px]">Transfer Ara</div>
+        <UButton
+        variant="solid"
+        size="xl"
+        label="Transfer Ara"
+        trailing-icon="ic:baseline-search"
+        class="relative top-[30px] w-60 flex justify-center"
+        />
+
       </div>
     </div>
     <UDrawer should-scale-background :direction="'top'" v-model:open="isSearchPopoverVisible">
