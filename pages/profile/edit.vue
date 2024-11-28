@@ -3,7 +3,7 @@
     <div class="flex flex-col gap-y-2 bg-gray-800 rounded-md p-4">
       <p class="text-lg font-medium">Profil Fotoğrafı</p>
       <div class="flex flex-col gap-y-4 justify-center items-center">
-        <img :src="user.profilePicture" alt="profile-picture" class="size-40 object-cover object-center text-center rounded-full" />
+        <img :src="user.profilePicture" alt="profile-picture" class="size-40 object-center text-center rounded-full" />
         <UButton color="primary" variant="solid" class="justify-center w-full" @click="uploadPicture">Profil Fotoğrafı Yükle</UButton>
       </div>
     </div>

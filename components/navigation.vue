@@ -8,7 +8,7 @@
         <Icon :name="currentRoute.path == '/my-vehicle' ? 'material-symbols:directions-car' : 'material-symbols:directions-car-outline'" size="30" mode="css" />
       </NuxtLink>
       <NuxtLink to="/profile" active-class="!text-white" class="text-gray-600 transition ease-in-out duration-300">
-        <UAvatar :src="user.profilePicture" :alt="user.name + ' ' + user.surname" size="sm"/>
+        <UAvatar :src="user?.profilePicture" icon="material-symbols:person" :alt="user.name + ' ' + user.surname" size="sm" class="object-cover"/>
       </NuxtLink>
     </div>
   </div>

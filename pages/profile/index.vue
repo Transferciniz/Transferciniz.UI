@@ -2,7 +2,7 @@
   <div class="h-screen w-screen flex flex-col p-4">
     <div class="flex flex-col rounded-md p-2 items-center justify-center">
       <div class="flex justify-center items-center">
-        <img :src="user.profilePicture" class="rounded-full size-40"/>
+        <img :src="user.profilePicture" class="rounded-full object-center size-40"/>
       </div>
       <p class="text-xl font-bold">{{user.name}} {{user.surname}}</p>
       <p class="text-xs opacity-50">{{user.username}} - {{user.email}}</p>
