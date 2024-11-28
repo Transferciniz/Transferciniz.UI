@@ -75,6 +75,12 @@
       <template v-for="trip in incomingTrips">
         <div class="flex flex-col gap-y-2">
           <p class="text-md font-bold">{{ trip.name }}</p>
+          <UAlert
+            color="warning"
+            variant="soft"
+            title="Bu transfere katılmayacağınızı belirttiniz!"
+            v-if="trip.willCome === false"
+          />
           <div class="flex justify-start gap-x-2 items-center rounded-md">
             <div class="flex flex-col justify-center items-center">
               <p class=text-3xl>{{ getDay(trip.startDate) }}</p>
@@ -88,9 +94,10 @@
               <UBadge :label="trip.plate" variant="subtle" size="sm" />
             </div>
             <USeparator orientation="vertical" class="w-4" />
-            <UButtonGroup>
-              <UButton label="İncele" icon="ic:twotone-search" color="neutral" variant="soft" />
-              <UButton label="Gelmeyeceğim" icon="ic:twotone-search" color="warning" variant="soft" />
+            <UButtonGroup size="lg">
+              <UButton label="İncele"  icon="ic:twotone-search" color="neutral" variant="soft" />
+              <UButton label="Gelmeyeceğim" trailing-icon="gridicons:cross-circle" color="warning" variant="soft" loading-auto @click="updateWillComeStatus(trip)" v-if="trip.willCome === true"/>
+              <UButton label="Geleceğim" trailing-icon="material-symbols:check-rounded" color="success" variant="soft" loading-auto  @click="updateWillComeStatus(trip)" v-if="trip.willCome === false"/>
             </UButtonGroup>
           </div>
           <USeparator orientation="horizontal" />
@@ -150,11 +157,12 @@
 </template>
 
 <script setup lang="ts">
-import { TripStatus } from "~/core/api/modules/trip/models/ITripHeaderDto";
+import { TripStatus, type ITripHeaderDto } from "~/core/api/modules/trip/models/ITripHeaderDto";
 import { useApi } from "~/core/api/useApi";
 import type { IAccountVehicleDto } from "~/core/api/modules/accountVehicle/models/IAccountVehicle";
 import { IVehicleStatus } from "~/core/api/modules/accountVehicle/models/IUpdateVehicleStatusCommand";
 import moment from "moment";
+import type { ITripDto } from "~/core/api/modules/trip/models/ITripDto";
 let interval: any;
 
 
@@ -213,6 +221,14 @@ function getClock(date: Date): string {
 
 function activateVehicleMode() {
   useVehicleModeStore().setAccountVehicleId(accountVehicleCard.value!.id)
+}
+
+function updateWillComeStatus(trip: ITripHeaderDto){
+  trip.willCome = !trip.willCome;
+  return useApi().trip.UpdateUserWillCome({
+    waypointUserId: trip.waypointUserId,
+    willCome: trip.willCome
+  });
 }
 
 

@@ -11,6 +11,7 @@ import type {IWayPointDto} from "~/core/api/modules/trip/models/IWayPointDto";
 import type {IFinishTripCommand} from "~/core/api/modules/trip/models/IFinishTripCommand";
 import type {IGetTripHistoryQuery} from "~/core/api/modules/trip/models/IGetTripHistoryQuery";
 import type {IPagingResponse} from "~/core/api/modules/trip/models/IPagingResponse";
+import type { IUpdateUserWillComeCommand } from "./models/IUpdateUserWillComeCommand";
 
 export const useTripModule = (api: AxiosInstance) => {
     async function GetAvailableVehicles(request: IGetAvailableVehiclesQuery): Promise<AxiosResponse<IVehicleCombinationPricePair[]>> {
@@ -67,6 +68,10 @@ export const useTripModule = (api: AxiosInstance) => {
         })
     }
 
+    async function UpdateUserWillCome(payload: IUpdateUserWillComeCommand): Promise<AxiosResponse<any>>{
+        return api.post<any>('/Trip/UpdateUserWillCome', payload);
+    }
+
 
 
     return {
@@ -82,7 +87,8 @@ export const useTripModule = (api: AxiosInstance) => {
         GetTripDetailsForCustomer,
         UpdateWaypoint,
         FinishTrip,
-        GetTripHistory
+        GetTripHistory,
+        UpdateUserWillCome
 
     }
 }
