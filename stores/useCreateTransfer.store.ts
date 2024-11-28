@@ -187,11 +187,13 @@ export const useCreateTransferStore = defineStore('useCreateTransferStore', () =
                         x.users = [];
                     })
                 }
-                favoriteTrips.value.push({
-                    name: favoriteName.value,
-                    finalDestination: finalDestination.value!,
-                    waypoints: waypoints.value
-                })
+                if(isAddFavorite){
+                    favoriteTrips.value.push({
+                        name: favoriteName.value,
+                        finalDestination: finalDestination.value!,
+                        waypoints: waypoints.value
+                    })
+                }
                 useRouter().push('/')
             })
         })
