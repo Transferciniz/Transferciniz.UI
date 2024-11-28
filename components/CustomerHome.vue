@@ -71,11 +71,21 @@
     <div class="p-4 flex flex-col gap-y-2">
 
       <p class="text-sm opacity-50" v-if="incomingTrips.length > 0">Yaklaşan Transferleriniz</p>
-      <div class="bg-gray-700 flex gap-x-4 justify-between items-center p-2 rounded-md" v-for="trip in incomingTrips">
-        <div class="flex flex-col">
-          <p>{{ trip.name }}</p>
-
+      <div class="flex justify-start gap-x-2 items-center rounded-md p-3" v-for="trip in incomingTrips">
+        <div class="flex flex-col justify-center items-center">
+          <p class=text-3xl>{{ getDay(trip.startDate) }}</p>
+          <p class="mt-[-5px] text-xs opacity-80">{{ getMonth(trip.startDate) }}</p>
         </div>
+        <div class="flex flex-col">
+          <div class="flex justify-start items-center gap-x-1">
+            <UIcon name="material-symbols:nest-clock-farsight-analog-outline"/>
+            <p class="text-lg">{{ getClock(trip.startDate) }}</p>
+          </div>
+          <UBadge :label="trip.plate" variant="subtle" size="sm"/>
+        </div>
+
+        <USeparator orientation="vertical" class="w-4" />
+        <p class="text-xs">{{ trip.name }}</p>
 
 
       </div>
@@ -129,6 +139,7 @@ import { TripStatus } from "~/core/api/modules/trip/models/ITripHeaderDto";
 import { useApi } from "~/core/api/useApi";
 import type { IAccountVehicleDto } from "~/core/api/modules/accountVehicle/models/IAccountVehicle";
 import { IVehicleStatus } from "~/core/api/modules/accountVehicle/models/IUpdateVehicleStatusCommand";
+import moment from "moment";
 let interval: any;
 
 
@@ -171,6 +182,18 @@ function onVehicleModeClick() {
       })
     })
   }
+}
+
+function getDay(date: Date): string{
+  return moment(date).get('D').toString()
+}
+
+function getMonth(date: Date): string{
+  return moment(date).format('MMMM')
+}
+
+function getClock(date: Date): string{
+  return moment(date).format('HH:mm')
 }
 
 function activateVehicleMode(){
