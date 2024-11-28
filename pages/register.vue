@@ -161,22 +161,22 @@ const accountTypes = ref([
   {
     label: 'Araç çağırmak istiyorum',
     description: 'Bireysel olarak veya arkadaşlarınızla araç çağırmak için en iyi seçenek.',
-    id: 0
+    id: 2
   },
   {
     label: 'Sürücüyüm',
     description: 'Araç kullanarak hizmet vereceğim.',
-    id: 1
+    id: 3
   },
   {
     label: 'Taşıma Firmasıyım',
     description: 'Araçlarım var ve taşımacılık hizmeti vermek istiyorum.',
-    id: 2
+    id: 1
   },
   {
     label: 'Kurumsal Müşteriyim',
     description: 'Şirketimin ulaşım ihtiyaçlarını karşılamak istiyorum.',
-    id: 3
+    id: 0
   }
 ]);
 const show = ref(false)
