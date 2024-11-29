@@ -95,7 +95,7 @@
             </div>
             <USeparator orientation="vertical" class="w-4" />
             <UButtonGroup size="lg">
-              <UButton label="İncele"  icon="ic:twotone-search" color="neutral" variant="soft" />
+              <UButton label="İncele"  icon="ic:twotone-search" color="neutral" variant="soft" @click="goDetail(trip.id)"/>
               <UButton label="Gelmeyeceğim" trailing-icon="gridicons:cross-circle" color="warning" variant="soft" loading-auto @click="updateWillComeStatus(trip)" v-if="trip.willCome === true"/>
               <UButton label="Geleceğim" trailing-icon="material-symbols:check-rounded" color="success" variant="soft" loading-auto  @click="updateWillComeStatus(trip)" v-if="trip.willCome === false"/>
             </UButtonGroup>
@@ -229,6 +229,10 @@ function updateWillComeStatus(trip: ITripHeaderDto){
     waypointUserId: trip.waypointUserId,
     willCome: trip.willCome
   });
+}
+
+function goDetail(tripId: string){
+  goTripDetails(tripId)
 }
 
 

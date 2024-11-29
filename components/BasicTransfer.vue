@@ -1,6 +1,55 @@
 <template>
   <div class="p-4 flex flex-col">
-    <div class="bg-gray-800 p-4 rounded-md flex flex-col">
+    <div class="rounded-md flex flex-col">
+
+      <div class="my-4">
+        <UButtonGroup>
+          <UInput
+            v-model="value"
+            size="xl"
+            placeholder="Mevcut Konumunuz"
+            :ui="{
+              base: 'pl-[75px]',
+              leading: 'pointer-events-none'
+            }"
+          >
+            <template #leading>
+              <p class="text-sm text-[var(--ui-text-muted)]">
+                Nereden:
+              </p>
+            </template>
+          </UInput>
+
+           <USelectMenu  v-model="domain" :items="domains" />
+        </UButtonGroup>
+      </div>
+
+      <div class="my-4">
+        <UButtonGroup>
+          <UInput
+            v-model="value"
+            size="xl"
+            placeholder="Mevcut Konumunuz"
+            :ui="{
+              base: 'pl-[75px]',
+              leading: 'pointer-events-none'
+            }"
+          >
+            <template #leading>
+              <p class="text-sm text-[var(--ui-text-muted)]">
+                Nereye:
+              </p>
+            </template>
+          </UInput>
+
+           <USelectMenu  v-model="domain" :items="domains" />
+        </UButtonGroup>
+      </div>
+
+      <UInput type="datetime-local" v-model="formattedDate" @change="onDateChange" size="xl"/>
+
+
+      <!--
       <p>Nereden</p>
       <div class="flex justify-between items-center gap-x-2">
         <div @click="openSearch('from')"
@@ -15,6 +64,12 @@
           <Icon name="material-symbols:my-location-rounded" size="28"/>
         </div>
       </div>
+
+      -->
+
+
+
+      <!--
       <p class="mt-2">Nereye</p>
       <div class="flex justify-between items-center gap-x-2">
         <div @click="openSearch('to')"
@@ -34,6 +89,9 @@
         <input type="datetime-local" v-model="formattedDate" @change="onDateChange"
                class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
       </div>
+
+
+    -->
       <div class="mt-4 flex flex-col gap-y-2">
         <USwitch label="Rotayı Favoriye Ekle"
                  v-model:model-value="isAddFavorite"
@@ -51,7 +109,7 @@
         size="xl"
         label="Transfer Ara"
         trailing-icon="ic:baseline-search"
-        class="relative top-[30px] w-60 flex justify-center"
+        class="relative mt-2 w-60 flex justify-center"
         />
 
       </div>
@@ -112,6 +170,11 @@ const {
   isAddFavorite,
   favoriteName
 } = storeToRefs(useCreateTransferStore())
+
+
+const value = ref('')
+const domains = ['Konumumu Kullan', 'Kayıtlı Adresim', 'Konum Seç']
+const domain = ref(domains[0])
 
 const formattedDate = computed(() => {
   date.value.setMinutes(date.value.getMinutes() - date.value.getTimezoneOffset());
