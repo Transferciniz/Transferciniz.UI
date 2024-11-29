@@ -162,8 +162,7 @@ import { useApi } from "~/core/api/useApi";
 import type { IAccountVehicleDto } from "~/core/api/modules/accountVehicle/models/IAccountVehicle";
 import { IVehicleStatus } from "~/core/api/modules/accountVehicle/models/IUpdateVehicleStatusCommand";
 import moment from "moment";
-import type { ITripDto } from "~/core/api/modules/trip/models/ITripDto";
-let interval: any;
+
 
 
 const { tripHeaders } = storeToRefs(useCustomerTripStore());
@@ -181,17 +180,7 @@ const incomingTrips = computed(() => tripHeaders.value.filter(x => x.status == T
 const { goTripDetails, getTripHeaders } = useCustomerTripStore();
 
 onMounted(() => {
-  useApi().accountVehicle.GetAccountVehicle('4c1bc9fd-b152-448e-8813-9e47b39541ea').then(res => {
-
-  })
   getTripHeaders();
-  interval = setInterval(() => {
-    getTripHeaders();
-  }, 2000)
-})
-
-onUnmounted(() => {
-  clearInterval(interval)
 })
 
 function onVehicleModeClick() {

@@ -4,6 +4,7 @@ import type {INotification} from "~/core/api/modules/account/models/INotificatio
 import type {IVehicleMapResponse} from "~/core/api/modules/account/models/IVehicleMapResponse";
 import type {IGetProfileResponse} from "~/core/api/modules/account/models/IGetProfileResponse";
 import type { IChangeProfilePictureResponse } from "./models/IChangeProfilePictureResponse";
+import type { IReverseGeocodingResponse } from "./models/IReverseGeocodingResponse";
 
 export const useAccountModule = (api: AxiosInstance) => {
     async function SearchProfileLocation(request: IUserLocationSearchQuery): Promise<AxiosResponse<IUserLocationSearchResult[]>> {
@@ -42,6 +43,13 @@ export const useAccountModule = (api: AxiosInstance) => {
         return api.post<IChangeProfilePictureResponse>('/Account/ChangeProfilePicture', {file: file})
     }
 
+    async function ReverseGeoCoding(latitude: number, longitude: number): Promise<AxiosResponse<IReverseGeocodingResponse>>{
+        return api.get('/reverse', {params: {
+            lat: latitude,
+            lon: longitude
+        }, baseURL:'/'})
+    }
+
 
     return {
         SearchProfileLocation,
@@ -50,6 +58,7 @@ export const useAccountModule = (api: AxiosInstance) => {
         GetNotifications,
         GetAccountVehiclesForMap,
         GetProfile,
-        UploadProfilePicture
+        UploadProfilePicture,
+        ReverseGeoCoding
     }
 }

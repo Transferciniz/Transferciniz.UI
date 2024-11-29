@@ -13,6 +13,16 @@ export const useLocationStore = defineStore('locationStore', () => {
             longitude: dbLocation.value.longitude != 0 ? dbLocation.value.longitude : coords.value.longitude
         }
     })
+
+    const address = ref({
+        address: '',
+        displayAddress: '',
+        isCompleted: false
+    })
+
+    watch(location, (newValue) => {
+        updateAddress();
+    })
     function updateLocation(){
         if(coords.value.latitude != 0 && coords.value.longitude != 0){
             useApi().account.UpdateLocation(coords.value.latitude, coords.value.longitude).then(() => {
@@ -24,9 +34,21 @@ export const useLocationStore = defineStore('locationStore', () => {
     function setDbLocation(latitude: number, longitude: number){
         dbLocation.value = {latitude: latitude, longitude: longitude};
     }
+
+    function updateAddress(){
+        address.value.isCompleted = false;
+        useApi().account.ReverseGeoCoding(location.value.latitude, location.value.longitude).then(res => {
+            address.value = {
+                address: res.data.address,
+                displayAddress: res.data.displayAddress,
+                isCompleted: true
+            }
+        })
+    }
     return {
         location,
         bearing,
+        address,
 
         updateLocation,
         setDbLocation

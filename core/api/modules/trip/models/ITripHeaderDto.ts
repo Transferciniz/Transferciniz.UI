@@ -3,6 +3,9 @@ export interface ITripHeaderDto {
     name: string;
     startDate: Date;
     status: TripStatus
+    willCome: boolean;
+    waypointUserId: string;
+    plate: string;
 }
 
 export enum TripStatus{

@@ -40,6 +40,10 @@ export default defineNuxtConfig({
                     target: 'https://sekerlerteknoloji.com',
                     changeOrigin: true,
                 },
+                '/reverse': {
+                    target: 'https://sekerlerteknoloji.com',
+                    changeOrigin: true,
+                },
                 '/ors': {
                     target: 'https://sekerlerteknoloji.com',
                     changeOrigin: true,
