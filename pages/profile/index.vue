@@ -39,6 +39,7 @@
     </div>
 
     <IncomingTrips class="mt-8" v-if="tabValue == '0'"/>
+    <AccountLocations v-if="tabValue == '1'"/>
   </div>
 </template>
 
