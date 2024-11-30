@@ -96,43 +96,18 @@ export const useCreateTransferStore = defineStore('useCreateTransferStore', () =
     function createBasicTransferWaypoints(locations: ILocationSearchResult[]) {
         waypoints.value = [];
         finalDestination.value = undefined;
-        if(locations.length == 1){
-            const {location} = storeToRefs(useLocationStore())
-            const fromWaypoint = {
-                id: Date.now(),
-                name: 'Başlangıç Noktası',
-                latitude: location.value.latitude,
-                longitude: location.value.longitude,
+        locations.forEach((location, index) => {
+            const iteratorWaypoint = {
+                id: Date.now()+index,
+                name: location.name,
+                latitude: location.latitude,
+                longitude: location.longitude,
                 users: [],
-                marker: useMapbox().createMarker(location.value.longitude, location.value.latitude),
-                ordering: waypoints.value.length + 1
+                marker: useMapbox().createMarker(location.longitude, location.latitude),
+                ordering: index + 1
             }
-            waypoints.value.push(fromWaypoint);
-            const toWaypoint = {
-                id: Date.now()+1,
-                name: 'Varış Noktası',
-                latitude: locations[0].latitude,
-                longitude: locations[0].longitude,
-                users: [],
-                marker: useMapbox().createMarker(location.value.longitude, location.value.latitude),
-                ordering: 9999
-            }
-            finalDestination.value = toWaypoint;
-        }else{
-            locations.forEach((location, index) => {
-                const iteratorWaypoint = {
-                    id: Date.now()+index,
-                    name: index == 0 ? location.name : 'Varış Noktası',
-                    latitude: location.latitude,
-                    longitude: location.longitude,
-                    users: [],
-                    marker: useMapbox().createMarker(location.longitude, location.latitude),
-                    ordering: index + 1
-                }
-                index == 0 ?  waypoints.value.push(iteratorWaypoint) : finalDestination.value = iteratorWaypoint;
-
-            })
-        }
+            index == 0 ?  waypoints.value.push(iteratorWaypoint) : finalDestination.value = iteratorWaypoint;
+        })
         getVehicleCombinations();
         useRouter().push('/basic-transfer-preview')
     }
@@ -272,6 +247,10 @@ export const useCreateTransferStore = defineStore('useCreateTransferStore', () =
         return vehicles;
     }
 
+    function deleteFavorite(payload: IFavoriteTrip){
+        favoriteTrips.value = favoriteTrips.value.filter(x => x != payload)
+    }
+
 
     return {
         waypoints,
@@ -295,7 +274,8 @@ export const useCreateTransferStore = defineStore('useCreateTransferStore', () =
         decreasePeopleCount,
         setRoutingSummary,
         createTrip,
-        updateWaypointLatLang
+        updateWaypointLatLang,
+        deleteFavorite
     }
 })
 

@@ -8,12 +8,11 @@
       </div>
       <div class="flex justify-between items-center">
         <div class="flex flex-col">
-          <p class="text-bold text-2xl">{{ address.displayAddress }}</p>
-          <p class="text-xs opacity-50">{{ address.address }}</p>
+          <p class="text-bold text-2xl">{{ fromLocation?.name ?? address.displayAddress }}</p>
+          <p class="text-xs opacity-50">{{ fromLocation?.address ?? address.address }}</p>
         </div>
-        <UButton label="Değiştir" color="neutral" variant="subtle" @click="isLocationSelectorVisible = true"/>
+        <UButton label="Değiştir" color="neutral" variant="subtle" @click="openSearch('from')"/>
       </div>
-
 
 
       <div class="flex justify-start items-center gap-x-2 mt-4">
@@ -22,10 +21,10 @@
       </div>
       <div class="flex justify-between items-center">
         <div class="flex flex-col">
-          <p class="text-bold text-2xl">{{ '-' }}</p>
-          <p class="text-xs opacity-50">{{ 'Lütfen konum seçin' }}</p>
+          <p class="text-bold text-2xl">{{ toLocation?.name ?? '-' }}</p>
+          <p class="text-xs opacity-50">{{ toLocation?.address ?? 'Lütfen konum seçin' }}</p>
         </div>
-        <UButton label="Konum Seç" color="neutral" variant="subtle" />
+        <UButton label="Konum Seç" color="neutral" variant="subtle" @click="openSearch('to')"/>
       </div>
 
 
@@ -47,54 +46,25 @@
 
       </div>
     </div>
-    <UDrawer should-scale-background :direction="'top'" v-model:open="isSearchPopoverVisible">
-      <template #body>
-        <div class="flex flex-col rounded-md p-2 mt-2">
-          <UInput icon="i-heroicons-magnifying-glass-20-solid" size="xl" class="w-full" color="neutral"
-            v-model="searchInput" :trailing="false" @click="isSearchPanelVisible = true"
-            placeholder="Bir yer arayın..." />
-          <div class="flex flex-col mt-2 justify-center items-center" v-if="isSearchPanelVisible">
-            <Icon name="eos-icons:bubble-loading" :size="30" v-if="isSearching" />
-            <div v-else class="flex flex-col items-start justify-start w-full">
-              <div class="flex flex-col  overflow-y-scroll gap-y-2">
-                <div v-for="location in searchResults" class="text-xs bg-gray-800 p-2 rounded-md"
-                  @click="selectWaypoint(location)">
-                  <p>{{ location.name }}</p>
-                  <p class="opacity-50">{{ location.address }}</p>
-                </div>
-              </div>
 
-            </div>
-          </div>
-        </div>
-      </template>
-
-    </UDrawer>
-    <LocationSelector v-model:open="isLocationSelectorVisible"/>
+    <LocationSelector v-model:open="isLocationSelectorVisible" @on-location-selected="onLocationSelected"/>
   </div>
 </template>
 
 <script setup lang="ts">
 
-
 import type { ILocationSearchResult } from "~/core/app/ITripLocation";
 
 
 const isLocationSelectorVisible = ref(false);
-
-const isSearchPopoverVisible = ref(false);
 const searchMode = ref<'from' | 'to'>('from');
 const fromLocation = ref<ILocationSearchResult>()
 const toLocation = ref<ILocationSearchResult>()
-const {
-  searchInput,
-  searchResults,
-  isSearchPanelVisible,
-  isSearching
-} = storeToRefs(useLocationSearchStore());
 
-const { address } = storeToRefs(useLocationStore())
-
+const { 
+  address,
+  location
+} = storeToRefs(useLocationStore())
 
 const {
   date,
@@ -102,8 +72,6 @@ const {
   isAddFavorite,
   favoriteName
 } = storeToRefs(useCreateTransferStore())
-
-
 
 const formattedDate = computed(() => {
   date.value.setMinutes(date.value.getMinutes() - date.value.getTimezoneOffset());
@@ -115,27 +83,19 @@ function onDateChange(event: any) {
 }
 
 function openSearch(mode: 'from' | 'to'): void {
-  searchInput.value = '';
   searchMode.value = mode;
-  isSearchPopoverVisible.value = true;
+  isLocationSelectorVisible.value = true;
 }
 
-function selectWaypoint(payload: ILocationSearchResult): void {
+function onLocationSelected(payload: ILocationSearchResult): void {
   if (searchMode.value == 'from') {
     fromLocation.value = payload;
   } else {
     toLocation.value = payload;
   }
-  searchInput.value = '';
-  isSearchPopoverVisible.value = false;
+  isLocationSelectorVisible.value = false;
 }
 
-function changeDirections() {
-  const from = fromLocation.value;
-  const to = toLocation.value;
-  fromLocation.value = to;
-  toLocation.value = from;
-}
 
 function searchTransfer() {
   if (isAddFavorite.value && favoriteName.value == "") {
@@ -152,7 +112,14 @@ function searchTransfer() {
       color: "warning",
     })
   }
-  const locations = fromLocation.value != undefined ? [fromLocation.value, toLocation.value] : [toLocation.value]
-  useCreateTransferStore().createBasicTransferWaypoints(locations as ILocationSearchResult[])
+  if(fromLocation.value == undefined){
+    fromLocation.value = {
+      address: address.value.address,
+      name: address.value.displayAddress,
+      latitude: location.value.latitude,
+      longitude: location.value.longitude
+    }
+  }
+  useCreateTransferStore().createBasicTransferWaypoints([fromLocation.value, toLocation.value]  as ILocationSearchResult[])
 }
 </script>

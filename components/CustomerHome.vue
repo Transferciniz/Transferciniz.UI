@@ -36,6 +36,7 @@
           v-for="favorite in favoriteTrips">
           <p>{{ favorite.name }}</p>
           <UButton color="neutral" variant="outline">Seç</UButton>
+          <UButton color="error" variant="outline" @click="deleteFavorite(favorite)">Sil</UButton>
         </div>
       </div>
       <BasicTransfer />
@@ -126,6 +127,7 @@ import { TripStatus } from "~/core/api/modules/trip/models/ITripHeaderDto";
 import { useApi } from "~/core/api/useApi";
 import type { IAccountVehicleDto } from "~/core/api/modules/accountVehicle/models/IAccountVehicle";
 import { IVehicleStatus } from "~/core/api/modules/accountVehicle/models/IUpdateVehicleStatusCommand";
+import type { IFavoriteTrip } from "~/core/api/modules/trip/models/IFavoriteTrip";
 
 
 
@@ -156,6 +158,9 @@ function onVehicleModeClick() {
   }
 }
 
+function deleteFavorite(payload: IFavoriteTrip){
+  useCreateTransferStore().deleteFavorite(payload);
+}
 
 
 function activateVehicleMode() {
