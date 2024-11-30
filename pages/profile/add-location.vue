@@ -62,9 +62,7 @@ function getAddress(latitude: number, longitude: number) {
 
 async function addAddress() {
   const { lat, lng } = marker.value!.getLngLat()
-  return useApi().account.AddLocation(address.value!.displayAddress, address.value!.address, lat, lng).then(() => {
-    useRouter().push('/profile')
-  })
-
+  useAccountLocations().addLocation(address.value!.displayAddress, address.value!.address, lat, lng);
+  useRouter().push('/profile');
 }
 </script>

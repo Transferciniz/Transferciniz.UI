@@ -130,20 +130,16 @@ import { IVehicleStatus } from "~/core/api/modules/accountVehicle/models/IUpdate
 import type { IFavoriteTrip } from "~/core/api/modules/trip/models/IFavoriteTrip";
 
 
-
 const { tripHeaders } = storeToRefs(useCustomerTripStore());
 const { accountVehicleId } = storeToRefs(useVehicleModeStore())
 const { unreadCount } = storeToRefs(useNotificationStore())
 const { user } = storeToRefs(useAuthStore())
 const { favoriteTrips } = storeToRefs(useCreateTransferStore())
-const accountVehicleCard = ref<IAccountVehicleDto | null>(null);
-const isVehicleCardVisible = ref(false);
-
-
-const liveTrips = computed(() => tripHeaders.value.filter(x => x.status == TripStatus.Live));
-
 const { goTripDetails } = useCustomerTripStore();
 
+const accountVehicleCard = ref<IAccountVehicleDto | null>(null);
+const isVehicleCardVisible = ref(false);
+const liveTrips = computed(() => tripHeaders.value.filter(x => x.status == TripStatus.Live));
 
 function onVehicleModeClick() {
   if (accountVehicleId.value != '') {
@@ -162,13 +158,7 @@ function deleteFavorite(payload: IFavoriteTrip){
   useCreateTransferStore().deleteFavorite(payload);
 }
 
-
 function activateVehicleMode() {
   useVehicleModeStore().setAccountVehicleId(accountVehicleCard.value!.id)
 }
-
-
-
-
-
 </script>

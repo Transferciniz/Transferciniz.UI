@@ -44,10 +44,10 @@
 </template>
 
 <script setup lang="ts">
-
 import {AccountType} from "~/core/api/modules/auth/models/AccountType";
 import {useApi} from "~/core/api/useApi";
 import type {ITripHeaderDto} from "~/core/api/modules/trip/models/ITripHeaderDto";
+import {useStorage} from "@vueuse/core";
 
 const {user} = storeToRefs(useAuthStore())
 const {logout} = useAuthStore();
@@ -68,7 +68,7 @@ const tabs = ref([
   }
 ]);
 
-const tabValue = ref('0')
+const tabValue = useStorage("activeProfileTab", '0') //ref('0')
 
 
 const userType = computed(() => {
