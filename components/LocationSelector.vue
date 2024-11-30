@@ -30,6 +30,7 @@
           color="neutral"
           v-model="searchInput"
           :trailing="false"
+          :autofocus="false"
           @click="isSearchPanelVisible = true"/>
           
           <USeparator orientation="horizontal" label="Arama Sonuçları" v-if="isSearchPanelVisible" class="my-2"/>
