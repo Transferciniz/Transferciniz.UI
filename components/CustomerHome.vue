@@ -70,42 +70,7 @@
     </div>
 
     <div class="p-4 flex flex-col gap-y-2">
-
-      <p class="text-sm opacity-50" v-if="incomingTrips.length > 0">Yaklaşan Transferleriniz</p>
-      <template v-for="trip in incomingTrips">
-        <div class="flex flex-col gap-y-2">
-          <p class="text-md font-bold">{{ trip.name }}</p>
-          <UAlert
-            color="warning"
-            variant="soft"
-            title="Bu transfere katılmayacağınızı belirttiniz!"
-            v-if="trip.willCome === false"
-          />
-          <div class="flex justify-start gap-x-2 items-center rounded-md">
-            <div class="flex flex-col justify-center items-center">
-              <p class=text-3xl>{{ getDay(trip.startDate) }}</p>
-              <p class="mt-[-5px] text-xs opacity-80">{{ getMonth(trip.startDate) }}</p>
-            </div>
-            <div class="flex flex-col">
-              <div class="flex justify-start items-center gap-x-1">
-                <UIcon name="material-symbols:nest-clock-farsight-analog-outline" />
-                <p class="text-lg">{{ getClock(trip.startDate) }}</p>
-              </div>
-              <UBadge :label="trip.plate" variant="subtle" size="sm" />
-            </div>
-            <USeparator orientation="vertical" class="w-4" />
-            <UButtonGroup size="lg">
-              <UButton label="İncele"  icon="ic:twotone-search" color="neutral" variant="soft" @click="goDetail(trip.id)"/>
-              <UButton label="Gelmeyeceğim" trailing-icon="gridicons:cross-circle" color="warning" variant="soft" loading-auto @click="updateWillComeStatus(trip)" v-if="trip.willCome === true"/>
-              <UButton label="Geleceğim" trailing-icon="material-symbols:check-rounded" color="success" variant="soft" loading-auto  @click="updateWillComeStatus(trip)" v-if="trip.willCome === false"/>
-            </UButtonGroup>
-          </div>
-          <USeparator orientation="horizontal" />
-
-        </div>
-      </template>
-
-
+      <IncomingTrips/>
     </div>
 
     <UDrawer should-scale-background :direction="'bottom'" v-model:open="isVehicleCardVisible">
@@ -157,11 +122,10 @@
 </template>
 
 <script setup lang="ts">
-import { TripStatus, type ITripHeaderDto } from "~/core/api/modules/trip/models/ITripHeaderDto";
+import { TripStatus } from "~/core/api/modules/trip/models/ITripHeaderDto";
 import { useApi } from "~/core/api/useApi";
 import type { IAccountVehicleDto } from "~/core/api/modules/accountVehicle/models/IAccountVehicle";
 import { IVehicleStatus } from "~/core/api/modules/accountVehicle/models/IUpdateVehicleStatusCommand";
-import moment from "moment";
 
 
 
@@ -175,13 +139,9 @@ const isVehicleCardVisible = ref(false);
 
 
 const liveTrips = computed(() => tripHeaders.value.filter(x => x.status == TripStatus.Live));
-const incomingTrips = computed(() => tripHeaders.value.filter(x => x.status == TripStatus.Approved))
 
-const { goTripDetails, getTripHeaders } = useCustomerTripStore();
+const { goTripDetails } = useCustomerTripStore();
 
-onMounted(() => {
-  getTripHeaders();
-})
 
 function onVehicleModeClick() {
   if (accountVehicleId.value != '') {
@@ -196,33 +156,14 @@ function onVehicleModeClick() {
   }
 }
 
-function getDay(date: Date): string {
-  return moment(date).get('D').toString()
-}
 
-function getMonth(date: Date): string {
-  return moment(date).format('MMMM')
-}
-
-function getClock(date: Date): string {
-  return moment(date).format('HH:mm')
-}
 
 function activateVehicleMode() {
   useVehicleModeStore().setAccountVehicleId(accountVehicleCard.value!.id)
 }
 
-function updateWillComeStatus(trip: ITripHeaderDto){
-  trip.willCome = !trip.willCome;
-  return useApi().trip.UpdateUserWillCome({
-    waypointUserId: trip.waypointUserId,
-    willCome: trip.willCome
-  });
-}
 
-function goDetail(tripId: string){
-  goTripDetails(tripId)
-}
+
 
 
 </script>
