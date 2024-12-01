@@ -3,7 +3,7 @@ import {HttpTransportType} from "@microsoft/signalr";
 
 export const useSocketStore = defineStore('useSocketStore', () => {
     const socket = ref(new signalR.HubConnectionBuilder()
-        .withUrl("https://sekerlerteknoloji.com/locationHub", {skipNegotiation: true, transport: HttpTransportType.WebSockets}) // Sunucudaki hub URL'si
+        .withUrl("/locationHub", {skipNegotiation: true, transport: HttpTransportType.WebSockets}) // Sunucudaki hub URL'si
         .withAutomaticReconnect() // Otomatik yeniden bağlanma
         .build());
 
@@ -22,7 +22,7 @@ export const useSocketStore = defineStore('useSocketStore', () => {
 
     function setDefaultEvents(){
         joinGroup(`account@${useAuthStore().user.id}`)
-        socket.value.on('onUserLocationChange', e => {
+        socket.value.on('onAccountLocationChanged', e => {
             useLocationStore().setDbLocation(e.latitude, e.longitude)
         });
         socket.value.on('onVehicleLocationChange', e => {
