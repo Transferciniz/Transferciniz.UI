@@ -11,7 +11,12 @@ export const useAxios = () => {
         return request;
     })
     axiosInstance.interceptors.response.use(response => {
-        return response;
+        return response
+    }, err => {
+        if(err.status == 403 || err.status == 401){
+            useAuthStore().logout();
+        }
+        return err;
     })
     return axiosInstance;
 }

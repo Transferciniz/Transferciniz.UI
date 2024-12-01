@@ -1,9 +1,8 @@
 <template>
   <div class="flex flex-col">
+    <div ref="mapboxContainer" class="rounded-md h-screen w-full transition-all ease-in-out"></div>
     <div class="flex flex-col p-4">
-      <div class="relative">
-        <div ref="mapboxContainer" class="rounded-md h-[300px] w-full transition-all ease-in-out"></div>
-      </div>
+      
       <div class="flex justify-between items-center p-4 px-10" v-if="routingSummary">
         <div class="bg-gray-800 rounded-full flex justify-between items-center w-full p-2 px-8 mt-[-40px] z-[10]">
           <div class="flex justify-start items-center gap-x-2">

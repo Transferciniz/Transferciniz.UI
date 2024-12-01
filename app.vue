@@ -15,8 +15,7 @@
 
 <script setup lang="ts">
 
-useLocationStore();
-useAuthStore();
+
 </script>
 
 <style>

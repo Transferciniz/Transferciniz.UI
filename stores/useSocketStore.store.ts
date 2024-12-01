@@ -21,7 +21,7 @@ export const useSocketStore = defineStore('useSocketStore', () => {
     }
 
     function setDefaultEvents(){
-        joinGroup(useAuthStore().user.id)
+        joinGroup(`account@${useAuthStore().user.id}`)
         socket.value.on('onUserLocationChange', e => {
             useLocationStore().setDbLocation(e.latitude, e.longitude)
         });

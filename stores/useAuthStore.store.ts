@@ -68,7 +68,7 @@ export const useAuthStore = defineStore('authStore', () => {
     function logout() {
         token.value = ''
         useVehicleModeStore().onLogout();
-        useRouter().push('/')
+        useRouter().push('/login')
     }
 
     function getToken(): string{
