@@ -24,6 +24,11 @@ export const useAuthStore = defineStore('authStore', () => {
         },5000)
     }
 
+    //@ts-ignore
+    if(window.webkit?.messageHandlers?.messageHandler != null && isAuthenticated.value){
+        usePushReactNative('onLogin', token.value)
+    }
+
     if(isAuthenticated.value){
         useSocketStore().initConnection().then(() => {});
     }
