@@ -2,6 +2,7 @@
     <UDrawer should-scale-background :direction="'top'" :open="open" @update:open="(val) => emit('update:open', val)">
       <template #body>
         <div class="flex flex-col rounded-md p-2">
+          <button autofocus class="hidden"></button>
           <div class="bg-red-800 text-white flex flex-col justify-start items-start p-4 rounded-md" @click="selectLiveLocation">
             <p class="text-xs">Canlı Konumu Kullan</p>
             <p class="text-lg font-bold">{{ address.displayAddress }}</p>
@@ -30,6 +31,7 @@
           color="neutral"
           v-model="searchInput"
           :trailing="false"
+          tabindex="-1"
           :autofocus="false"
           @click="isSearchPanelVisible = true"/>
           
