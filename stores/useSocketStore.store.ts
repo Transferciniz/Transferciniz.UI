@@ -3,37 +3,47 @@ import {HttpTransportType} from "@microsoft/signalr";
 
 export const useSocketStore = defineStore('useSocketStore', () => {
     const socket = ref(new signalR.HubConnectionBuilder()
-        .withUrl("https://sekerlerteknoloji.com/locationHub", {skipNegotiation: true, transport: HttpTransportType.WebSockets}) // Sunucudaki hub URL'si
+        .withUrl("/locationHub", {skipNegotiation: true, transport: HttpTransportType.WebSockets}) // Sunucudaki hub URL'si
         .withAutomaticReconnect() // Otomatik yeniden bağlanma
         .build());
 
     const groupIds = ref<string[]>([])
 
-    async function initConnection(): Promise<any>{
-        if(socket.value.state === signalR.HubConnectionState.Connected){
-            await socket.value.stop()
-        }
-        return socket.value.start().then(() => {
-            socket.value.onreconnected(() => {
-                reJoinGroups();
+    function initConnection(): Promise<void>{
+        return new Promise((resolve, reject) => {
+            socket.value.start().then(() => {
+                setDefaultEvents().then(() => {
+                    resolve()
+                })
+                socket.value.onreconnected(() => {
+                    reJoinGroups();
+                })
             })
-                setTimeout(() => {
-                    setDefaultEvents();
-                }, 2000)
         })
+        
+      
     }
 
-    function setDefaultEvents(){
-        joinGroup(`account@${useAuthStore().user.id}`)
-        socket.value.on('onAccountLocationChanged', e => {
-            useLocationStore().setDbLocation(e.latitude, e.longitude)
-        });
-        socket.value.on('onVehicleLocationChange', e => {
-            useCustomerTripStore().setVehicleCoordinate(e.latitude, e.longitude)
+    function onLogout(){
+        socket.value.stop();
+    }
+
+    function setDefaultEvents(): Promise<void>{
+        return new Promise((resolve, reject) => {
+            joinGroup(`account@${useAuthStore().user.id}`).then(() => {
+                resolve();
+            })
+            socket.value.on('onAccountLocationChanged', e => {
+                useLocationStore().setDbLocation(e.latitude, e.longitude)
+            });
+            socket.value.on('onVehicleLocationChange', e => {
+                useCustomerTripStore().setVehicleCoordinate(e.latitude, e.longitude)
+            })
+            socket.value.on('onNotificationRecieved', e => {
+                useToast().add({title: 'Yeni Bildirim!', description: e.message})
+            })
         })
-        socket.value.on('onNotificationRecieved', e => {
-            useToast().add({title: 'Yeni Bildirim!', description: e.message})
-        })
+     
     }
 
     function reJoinGroups(){
@@ -42,9 +52,9 @@ export const useSocketStore = defineStore('useSocketStore', () => {
         })
     }
 
-    function joinGroup(groupName: string){
+    function joinGroup(groupName: string): Promise<any>{
         groupIds.value.push(groupName);
-        socket.value.invoke('JoinGroup', groupName);
+        return socket.value.invoke('JoinGroup', groupName);
     }
 
     function leaveGroup(groupName: string){
@@ -55,6 +65,7 @@ export const useSocketStore = defineStore('useSocketStore', () => {
     return {
         joinGroup,
         leaveGroup,
-        initConnection
+        initConnection,
+        onLogout
     }
 })

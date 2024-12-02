@@ -1,16 +1,16 @@
-import type {IRegisterRequest} from "~/core/api/modules/auth/models/IRegisterRequest";
-import {useApi} from "~/core/api/useApi";
+import type { IRegisterRequest } from "~/core/api/modules/auth/models/IRegisterRequest";
+import { useApi } from "~/core/api/useApi";
 import { useStorage } from '@vueuse/core'
-import {jwtDecode} from "jwt-decode";
-import type {ISession} from "~/core/api/modules/auth/models/ISession";
-import type {ILoginRequest} from "~/core/api/modules/auth/models/ILoginRequest";
+import { jwtDecode } from "jwt-decode";
+import type { ISession } from "~/core/api/modules/auth/models/ISession";
+import type { ILoginRequest } from "~/core/api/modules/auth/models/ILoginRequest";
 
 export const useAuthStore = defineStore('authStore', () => {
     const token = useStorage('token', '');
     const user = computed(() => {
-        try{
+        try {
             return jwtDecode<ISession>(token.value)
-        }catch(e){
+        } catch (e) {
             console.error('Error on token decode')
             return {} as ISession;
         }
@@ -18,23 +18,25 @@ export const useAuthStore = defineStore('authStore', () => {
     const isAuthenticated = computed(() => token.value != '');
     let webInterval: any;
 
-    //@ts-ignore
-    if(window.webkit?.messageHandlers?.messageHandler == null && isAuthenticated.value){
-        setInterval(() => {
-            useLocationStore().updateLocation()
-        },5000)
+
+
+    if (isAuthenticated.value) {
+        useSocketStore().initConnection().then(() => {
+            //@ts-ignore
+            if (window.webkit?.messageHandlers?.messageHandler == null) {
+                setInterval(() => {
+                    useLocationStore().updateLocation()
+                }, 5000)
+            }
+
+            //@ts-ignore
+            if (window.webkit?.messageHandlers?.messageHandler != null) {
+                usePushReactNative('startTracking', token.value)
+            }
+        });
     }
 
-    //@ts-ignore
-    if(window.webkit?.messageHandlers?.messageHandler != null && isAuthenticated.value){
-        usePushReactNative('onLogin', token.value)
-    }
-
-    if(isAuthenticated.value){
-        useSocketStore().initConnection().then(() => {});
-    }
-
-    function register(payload: IRegisterRequest): Promise<void>{
+    function register(payload: IRegisterRequest): Promise<void> {
         return new Promise((resolve, reject) => {
             useApi().auth.Register(payload).then((result) => {
                 token.value = result.data.token;
@@ -53,15 +55,18 @@ export const useAuthStore = defineStore('authStore', () => {
         return new Promise((resolve, reject) => {
             useApi().auth.Login(payload).then((result) => {
                 token.value = result.data.token;
-                //@ts-ignore
-                if( window.webkit?.messageHandlers?.messageHandler){
-                    usePushReactNative('onLogin', result.data.token);
-                }else{
-                    webInterval = setInterval(() => {
-                        useLocationStore().updateLocation()
-                    },5000)
-                }
-                useSocketStore().initConnection().then(() => {});
+
+                useSocketStore().initConnection().then(() => {
+                    //@ts-ignore
+                    if (window.webkit?.messageHandlers?.messageHandler) {
+                        usePushReactNative('onLogin', result.data.token);
+                        usePushReactNative('startTracking', result.data.token);
+                    } else {
+                        webInterval = setInterval(() => {
+                            useLocationStore().updateLocation()
+                        }, 5000)
+                    }
+                });
                 useRouter().push('/')
                 resolve()
             }).catch(() => {
@@ -72,18 +77,20 @@ export const useAuthStore = defineStore('authStore', () => {
     }
 
     function logout() {
-        if(webInterval){
+        if (webInterval) {
             clearInterval(webInterval)
         }
         token.value = ''
+        usePushReactNative('stopTracking', "")
+        usePushReactNative('onLogout', "")
         useRouter().push('/login')
     }
 
-    function getToken(): string{
+    function getToken(): string {
         return token.value;
     }
 
-    function onProfilePictureChange(payload: string){
+    function onProfilePictureChange(payload: string) {
         token.value = payload;
     }
     return {
