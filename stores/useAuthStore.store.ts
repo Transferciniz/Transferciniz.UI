@@ -16,6 +16,7 @@ export const useAuthStore = defineStore('authStore', () => {
         }
     });
     const isAuthenticated = computed(() => token.value != '');
+    let webInterval: any;
 
     //@ts-ignore
     if(window.webkit?.messageHandlers?.messageHandler == null && isAuthenticated.value){
@@ -56,7 +57,7 @@ export const useAuthStore = defineStore('authStore', () => {
                 if( window.webkit?.messageHandlers?.messageHandler){
                     usePushReactNative('onLogin', result.data.token);
                 }else{
-                    setInterval(() => {
+                    webInterval = setInterval(() => {
                         useLocationStore().updateLocation()
                     },5000)
                 }
@@ -71,6 +72,9 @@ export const useAuthStore = defineStore('authStore', () => {
     }
 
     function logout() {
+        if(webInterval){
+            clearInterval(webInterval)
+        }
         token.value = ''
         useRouter().push('/login')
     }

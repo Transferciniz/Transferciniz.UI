@@ -1,7 +1,8 @@
-import { getActivePinia } from "pinia";
+
 
 export const useLogout = () => {
     useAuthStore().logout();
+    useSocketStore().onLogout();
    const stores = [
     useAccountLocations(),
     useAuthStore(),

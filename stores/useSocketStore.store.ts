@@ -3,13 +3,16 @@ import {HttpTransportType} from "@microsoft/signalr";
 
 export const useSocketStore = defineStore('useSocketStore', () => {
     const socket = ref(new signalR.HubConnectionBuilder()
-        .withUrl("/locationHub", {skipNegotiation: true, transport: HttpTransportType.WebSockets}) // Sunucudaki hub URL'si
+        .withUrl("https://sekerlerteknoloji.com/locationHub", {skipNegotiation: true, transport: HttpTransportType.WebSockets}) // Sunucudaki hub URL'si
         .withAutomaticReconnect() // Otomatik yeniden bağlanma
         .build());
 
     const groupIds = ref<string[]>([])
 
-    function initConnection(): Promise<any>{
+    async function initConnection(): Promise<any>{
+        if(socket.value.state === signalR.HubConnectionState.Connected){
+            await socket.value.stop()
+        }
         return socket.value.start().then(() => {
             socket.value.onreconnected(() => {
                 reJoinGroups();
