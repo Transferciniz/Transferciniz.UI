@@ -15,8 +15,8 @@ export const useLocationStore = defineStore('locationStore', () => {
     })
 
     const address = ref({
-        address: '',
-        displayAddress: '',
+        address: 'Konumunuz aranıyor...',
+        displayAddress: 'Lütfen Bekleyiniz',
         isCompleted: false
     })
 
@@ -24,7 +24,7 @@ export const useLocationStore = defineStore('locationStore', () => {
         updateAddress();
     })
     function updateLocation(){
-        if(coords.value.latitude != 0 && coords.value.longitude != 0){
+        if(coords.value.latitude != null && coords.value.longitude != null){
             useApi().account.UpdateLocation(coords.value.latitude, coords.value.longitude).then(() => {
 
             })

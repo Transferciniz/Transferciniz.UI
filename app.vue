@@ -1,6 +1,6 @@
 <template>
   <div>
-    <UApp :toaster="{position:'top-center'}">
+    <UApp :toaster="{position:'top-center', class: 'z-[9999]'}">
       <div class="bg-[var(--ui-bg)] !antialiased" vaul-drawer-wrapper>
         <NuxtLayout>
           <NuxtPage/>

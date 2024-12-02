@@ -48,6 +48,25 @@ export const useCreateTransferStore = defineStore('useCreateTransferStore', () =
     }
 
     function addUserToWaypoint(waypoint: IWaypoint, user: IWaypointUser){
+        if(waypoint.users.some(x => x.userId == user.userId)){
+            useToast().add({
+                color: 'error',
+                title: 'Kişi zaten bu durakta!',
+                description: 'Aynı kişiyi birden fazla kez aynı durağa ekleyemezsiniz.'
+            })
+            return;
+        }
+        waypoints.value.filter(x => x != waypoint).forEach(x => {
+            if(x.users.some(y => y.userId == user.userId)){
+                useToast().add({
+                    color: 'error',
+                    title: 'Kişi başka durakta!',
+                    description: 'Aynı kişiyi birden fazla durağa ekleyemezsiniz!'
+                })
+                return;
+            }
+            
+        })
         waypoints.value.find(x => x.id == waypoint.id)?.users.push(user)
     }
 
