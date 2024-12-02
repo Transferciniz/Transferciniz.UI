@@ -1,8 +1,3 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
-import {util} from "protobufjs";
-import fs = util.fs;
-import path from "node:path";
-
 export default defineNuxtConfig({
     css: [
         'mapbox-gl/dist/mapbox-gl.css',
@@ -55,7 +50,7 @@ export default defineNuxtConfig({
     compatibilityDate: '2024-04-03',
     ssr: false,
     devtools: {enabled: true},
-    modules: ['@nuxt/ui', '@nuxtjs/color-mode' , '@nuxtjs/google-fonts', '@nuxt/scripts', '@pinia/nuxt', '@vueuse/nuxt', 'nuxt-echarts', 'nuxt-tour'],
+    modules: ['@nuxt/ui', '@nuxtjs/color-mode' , '@nuxtjs/google-fonts', '@nuxt/scripts', '@pinia/nuxt', '@vueuse/nuxt', 'nuxt-tour'],
     colorMode: {
         preference: 'dark', // Varsayılan olarak 'dark' modunu ayarla
         fallback: 'light',  // Tarayıcı desteklemiyorsa fallback olarak 'light'

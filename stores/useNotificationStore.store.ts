@@ -4,7 +4,7 @@ import {useApi} from "~/core/api/useApi";
 
 export const useNotificationStore = defineStore('useNotificationStore', () => {
     const notifications = ref<INotification[]>([])
-    const unreadCount = computed(() => notifications.value.filter(x => x.isViewed === false).length)
+    const unreadCount = computed(() => notifications.value?.filter(x => x.isViewed === false)?.length ?? 0)
 
     getNotifications();
 

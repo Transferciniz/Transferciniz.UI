@@ -13,7 +13,7 @@
     
     <div class="flex justify-between gap-x-4 items-center">
       <UButton color="neutral" variant="subtle" class="justify-center w-full" @click="editProfile">Profili Düzenle</UButton>
-      <UButton color="error" variant="subtle" class="justify-center w-full" @click="logout">Çıkış Yap</UButton>
+      <UButton color="error" variant="subtle" class="justify-center w-full" @click="useLogout">Çıkış Yap</UButton>
     </div>
 
     <UTabs color="neutral" v-model="tabValue" :content="false" :items="tabs" variant="link" class="w-full mt-8" />
@@ -50,7 +50,6 @@ import type {ITripHeaderDto} from "~/core/api/modules/trip/models/ITripHeaderDto
 import {useStorage} from "@vueuse/core";
 
 const {user} = storeToRefs(useAuthStore())
-const {logout} = useAuthStore();
 const take = ref(10);
 const skip = ref(0);
 const tripHistory = ref<ITripHeaderDto[]>([])

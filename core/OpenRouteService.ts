@@ -1,16 +1,11 @@
-// typescript dosyanıza ekleyin
-import * as L from 'leaflet';
-import 'leaflet-routing-machine';
-
-// OpenRouteService yönlendirme sağlayıcısı tipi
-interface OpenRouteServiceOptions extends L.Routing.RoutingControlOptions {
+interface OpenRouteServiceOptions {
     serviceUrl: string;
     apiKey: string;
     timeout: number;
 }
 
 // OpenRouteService yönlendirme sağlayıcısı sınıfı
-export class OpenRouteService implements L.Routing.IRouter {
+export class OpenRouteService {
     options: OpenRouteServiceOptions;
 
     constructor(options: Partial<OpenRouteServiceOptions>) {
@@ -24,10 +19,10 @@ export class OpenRouteService implements L.Routing.IRouter {
 
     // OpenRouteService ile rota hesapla
     route(
-        waypoints: L.Routing.Waypoint[],
-        callback: (err?: L.Routing.IError, routes?: L.Routing.IRoute[]) => void,
+        waypoints: any[],
+        callback: (err?: any, routes?: any[]) => void,
         context?: {},
-        options?: L.Routing.RoutingOptions
+        options?: any
     ): void {
         const url = this.options.serviceUrl;
         //@ts-ignore
@@ -73,7 +68,7 @@ export class OpenRouteService implements L.Routing.IRouter {
 
 
     // API URL'sini oluştur
-    buildRouteUrl(waypoints: L.Routing.Waypoint[]): string {
+    buildRouteUrl(waypoints: any[]): string {
         const coordinates = waypoints
             .map(wp => `${wp.latLng.lng},${wp.latLng.lat}`)
             .join('|');
@@ -82,12 +77,18 @@ export class OpenRouteService implements L.Routing.IRouter {
     }
 
     // OpenRouteService API yanıtını Leaflet için uygun rotaya dönüştür
-    convertRoute(response: any): L.Routing.IRoute[] {
+    convertRoute(response: any): any[] {
         // GeoJSON formatında gelen koordinatları alıyoruz
         const coordinates = response.features[0].geometry.coordinates;
 
         // Koordinatları Leaflet'in LatLng formatına dönüştür
-        const latLngs = coordinates.map((coord: [number, number]) => L.latLng(coord[1], coord[0]));
+        const latLngs = coordinates.map((coord: [number, number]) => {
+            return {
+                lat: coord[1],
+                lng: coord[0]
+            }
+        });
+
 
         // Başlangıç ve bitiş noktalarını alıyoruz
         const startPoint = latLngs[0];  // İlk nokta (başlangıç)
