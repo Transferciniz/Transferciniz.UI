@@ -48,7 +48,7 @@ export const useCreateTransferStore = defineStore('useCreateTransferStore', () =
     }
 
     function addUserToWaypoint(waypoint: IWaypoint, user: IWaypointUser){
-        if(waypoint.users.some(x => x.userId == user.userId)){
+        if(waypoint.users.filter(x => x.userId != null).some(x => x.userId == user.userId)){
             useToast().add({
                 color: 'error',
                 title: 'Kişi zaten bu durakta!',
@@ -57,7 +57,7 @@ export const useCreateTransferStore = defineStore('useCreateTransferStore', () =
             return;
         }
         waypoints.value.filter(x => x != waypoint).forEach(x => {
-            if(x.users.some(y => y.userId == user.userId)){
+            if(x.users.filter(x => x.userId != "").some(y => y.userId == user.userId)){
                 useToast().add({
                     color: 'error',
                     title: 'Kişi başka durakta!',
@@ -181,7 +181,7 @@ export const useCreateTransferStore = defineStore('useCreateTransferStore', () =
                         x.users = [];
                     })
                 }
-                if(isAddFavorite){
+                if(isAddFavorite.value){
                     favoriteTrips.value.push({
                         name: favoriteName.value,
                         finalDestination: finalDestination.value!,

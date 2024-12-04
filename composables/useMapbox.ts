@@ -61,7 +61,7 @@ export function useMapbox(){
         })
     }
 
-    function drawRoute(map: mapboxgl.Map, geoJsonData: any, sourceId: string = "route", layerId: string = "routeLayer", center:boolean = true){
+    function drawRoute(map: mapboxgl.Map, geoJsonData: any, sourceId: string = "route", layerId: string = "routeLayer", center:boolean = true, lineColor: string = '#3b9ddd'){
         try{
             map.removeLayer(layerId)
             map.removeSource(sourceId)
@@ -81,7 +81,7 @@ export function useMapbox(){
                     'line-cap': 'round'
                 },
                 paint: {
-                    'line-color': '#3b9ddd',
+                    'line-color': lineColor,
                     'line-width': 6
                 }
             });

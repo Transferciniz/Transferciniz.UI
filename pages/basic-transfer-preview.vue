@@ -1,5 +1,6 @@
 <template>
   <div class="flex flex-col h-full">
+
     <div class="relative flex-1 w-full flex flex-col" v-show="step == 0">
       <div ref="mapboxContainer" class="rounded-md flex-1 w-full transition-all ease-in-out"></div>
       <div class="absolute bottom-0 left-0 flex flex-col p-4 w-full">
@@ -36,7 +37,8 @@
 
     <div class="flex flex-col p-4" v-show="step == 1">
       <div class="flex flex-col gap-y-2 p-2">
-        <div class="flex justify-center items-center">
+        <div class="flex justify-start items-center gap-x-2">
+          <UButton label="Geri Dön" variant="subtle" color="neutral" @click="step= 0"/>
           <p class="text-xl">Aracınızı Seçin</p>
         </div>
         <div class="flex flex-col divide-y divide-gray-900 gap-y-2 bg-gray-700 rounded-md p-4"

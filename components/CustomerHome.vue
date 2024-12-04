@@ -154,6 +154,18 @@ function onVehicleModeClick() {
   }
 }
 
+/**
+ * Silinecek
+ */
+/*
+onMounted(() => {
+  const vehicleId = '61220d17-9097-4135-9d8a-220b7003e7cc'
+  useApi().accountVehicle.GetAccountVehicle(vehicleId).then(res => {
+        accountVehicleCard.value = res.data;
+        isVehicleCardVisible.value = true;
+      })
+})*/
+
 function deleteFavorite(payload: IFavoriteTrip){
   useCreateTransferStore().deleteFavorite(payload);
 }

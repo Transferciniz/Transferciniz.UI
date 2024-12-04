@@ -151,7 +151,7 @@ function getRouteForStartPoint(){
       {latitude: location.value.latitude, longitude: location.value.longitude},
       {longitude: selectedTrip.value!.trip.waypoints[0].longitude, latitude: selectedTrip.value!.trip.waypoints[0].latitude},
   ]).then(res => {
-    useMapbox().drawRoute(mapbox.value!, res, 'startNavigationSource', 'startNavigationLayer', false);
+    useMapbox().drawRoute(mapbox.value!, res, 'startNavigationSource', 'startNavigationLayer', false, '#3bdd4b');
     mapbox.value?.easeTo({
       center: [location.value.longitude, location.value.latitude],
       bearing: bearing.value ?? 0,
