@@ -36,11 +36,14 @@ export const useSocketStore = defineStore('useSocketStore', () => {
             socket.value.on('onAccountLocationChanged', e => {
                 useLocationStore().setDbLocation(e.latitude, e.longitude)
             });
-            socket.value.on('onVehicleLocationChange', e => {
+            socket.value.on('onVehicleLocationChanged', e => {
                 useCustomerTripStore().setVehicleCoordinate(e.latitude, e.longitude)
             })
             socket.value.on('onNotificationRecieved', e => {
                 useToast().add({title: 'Yeni Bildirim!', description: e.message})
+            })
+            socket.value.on('onTripStatusChange', e => {
+                useCustomerTripStore().getTripHeaders(); 
             })
         })
      

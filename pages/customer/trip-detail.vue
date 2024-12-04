@@ -95,10 +95,9 @@ onBeforeUnmount(() => {
 
 const vehicleMarker = ref<mapboxgl.Marker>();
 
-watchDebounced(vehicleCoordinate, value => {
-  if (vehicleMarker.value != undefined) {
-    vehicleMarker.value.setLngLat([value.longitude, value.latitude])
-  }
-})
+watch(vehicleCoordinate, value => {
+    vehicleMarker.value!.setLngLat([value.longitude, value.latitude])
+  
+}, {deep: true})
 
 </script>
