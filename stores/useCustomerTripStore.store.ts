@@ -2,6 +2,7 @@ import {useApi} from "~/core/api/useApi";
 import type {ITripHeaderDto} from "~/core/api/modules/trip/models/ITripHeaderDto";
 import type {ITripDto} from "~/core/api/modules/trip/models/ITripDto";
 import type {IWayPointDto} from "~/core/api/modules/trip/models/IWayPointDto";
+import type { IWaypointStatus } from "~/core/api/modules/trip/models/IWaypointStatus";
 
 export const useCustomerTripStore = defineStore('useCustomerTripStore', () => {
     const {user} = storeToRefs(useAuthStore())
@@ -43,6 +44,10 @@ export const useCustomerTripStore = defineStore('useCustomerTripStore', () => {
         vehicleCoordinate.value = {latitude: latitude, longitude: longitude};
     }
 
+    function updateWaypointStatus(payload: IWaypointStatus){
+        tripDetails.value!.userStatus = payload;
+    }
+
     return {
         tripHeaders,
         tripDetails,
@@ -52,6 +57,7 @@ export const useCustomerTripStore = defineStore('useCustomerTripStore', () => {
 
         getTripHeaders,
         goTripDetails,
-        setVehicleCoordinate
+        setVehicleCoordinate,
+        updateWaypointStatus
     }
 })

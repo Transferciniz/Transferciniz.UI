@@ -43,6 +43,7 @@ import 'moment/locale/tr'
 import mapboxgl from "mapbox-gl";
 import { ITripStatusForUser } from "~/core/api/modules/trip/models/ITripStatusForUser";
 import { TripStatus } from "~/core/api/modules/trip/models/ITripHeaderDto";
+import { IWaypointStatus } from "~/core/api/modules/trip/models/IWaypointStatus";
 
 moment.locale('tr');
 const mapContainer = ref();
@@ -56,13 +57,19 @@ const {
 
 const sliderValue = computed(() => {
   switch (myTrip.value?.userStatus) {
-    case ITripStatusForUser.OnRoad:
+    case IWaypointStatus.OnRoad:
       return 12.5
-    case ITripStatusForUser.OnWaypoint:
+    case IWaypointStatus.Near1Km:
+      return 12.5
+    case IWaypointStatus.Near500Mt:
+      return 12.5
+    case IWaypointStatus.Near200Mt:
+      return 12.5
+    case IWaypointStatus.OnWaypoint:
       return 37.5
-    case ITripStatusForUser.OnVehicle:
+    case IWaypointStatus.InProgress:
       return 62.5
-    case ITripStatusForUser.Finished:
+    case IWaypointStatus.Finished:
       return 100
     default:
       return 0

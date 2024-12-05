@@ -42,6 +42,15 @@ export const useSocketStore = defineStore('useSocketStore', () => {
             socket.value.on('onNotificationRecieved', e => {
                 useToast().add({title: 'Yeni Bildirim!', description: e.message})
             })
+            socket.value.on('onAccountWaypointStatusChanged', e => {
+                useCustomerTripStore().updateWaypointStatus(e.status);
+            })
+            socket.value.on('onTripFinished', e => {
+                const router = useRouter();
+                if(router.currentRoute.value.fullPath == '/customer/trip-detail'){
+                   router.push('/customer/trip-finished');
+                }
+            })
             socket.value.on('onTripStatusChange', e => {
                 useCustomerTripStore().getTripHeaders(); 
             })
