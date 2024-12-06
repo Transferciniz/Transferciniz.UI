@@ -56,7 +56,7 @@ const {
 } = storeToRefs(useCustomerTripStore());
 
 const sliderValue = computed(() => {
-  switch (myTrip.value?.userStatus) {
+  switch (myTrip.value?.waypointStatus) {
     case IWaypointStatus.OnRoad:
       return 12.5
     case IWaypointStatus.Near1Km:

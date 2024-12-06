@@ -45,7 +45,7 @@ export const useCustomerTripStore = defineStore('useCustomerTripStore', () => {
     }
 
     function updateWaypointStatus(payload: IWaypointStatus){
-        tripDetails.value!.userStatus = payload;
+        tripDetails.value!.waypointStatus = payload;
     }
 
     return {

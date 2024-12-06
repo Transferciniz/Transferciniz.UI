@@ -14,6 +14,6 @@ export interface ITripDto {
     vehiclePhoto: string;
     status: TripStatus;
     waypoints: IWayPointDto[];
-    userStatus: IWaypointStatus;
+    waypointStatus: IWaypointStatus;
 }
 
