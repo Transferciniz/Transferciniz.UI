@@ -23,6 +23,13 @@ export const useVehicleModeStore = defineStore('useVehicleModeStore', () => {
         useRouter().push('/vehicle-mode/upload-files')
     }
 
+    function removeAccountToVehicle(){
+        accountVehicleId.value = '';
+        accountVehicle.value = {} as IAccountVehicleDto
+        selectedTrip.value = {} as IGetVehicleTripsResponse
+        useRouter().push('/')
+    }
+
     function setVehicleOnline(): void{
         useApi().accountVehicle.OnlineVehicle({
              id: accountVehicleId.value
@@ -71,6 +78,7 @@ export const useVehicleModeStore = defineStore('useVehicleModeStore', () => {
         getVehicleTrips,
         startTrip,
         startVehicleMode,
-        onLogout
+        onLogout,
+        removeAccountToVehicle
     }
 })

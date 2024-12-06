@@ -21,7 +21,7 @@
       <div class="flex justify-between items-center gap-x-2">
         <UButton label="Sorun Bildirimi Yap" block color="warning" variant="subtle" icon="mingcute:warning-line"
           @click="isAddProblemDrawerOpen = true" />
-        <UButton label="Araçla İlişkimi Kes" block color="error" variant="subtle"
+        <UButton label="Araçla İlişkimi Kes" block color="error" variant="subtle" @click="removeAccountToVehicle"
           icon="material-symbols:close-rounded" />
       </div>
     </div>
@@ -140,4 +140,8 @@ function getProblems() {
 onBeforeUnmount(() => {
   mapbox.value?.remove();
 })
+
+function removeAccountToVehicle(){
+  useVehicleModeStore().removeAccountToVehicle();
+}
 </script>
