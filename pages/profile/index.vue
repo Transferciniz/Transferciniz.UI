@@ -3,7 +3,8 @@
     
     <div class="flex flex-col rounded-md p-2 items-center justify-center">
       <div class="flex justify-center items-center">
-        <img :src="user.profilePicture" class="rounded-full object-cover size-40"/>
+        <UAvatar :src="user.profilePicture" :alt="`${user.name} ${user.surname}`" size="3xl" class="size-40"/>
+
       </div>
       <p class="text-xl font-bold">{{user.name}} {{user.surname}}</p>
       <p class="text-xs opacity-50">{{user.username}} - {{user.email}}</p>

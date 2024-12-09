@@ -1,15 +1,10 @@
 <template>
   <div class="flex flex-col p-4 gap-y-4">
-    <div class="flex flex-col gap-y-2 bg-gray-800 rounded-md p-4">
-      <p class="text-lg font-medium">Profil Fotoğrafı</p>
-      <div class="flex flex-col gap-y-4 justify-center items-center">
-        <img :src="user.profilePicture" alt="profile-picture" class="size-40 object-cover text-center rounded-full" />
-        <UButton color="primary" variant="solid" class="justify-center w-full" @click="uploadPicture">Profil Fotoğrafı Yükle</UButton>
-        <p>Progress: {{ progress }}</p>
-      </div>
+    <UTabs :items="tabs" v-model:model-value="currentTab" />
+    <div class="flex flex-col gap-y-2 p-4" v-if="currentTab === '0'">
+      <ProfilePictureUploader/>
     </div>
-    <div class="flex flex-col gap-y-2 bg-gray-800 rounded-md p-4">
-      <p class="text-lg font-medium">Kişisel Bilgiler</p>
+    <div class="flex flex-col gap-y-2 rounded-md p-4" v-if="currentTab === '1'">
       <div class="flex flex-col gap-y-4">
         <UFormField
             label="Ad"
@@ -49,7 +44,21 @@ definePageMeta({
   layout: "title-layout",
 })
 usePageTitleStore().setTitle("Profil Düzenle")
-
+const tabs = ref([
+  {
+    label: 'Profil Fotoğrafı',
+    id: 0
+  },
+  {
+    label: 'Kişisel Bilgiler',
+    id: 1
+  },
+  {
+    label: 'Bildirim İzinleri',
+    id: 2
+  }
+])
+const currentTab = ref('0')
 
 const {user} = storeToRefs(useAuthStore())
 const progress = ref(0);
