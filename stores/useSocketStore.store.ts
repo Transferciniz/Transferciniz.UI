@@ -4,7 +4,7 @@ import { SocketMethods } from "~/core/api/SocketMethods";
 
 export const useSocketStore = defineStore('useSocketStore', () => {
     const socket = ref(new signalR.HubConnectionBuilder()
-        .withUrl("https://sekerlerteknoloji.com/locationHub", { skipNegotiation: true, transport: HttpTransportType.WebSockets }) // Sunucudaki hub URL'si
+        .withUrl("/locationHub", { skipNegotiation: true, transport: HttpTransportType.WebSockets }) // Sunucudaki hub URL'si
         .withAutomaticReconnect() // Otomatik yeniden bağlanma
         .build());
 
