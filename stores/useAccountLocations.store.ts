@@ -20,8 +20,8 @@ export const useAccountLocations = defineStore('useAccountLocations', () => {
         return useApi().account.ReverseGeoCoding(latitude, longitude)
     }
 
-    function addLocation(name: string, address: string, latitude: number, longitude: number){
-        useApi().account.AddLocation(name, address, latitude, longitude).then(() => {
+    function addLocation(name: string, address: string, latitude: number, longitude: number, isDefault: boolean = false){
+        useApi().account.AddLocation(name, address, latitude, longitude, isDefault).then(() => {
             getLocations();
         })
     }

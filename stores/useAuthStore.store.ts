@@ -7,6 +7,7 @@ import type { ILoginRequest } from "~/core/api/modules/auth/models/ILoginRequest
 
 export const useAuthStore = defineStore('authStore', () => {
     const token = useStorage('token', '');
+    const isProfileCompleted = useStorage('is-profile-completed', false);
     const user = computed(() => {
         try {
             return jwtDecode<ISession>(token.value)
@@ -83,6 +84,7 @@ export const useAuthStore = defineStore('authStore', () => {
         token.value = ''
         usePushReactNative('stopTracking', "")
         usePushReactNative('onLogout', "")
+        localStorage.clear();
         useRouter().push('/login')
     }
 
@@ -93,13 +95,20 @@ export const useAuthStore = defineStore('authStore', () => {
     function onProfilePictureChange(payload: string) {
         token.value = payload;
     }
+
+    function completeProfile(){
+        isProfileCompleted.value = true;
+    }
     return {
         isAuthenticated,
         user,
+        isProfileCompleted,
         register,
         getToken,
         login,
         logout,
-        onProfilePictureChange
+        onProfilePictureChange,
+        completeProfile
+  
     }
 })

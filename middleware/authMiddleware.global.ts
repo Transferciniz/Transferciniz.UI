@@ -1,5 +1,8 @@
 export default defineNuxtRouteMiddleware((to, from) => {
-    const {isAuthenticated} = storeToRefs(useAuthStore())
+    const {isAuthenticated, isProfileCompleted} = storeToRefs(useAuthStore())
+    if(isAuthenticated.value && !isProfileCompleted.value && '/complete-profile' != to.path){
+        return navigateTo('/complete-profile')
+    }
     if(!isAuthenticated.value && !['/register', '/login', '/redirect'].includes(to.path) ) {
        return navigateTo('/login')
     }

@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="flex flex-col justify-center items-center">
-      <UAvatar :src="user.profilePicture" :alt="`${user.name} ${user.surname}`" size="3xl" class="size-72"/>
+      <UAvatar :src="user.profilePicture" :alt="`${user.name} ${user.surname}`" size="3xl" class="size-72" />
 
         <div class="mt-5 flex flex-col w-full">
           <UButton color="primary" variant="solid" class="justify-center w-full" @click="uploadPicture" v-if="isUploading == false">Profil Fotoğrafı Yükle</UButton>
@@ -22,6 +22,8 @@ const {user} = storeToRefs(useAuthStore())
 const progress = ref(0);
 const isUploading = ref(false);
 
+const emits = defineEmits(['onUploaded'])
+
 function uploadPicture(){
   useImagePicker().then((file: File) => {
     progress.value = 0;
@@ -32,6 +34,7 @@ function uploadPicture(){
     useAuthStore().onProfilePictureChange(res.data.token);
     isUploading.value = false;
     progress.value = 0;
+    emits('onUploaded')
   })
   })
 }
