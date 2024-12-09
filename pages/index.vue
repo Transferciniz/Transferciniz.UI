@@ -12,7 +12,8 @@ const {user} = storeToRefs(useAuthStore())
 moment.locale("tr");
 
 onMounted(() => {
-  if(user.value.isAccountCompleted == false){
+  console.log(user.value.isAccountCompleted)
+  if(user.value.isAccountCompleted == 'False'){
     useRouter().push('/complete-profile')
   }
 })

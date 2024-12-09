@@ -11,5 +11,5 @@ export interface ISession {
     accountType: AccountType;
     longitude: number;
     latitude: number;
-    isAccountCompleted: boolean;
+    isAccountCompleted: string;
 }
