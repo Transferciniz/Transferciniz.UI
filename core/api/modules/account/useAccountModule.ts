@@ -6,6 +6,7 @@ import type {IGetProfileResponse} from "~/core/api/modules/account/models/IGetPr
 import type { IChangeProfilePictureResponse } from "./models/IChangeProfilePictureResponse";
 import type { IReverseGeocodingResponse } from "./models/IReverseGeocodingResponse";
 import type { IAccountLocation } from "./models/IAccountLocation";
+import type { ILoginResponse } from "../auth/models/ILoginRequest";
 
 export const useAccountModule = (api: AxiosInstance) => {
     async function SearchProfileLocation(request: IUserLocationSearchQuery): Promise<AxiosResponse<IUserLocationSearchResult[]>> {
@@ -75,6 +76,10 @@ export const useAccountModule = (api: AxiosInstance) => {
         });
     }
 
+    async function CompleteAccount(): Promise<AxiosResponse<ILoginResponse>>{
+        return api.post<ILoginResponse>('/Account/CompleteAccount', {})
+    }
+
 
     return {
         SearchProfileLocation,
@@ -86,6 +91,7 @@ export const useAccountModule = (api: AxiosInstance) => {
         UploadProfilePicture,
         ReverseGeoCoding,
         GetMyLocations,
-        AddLocation
+        AddLocation,
+        CompleteAccount
     }
 }

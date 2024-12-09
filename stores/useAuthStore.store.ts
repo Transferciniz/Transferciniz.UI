@@ -84,7 +84,6 @@ export const useAuthStore = defineStore('authStore', () => {
         token.value = ''
         usePushReactNative('stopTracking', "")
         usePushReactNative('onLogout', "")
-        localStorage.clear();
         useRouter().push('/login')
     }
 
@@ -97,7 +96,10 @@ export const useAuthStore = defineStore('authStore', () => {
     }
 
     function completeProfile(){
-        isProfileCompleted.value = true;
+        useApi().account.CompleteAccount().then(res => {
+            token.value = res.data.token
+            useRouter().push('/')
+        })
     }
     return {
         isAuthenticated,

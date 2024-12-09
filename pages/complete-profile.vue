@@ -44,7 +44,6 @@ function nextStep(){
 
 function onCompleted(){
   useAuthStore().completeProfile();
-  useRouter().push('/')
 }
 </script>
 

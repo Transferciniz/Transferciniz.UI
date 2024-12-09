@@ -11,6 +11,8 @@ export const useAuthModule = (api: AxiosInstance) => {
         return api.post<ILoginResponse>('/Auth/Login', request);
     }
 
+   
+
     return {
         Register,
         Login

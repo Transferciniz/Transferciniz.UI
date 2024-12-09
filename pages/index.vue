@@ -11,5 +11,10 @@ import 'moment/dist/locale/tr.js'
 const {user} = storeToRefs(useAuthStore())
 moment.locale("tr");
 
+onMounted(() => {
+  if(user.value.isAccountCompleted == false){
+    useRouter().push('/complete-profile')
+  }
+})
 
 </script>
