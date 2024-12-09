@@ -40,8 +40,18 @@ export const useAccountModule = (api: AxiosInstance) => {
             }})
     }
 
-    async function UploadProfilePicture(file: any): Promise<AxiosResponse<IChangeProfilePictureResponse>>{
-        return api.post<IChangeProfilePictureResponse>('/Account/ChangeProfilePicture', {file: file})
+    async function UploadProfilePicture(file: File, onProgress: (progress: number) => void): Promise<AxiosResponse<IChangeProfilePictureResponse>>{
+        const formData = new FormData();
+        formData.append("file", file);
+        return api.post<IChangeProfilePictureResponse>('/Account/ChangeProfilePicture', formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+            onUploadProgress: (progressEvent) => {
+                const progress = Math.round((progressEvent.loaded / (progressEvent.total || 1)) * 100);
+                onProgress(progress); // İlerleme yüzdesini bildir
+            },
+        })
     }
 
     async function ReverseGeoCoding(latitude: number, longitude: number): Promise<AxiosResponse<IReverseGeocodingResponse>>{

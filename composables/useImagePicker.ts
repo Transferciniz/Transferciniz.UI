@@ -1,8 +1,8 @@
-export function useImagePicker(): Promise<string>{
+export function useImagePicker(): Promise<File>{
     return new Promise((resolve, reject) => {
         //@ts-ignore
         window.onImageCaptured = (message: string) => {
-            resolve(message)
+            resolve(useBase64ToFile(message, 'image.jpg'))
         }
 
         usePushReactNative("onImagePicker", "")

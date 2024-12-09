@@ -5,6 +5,7 @@
       <div class="flex flex-col gap-y-4 justify-center items-center">
         <img :src="user.profilePicture" alt="profile-picture" class="size-40 object-cover text-center rounded-full" />
         <UButton color="primary" variant="solid" class="justify-center w-full" @click="uploadPicture">Profil Fotoğrafı Yükle</UButton>
+        <p>Progress: {{ progress }}</p>
       </div>
     </div>
     <div class="flex flex-col gap-y-2 bg-gray-800 rounded-md p-4">
@@ -51,10 +52,8 @@ usePageTitleStore().setTitle("Profil Düzenle")
 
 
 const {user} = storeToRefs(useAuthStore())
-const {open, files, onChange} = useFileDialog({accept: 'image/*', directory: false, multiple: false})
-onChange((files) => {
+const progress = ref(0);
 
-})
 const form = ref({
   name: user.value.name,
   surname: user.value.surname,
@@ -62,8 +61,8 @@ const form = ref({
 })
 
 function uploadPicture(){
-  useImagePicker().then(file => {
-    useApi().account.UploadProfilePicture(file).then(res => {
+  useImagePicker().then((file: File) => {
+    useApi().account.UploadProfilePicture(file, (payload) => {progress.value = payload}).then(res => {
     useAuthStore().onProfilePictureChange(res.data.token);
   })
   })
