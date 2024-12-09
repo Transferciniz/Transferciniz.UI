@@ -35,7 +35,7 @@ export const useCustomerTripStore = defineStore('useCustomerTripStore', () => {
     function goTripDetails(tripId: string) {
         GetTripDetailsForCustomer(tripId).then(res => {
             tripDetails.value = res.data;
-            useSocketStore().joinGroup(`vehicle@${res.data.accountVehicleId}`)
+            useSocketStore().joinGroup(`trip@${tripId}`)
             useRouter().push('/customer/trip-detail');
         })
     }

@@ -24,7 +24,7 @@ export const useLocationStore = defineStore('locationStore', () => {
         updateAddress();
     })
     function updateLocation(){
-        if(coords.value.latitude != null && coords.value.longitude != null){
+        if(!!coords.value.latitude && !!coords.value.longitude){
             useApi().account.UpdateLocation(coords.value.latitude, coords.value.longitude).then(() => {
 
             })
