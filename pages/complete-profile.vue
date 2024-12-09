@@ -36,7 +36,7 @@ const steps = ref([
     title: 'Bitti!',
   }
 ]);
-const activeStep = ref(2)
+const activeStep = ref(0)
 
 function nextStep(){
   activeStep.value = activeStep.value++
