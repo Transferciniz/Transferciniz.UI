@@ -30,6 +30,7 @@
                   icon="i-lucide-user"
                   placeholder="Hesap Tipinizi Seçiniz"
                   class="w-full"
+                
               >
 
                 <template #item-label="{ item }">
@@ -199,7 +200,7 @@ const text = computed(() => {
 })
 const registerForm = ref<IRegisterRequest>({
   name: '',
-  accountType: AccountType.Customer,
+  accountType: {id: 2},
   email: '',
   invoiceAddress: '',
   password: '',
@@ -228,7 +229,6 @@ const userType = computed(() => {
 function doRegister(): Promise<any>{
   
   const form = useCloned(registerForm.value);
-  form.cloned.value
   form.cloned.value.accountType = form.cloned.value.accountType.id;
   return register(form.cloned.value)
 }

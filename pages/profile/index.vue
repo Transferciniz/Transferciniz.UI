@@ -16,6 +16,7 @@
       <UButton color="neutral" variant="subtle" class="justify-center w-full" @click="editProfile">Profili Düzenle</UButton>
       <UButton color="error" variant="subtle" class="justify-center w-full" @click="useLogout">Çıkış Yap</UButton>
     </div>
+    <UButton color="neutral" block variant="solid" class="mt-2" label="Kayıt Linki Paylaş" @click="shareRegisterLink" v-if="user.accountType === AccountType.EnterpriseCustomerCompany"/>
 
     <UTabs color="neutral" v-model="tabValue" :content="false" :items="tabs" variant="link" class="w-full mt-8" />
 
@@ -55,6 +56,7 @@ const take = ref(10);
 const skip = ref(0);
 const tripHistory = ref<ITripHeaderDto[]>([])
 const totalCount = ref(0);
+const {isSupported, share} = useShare()
 
 const tabs = ref([
   {
@@ -70,7 +72,15 @@ const tabs = ref([
 
 const tabValue = useStorage("activeProfileTab", '0') //ref('0')
 
+// https://sekerlerteknoloji.com/redirect?action=register&id=07987f86-6c81-4341-bd20-bbf69330867b
 
+function shareRegisterLink(){
+  share({
+    title: `Kayıt Ol!`,
+    text: `Seni Transferciniz® 'de ${user.value.name} ${user.value.surname} bünyesine katılmaya davet ediyorum.`,
+    url: `https://sekerlerteknoloji.com/redirect?action=register&id=${user.value.id}`
+  })
+}
 const userType = computed(() => {
   switch (user.value.accountType) {
     case AccountType.EnterpriseCustomerCompany:

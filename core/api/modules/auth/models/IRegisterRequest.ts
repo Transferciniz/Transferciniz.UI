@@ -6,7 +6,7 @@ export interface IRegisterRequest {
     username :string
     email: string;
     password: string;
-    accountType: AccountType;
+    accountType: any;
     taxNumber: string;
     invoiceAddress: string;
     parentAccountId: string;
