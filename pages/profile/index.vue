@@ -78,7 +78,7 @@ function shareRegisterLink(){
   share({
     title: `Kayıt Ol!`,
     text: `Seni Transferciniz® 'de ${user.value.name} ${user.value.surname} bünyesine katılmaya davet ediyorum.`,
-    url: `https://sekerlerteknoloji.com/redirect?action=register&id=${user.value.id}`
+    url: `https://sekerlerteknoloji.com/redirect-register/${user.value.id}`
   })
 }
 const userType = computed(() => {

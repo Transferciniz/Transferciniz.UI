@@ -1,6 +1,6 @@
-export default defineNuxtRouteMiddleware((to, from) => {
+export default defineNuxtRouteMiddleware((to: any, from) => {
     const {isAuthenticated} = storeToRefs(useAuthStore())
-    if(!isAuthenticated.value && !['/register', '/login', '/redirect'].includes(to.path) ) {
+    if(!isAuthenticated.value && !['register', 'login', 'redirect-action-companyId'].includes(to.name) ) {
        return navigateTo('/login')
     }
 
