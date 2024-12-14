@@ -28,14 +28,14 @@
       <USeparator orientation="horizontal" class="flex-1" />
     </div>
     <div class="flex justify-center gap-x-2 items-stretch rounded-md">
-      <div class="flex flex-col items-center justify-center p-4 border border-gray-500/0 rounded-md flex-1" :class="{'bg-gray-700 border !border-gray-500' : directionType == 'oneWay'}" @click="directionType = 'oneWay'; isOneWayDetailDrawerVisible = true;">
+      <div class="flex flex-col items-center justify-center p-4 border border-gray-500/0 rounded-md flex-1" :class="{'bg-gray-700 border !border-gray-500' : directionType == 'oneWay'}" @click="setDirectionType('oneWay'); isOneWayDetailDrawerVisible = true;">
         <div class="flex justify-start items-center gap-x-2">
           <Icon name="line-md:arrow-up" mode="svg" size="30"/>
           <p class="text-xl">Tek Yön</p>
         </div>
         <p class="text-xs opacity-50 text-center mt-2">Sadece toplama veya dağıtım servisi yapmak istiyorsanız.</p>
       </div>
-      <div class="flex flex-col items-center justify-center p-4 border border-gray-500/0 rounded-md flex-1" :class="{'bg-gray-700 border !border-gray-500' : directionType == 'twoWay'}" @click="directionType = 'twoWay'">
+      <div class="flex flex-col items-center justify-center p-4 border border-gray-500/0 rounded-md flex-1" :class="{'bg-gray-700 border !border-gray-500' : directionType == 'twoWay'}" @click="setDirectionType('twoWay')">
         <div class="flex justify-start items-center gap-x-2">
           <Icon name="line-md:arrows-vertical-alt" mode="svg" size="30"/>
           <p class="text-xl">Çift Yön</p>
@@ -44,6 +44,7 @@
       </div>
     </div>
 
+    <!--TEK YÖN-->
     <div class="flex justify-start items-center gap-x-2 my-4" v-if="directionType == 'oneWay' && oneWayDetail != 'none'">
       <p class="text-lg">Tarih ve Saat</p>
       <USeparator orientation="horizontal" class="flex-1" />
@@ -57,11 +58,12 @@
            {{ df.format(modelValue.toDate(getLocalTimeZone())) }}
           -->
           <UButton color="neutral" variant="subtle" icon="i-lucide-calendar" block>
-            Tarih Seçin
+            {{ oneWayDetail == 'from' ? fromDatesView : toDatesView }}
           </UButton>
 
           <template #content>
-            <UCalendar :multiple="true" v-model="calendarDates" class="p-2" />
+            <UCalendar :multiple="true" v-model="fromDates" class="p-2" v-if="oneWayDetail == 'from'"/>
+            <UCalendar :multiple="true" v-model="toDates" class="p-2" v-if="oneWayDetail == 'to'"/>
           </template>
         </UPopover>
       </div>
@@ -69,19 +71,85 @@
       <div class="flex justify-start items-center w-full mt-2" v-if="directionType == 'oneWay'">
         <p v-if="oneWayDetail == 'from'" class="w-1/2">Varış Saati Seçin:</p>
         <p v-if="oneWayDetail == 'to'" class="w-1/2">Çıkış Saati Seçin:</p>
-        <div class="flex justify-end items-center w-full gap-x-2">
-          <USelect :items="hours" class="flex-1"/>
+        <div class="flex justify-end items-center w-full gap-x-2" v-if="oneWayDetail == 'from'">
+          <USelect :items="hours" class="flex-1" v-model:model-value="fromHour"/>
           <p>:</p>
-          <USelect :items="minutes" class="flex-1"/>
+          <USelect :items="minutes" class="flex-1" v-model:model-value="fromMinute"/>
+        </div>
+        <div class="flex justify-end items-center w-full gap-x-2" v-if="oneWayDetail == 'to'">
+          <USelect :items="hours" class="flex-1" v-model:model-value="toHour"/>
+          <p>:</p>
+          <USelect :items="minutes" class="flex-1" v-model:model-value="toMinute"/>
         </div>
       </div>
-
-
-
-
-
-
     </div>
+
+
+    <div class="flex justify-start items-center gap-x-2 my-4" v-if="directionType == 'twoWay'">
+      <p class="text-lg">Toplama Tarih ve Saati</p>
+      <USeparator orientation="horizontal" class="flex-1" />
+    </div>
+    <div class="flex flex-col items-start justify-start" v-if="directionType == 'twoWay'">
+
+      <div class="flex justify-between items-center w-full">
+        <p class="w-1/2">Tarih:</p>
+        <UPopover>
+          <!--
+           {{ df.format(modelValue.toDate(getLocalTimeZone())) }}
+          -->
+          <UButton color="neutral" variant="subtle" icon="i-lucide-calendar" block>
+            {{ fromDatesView }}
+          </UButton>
+
+          <template #content>
+            <UCalendar :multiple="true" v-model="fromDates" class="p-2" />
+          </template>
+        </UPopover>
+      </div>
+
+      <div class="flex justify-start items-center w-full mt-2">
+        <p class="w-1/2">Varış Saati Seçin:</p>
+        <div class="flex justify-end items-center w-full gap-x-2">
+          <USelect :items="hours" v-model:model-value="fromHour" class="flex-1"/>
+          <p>:</p>
+          <USelect :items="minutes" v-model:model-value="fromMinute"class="flex-1"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex justify-start items-center gap-x-2 my-4" v-if="directionType == 'twoWay'">
+      <p class="text-lg">Dağıtım Tarih ve Saati</p>
+      <USeparator orientation="horizontal" class="flex-1" />
+    </div>
+    <div class="flex flex-col items-start justify-start" v-if="directionType == 'twoWay'">
+
+      <div class="flex justify-between items-center w-full">
+        <p class="w-1/2">Tarih:</p>
+        <UPopover>
+          <!--
+           {{ df.format(modelValue.toDate(getLocalTimeZone())) }}
+          -->
+          <UButton color="neutral" variant="subtle" icon="i-lucide-calendar" block>
+            {{toDatesView}}
+          </UButton>
+
+          <template #content>
+            <UCalendar :multiple="true" v-model="toDates" class="p-2" />
+          </template>
+        </UPopover>
+      </div>
+
+      <div class="flex justify-start items-center w-full mt-2">
+        <p class="w-1/2">Çıkış Saati Seçin:</p>
+        <div class="flex justify-end items-center w-full gap-x-2">
+          <USelect :items="hours" v-model:model-value="toHour" class="flex-1"/>
+          <p>:</p>
+          <USelect :items="minutes" v-model:model-value="toMinute" class="flex-1"/>
+        </div>
+      </div>
+    </div>
+
+    <UButton label="Araç Seçeneklerini Göster" color="neutral" block class="mt-4" v-if="directionType != 'none'" />
    
 
   </div>
@@ -113,11 +181,11 @@
   </UDrawer>
   <UDrawer title="Tek Yön Servis Tipini Seçin" v-model:open="isOneWayDetailDrawerVisible" direction="top" :handle="false" >
     <template #body>
-      <div class="flex flex-col gap-y-1 my-2 border border-white/10 p-2 rounded-md" @click="setOneWayDetail('from')">
+      <div class="flex flex-col gap-y-1 my-2 border border-white/10 p-2 rounded-md" @click="selectOneWayDetail('from')">
         <p class="text-lg">Toplama Servisi</p>
         <p class="text-xs opacity-50">Kişilerinizi konumlarından alarak, servis konumuna taşıyın.</p>
       </div>
-      <div class="flex flex-col gap-y-1 my-2 border border-white/10 p-2 rounded-md" @click="setOneWayDetail('to')">
+      <div class="flex flex-col gap-y-1 my-2 border border-white/10 p-2 rounded-md" @click="selectOneWayDetail('to')">
         <p class="text-lg">Dağıtım Servisi</p>
         <p class="text-xs opacity-50">Kişilerinizi servis konumundan başlayarak, konumlarına taşıyın.</p>
       </div>
@@ -127,60 +195,59 @@
 </template>
 
 <script lang="ts" setup>
-import type { IEmployee } from '~/core/api/modules/account/models/IEmployee';
 import { useApi } from '~/core/api/useApi';
 import type { ILocationSearchResult } from '~/core/app/ITripLocation';
 import { CalendarDate, DateFormatter, getLocalTimeZone } from '@internationalized/date'
 
+
 const {
   address,
 } = storeToRefs(useLocationStore())
-const serviceLocation = ref<ILocationSearchResult>();
+
 const isLocationSelectorVisible = ref(false);
-
-const employeeDataSource = ref(<IEmployee[]>[]);
-const employeeSearchInput = ref('')
 const isPeopleEditDrawerVisible = ref(false);
-const employeeView = computed(() => {
-  if (employeeSearchInput.value != '') {
-    return employeeDataSource.value.filter(x => x.name.startsWith(employeeSearchInput.value) || x.surname.startsWith(employeeSearchInput.value)).toSorted((a, b) => (b.isSelected ? 1 : 0) - (a.isSelected ? 1 : 0))
-  }
-  return employeeDataSource.value.toSorted((a, b) => (a.isSelected ? 1 : 0) - (b.isSelected ? 1 : 0))
-});
-
-const selectedEmployee = computed(() => employeeDataSource.value.filter(x => x.isSelected))
-
-const hours = ref([
-  1,2,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24
-])
-const minutes = ref([
-  0, 10, 15, 20,30,40,45,50,60
-])
-
-const directionType = ref<'oneWay' | 'twoWay' | 'none'>('none');
-const oneWayDetail = ref<'to' | 'from' | 'none'>('none');
 const isOneWayDetailDrawerVisible = ref(false);
 
-function setOneWayDetail(payload: 'to' | 'from'){
-  oneWayDetail.value = payload;
+const {
+  directionType,
+  employeeView,
+  fromHour,
+  fromMinute,
+  hours,
+  minutes,
+  oneWayDetail,
+  selectedEmployee,
+  serviceLocation,
+  toHour,
+  toMinute,
+  employeeSearchInput,
+  fromDates,
+  toDates,
+  fromDatesView,
+  toDatesView
+} = storeToRefs(useServicePlannerStore())
+
+const {
+setServiceLocation,
+setDirectionType,
+setOneWayDetail,
+toggleEmployee
+} = useServicePlannerStore()
+
+
+function selectOneWayDetail(payload: 'to' | 'from'){
+  setOneWayDetail(payload);
   isOneWayDetailDrawerVisible.value = false;
 }
-function toggleEmployee(payload: IEmployee) {
-  employeeDataSource.value.find(x => x == payload)!.isSelected = !employeeDataSource.value.find(x => x == payload)!.isSelected
-}
+
 
 function onLocationSelected(payload: ILocationSearchResult): void {
-  serviceLocation.value = payload;
+  setServiceLocation(payload);
   isLocationSelectorVisible.value = false;
 }
 
 
 
-const df = new DateFormatter('tr-TR', {
-  dateStyle: 'medium'
-})
-
-const calendarDates = ref([])
 
 
 
@@ -188,13 +255,8 @@ const calendarDates = ref([])
 
 
 
-onMounted(() => {
-  useApi().account.GetEmployee().then(res => {
-    employeeDataSource.value = res.data.map(x => {
-      return { ...x, isSelected: false }
-    })
-  })
-})
+
+
 
 function calculate() {
   useApi().trip.OptimizeRoute({
