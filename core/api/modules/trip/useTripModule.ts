@@ -12,6 +12,7 @@ import type {IFinishTripCommand} from "~/core/api/modules/trip/models/IFinishTri
 import type {IGetTripHistoryQuery} from "~/core/api/modules/trip/models/IGetTripHistoryQuery";
 import type {IPagingResponse} from "~/core/api/modules/trip/models/IPagingResponse";
 import type { IUpdateUserWillComeCommand } from "./models/IUpdateUserWillComeCommand";
+import type { IOptimizeRoute } from "./models/IOptimizeRoute";
 
 export const useTripModule = (api: AxiosInstance) => {
     async function GetAvailableVehicles(request: IGetAvailableVehiclesQuery): Promise<AxiosResponse<IVehicleCombinationPricePair[]>> {
@@ -72,6 +73,12 @@ export const useTripModule = (api: AxiosInstance) => {
         return api.post<any>('/Trip/UpdateUserWillCome', payload);
     }
 
+    async function OptimizeRoute(payload: IOptimizeRoute): Promise<AxiosResponse<any>>{
+        return api.post<any>('/', payload, {
+            baseURL: 'http://localhost:6060'
+        })
+    }
+
 
 
     return {
@@ -88,7 +95,8 @@ export const useTripModule = (api: AxiosInstance) => {
         UpdateWaypoint,
         FinishTrip,
         GetTripHistory,
-        UpdateUserWillCome
+        UpdateUserWillCome,
+        OptimizeRoute
 
     }
 }

@@ -2,6 +2,7 @@
   <div class="flex flex-col w-full h-full">
     <EnterpriseTransporterHome v-if="user.accountType == 'EnterpriseTransporterCompany'"/>
     <CustomerHome v-if="user.accountType == 'Customer' || user.accountType == 'Driver'"></CustomerHome>
+    <EnterptiseCustomerHome v-if="user.accountType == 'EnterpriseCustomerCompany'"/>
   </div>
 </template>
 <script setup lang="ts">

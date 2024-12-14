@@ -10,7 +10,7 @@ export class OpenRouteService {
 
     constructor(options: Partial<OpenRouteServiceOptions>) {
         this.options = {
-            serviceUrl: '/ors/v2/directions/driving-car/geojson',
+            serviceUrl: '/ors/v2/directions/car/geojson',
             apiKey: '', // Kendi OpenRouteService API anahtarınızı buraya koyun
             timeout: 30 * 1000,
             ...options
@@ -38,7 +38,7 @@ export class OpenRouteService {
         // POST isteği için gövdeyi hazırlıyoruz
         const body = {
             coordinates: coordinates,
-            profile: 'driving-car',
+            profile: 'car',
             format: 'geojson'
         };
 
