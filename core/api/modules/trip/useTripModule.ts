@@ -74,9 +74,7 @@ export const useTripModule = (api: AxiosInstance) => {
     }
 
     async function OptimizeRoute(payload: IOptimizeRoute): Promise<AxiosResponse<any>>{
-        return api.post<any>('/', payload, {
-            baseURL: 'http://localhost:6060'
-        })
+        return api.post<any>('/vroom', payload, {baseURL:'/'})
     }
 
 

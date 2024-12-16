@@ -149,7 +149,7 @@
       </div>
     </div>
 
-    <UButton label="Araç Seçeneklerini Göster" color="neutral" block class="mt-4" v-if="directionType != 'none'" />
+    <UButton label="Araç Seçeneklerini Göster" color="neutral" block class="mt-4" v-if="directionType != 'none'" @click="getVehicles"/>
    
 
   </div>
@@ -231,7 +231,8 @@ const {
 setServiceLocation,
 setDirectionType,
 setOneWayDetail,
-toggleEmployee
+toggleEmployee,
+getVehicles
 } = useServicePlannerStore()
 
 

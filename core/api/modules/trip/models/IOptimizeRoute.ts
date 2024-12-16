@@ -1,10 +1,10 @@
 export interface IOptimizeRoute {
-    vehicles: IVehicle[];
-    jobs: IJob[];
+    vehicles: IVroomVehicle[];
+    jobs: IVroomJob[];
     options: IOptions;
 }
 
-interface IVehicle{
+export interface IVroomVehicle{
  id: number;
  capacity: number[];
  start?: number[];
@@ -12,7 +12,7 @@ interface IVehicle{
  description: string;
 }
 
-interface IJob{
+export interface IVroomJob{
     id: number;
     location: number[];
     description: string;
