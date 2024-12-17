@@ -73,42 +73,44 @@ export function useMapbox(){
     function drawRoute(map: mapboxgl.Map, geoJsonData: any, sourceId: string = "route", layerId: string = "routeLayer", center:boolean = true, lineColor: string = '#3b9ddd', isSelected: boolean = true){
         try{
             if(map.getLayer(layerId) != undefined){
-                console.log('Layer Silindi')
                 map.removeLayer(layerId)
                 map.removeSource(sourceId)
             }
         } catch (e) {
 
         }finally {
-            map.addSource(sourceId, {
-                type: 'geojson',
-                data: geoJsonData,
-            });
-            map.addLayer({
-                id: layerId,
-                type: 'line',
-                source: sourceId,
-                layout: {
-                    'line-join': 'round',
-                    'line-cap': 'round'
-                },
-                paint: {
-                    'line-color': lineColor,
-                    'line-width': 4, // Math.random() * 3 + 2, // Farklı kalınlık
-                    'line-opacity': isSelected ? 1 : 0.2, // Şeffaflık
-                   // 'line-dasharray': [2, 4] // Kesikli çizgiler
-                }
-            });
-
-        
-         
-            if(center){
-                const coordinates = geoJsonData?.features[0]?.geometry?.coordinates ?? geoJsonData.geometry.coordinates;
-                const bounds = coordinates.reduce((bounds: any, coord: any) => bounds.extend(coord), new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
-                map.fitBounds(bounds, {
-                    padding: 50
+            if(isSelected){
+                map.addSource(sourceId, {
+                    type: 'geojson',
+                    data: geoJsonData,
                 });
+                map.addLayer({
+                    id: layerId,
+                    type: 'line',
+                    source: sourceId,
+                    layout: {
+                        'line-join': 'round',
+                        'line-cap': 'round'
+                    },
+                    paint: {
+                        'line-color': lineColor,
+                        'line-width': 4, // Math.random() * 3 + 2, // Farklı kalınlık
+                        'line-opacity': isSelected ? 1 : 0.5, // Şeffaflık
+                       // 'line-dasharray': [2, 4] // Kesikli çizgiler
+                    }
+                });
+    
+            
+             
+                if(center){
+                    const coordinates = geoJsonData?.features[0]?.geometry?.coordinates ?? geoJsonData.geometry.coordinates;
+                    const bounds = coordinates.reduce((bounds: any, coord: any) => bounds.extend(coord), new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
+                    map.fitBounds(bounds, {
+                        padding: 50
+                    });
+                }
             }
+
 
         }
 

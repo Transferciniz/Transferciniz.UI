@@ -139,9 +139,21 @@ export class VehicleCombination{
 
     public drawRoutes(map: mapboxgl.Map){
         this.vehicles.forEach(vehicle => {
+            console.log('isSelected', vehicle.isRouteSelected)
             useMapbox().drawRoute(map, this.getRouteGeoJSONTemplate(), `route-${vehicle.id}`, `route-${vehicle.id}`, false, '#3b9ddd', vehicle.isRouteSelected);
-            this.animateRoute(vehicle.decodedGeometry, this.getRouteGeoJSONTemplate(), 0, `route-${vehicle.id}`, map);
+            if(vehicle.isRouteSelected){
+                this.animateRoute(vehicle.decodedGeometry, this.getRouteGeoJSONTemplate(), 0, `route-${vehicle.id}`, map);
+            }
+    
         })
+    }
+
+    public toggleSelected(id: number){
+        this.vehicles.find(x => x.id == id)!.isRouteSelected = true;
+        this.vehicles.filter(x => x.id != id).forEach(vehicle => {
+            vehicle.isRouteSelected = false;
+        })
+    
     }
 
     private getRouteGeoJSONTemplate(){
