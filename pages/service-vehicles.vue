@@ -29,7 +29,7 @@
             </div>
           </template>
           <div class="flex justify-between items-center pt-3">
-            <p class="text-2xl">{{ combinations.totalPrice }} ₺</p>
+            <p class="text-2xl">{{ combinations.totalPrice.toFixed(2) }} ₺</p>
             <div class="bg-red-700 text-white text-xs px-4 py-2 rounded-md" @click="setSelectedVehicleCombination(combinations)">Seç ve
               Ödemeye
               Devam Et</div>

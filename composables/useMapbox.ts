@@ -70,9 +70,10 @@ export function useMapbox(){
         return color;
     }
 
-    function drawRoute(map: mapboxgl.Map, geoJsonData: any, sourceId: string = "route", layerId: string = "routeLayer", center:boolean = true, lineColor: string = '#3b9ddd'){
+    function drawRoute(map: mapboxgl.Map, geoJsonData: any, sourceId: string = "route", layerId: string = "routeLayer", center:boolean = true, lineColor: string = '#3b9ddd', isSelected: boolean = true){
         try{
             if(map.getLayer(layerId) != undefined){
+                console.log('Layer Silindi')
                 map.removeLayer(layerId)
                 map.removeSource(sourceId)
             }
@@ -94,10 +95,12 @@ export function useMapbox(){
                 paint: {
                     'line-color': lineColor,
                     'line-width': 4, // Math.random() * 3 + 2, // Farklı kalınlık
-                    'line-opacity': 0.5, // Şeffaflık
+                    'line-opacity': isSelected ? 1 : 0.2, // Şeffaflık
                    // 'line-dasharray': [2, 4] // Kesikli çizgiler
                 }
             });
+
+        
          
             if(center){
                 const coordinates = geoJsonData?.features[0]?.geometry?.coordinates ?? geoJsonData.geometry.coordinates;

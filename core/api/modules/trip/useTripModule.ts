@@ -13,6 +13,7 @@ import type {IGetTripHistoryQuery} from "~/core/api/modules/trip/models/IGetTrip
 import type {IPagingResponse} from "~/core/api/modules/trip/models/IPagingResponse";
 import type { IUpdateUserWillComeCommand } from "./models/IUpdateUserWillComeCommand";
 import type { IOptimizeRoute } from "./models/IOptimizeRoute";
+import type { VroomResponse } from "./models/IVroom";
 
 export const useTripModule = (api: AxiosInstance) => {
     async function GetAvailableVehicles(request: IGetAvailableVehiclesQuery): Promise<AxiosResponse<IVehicleCombinationPricePair[]>> {
@@ -73,8 +74,8 @@ export const useTripModule = (api: AxiosInstance) => {
         return api.post<any>('/Trip/UpdateUserWillCome', payload);
     }
 
-    async function OptimizeRoute(payload: IOptimizeRoute): Promise<AxiosResponse<any>>{
-        return api.post<any>('/vroom', payload, {baseURL:'/'})
+    async function OptimizeRoute(payload: IOptimizeRoute): Promise<AxiosResponse<VroomResponse>>{
+        return api.post<VroomResponse>('/vroom', payload, {baseURL:'/'})
     }
 
 

@@ -11,7 +11,7 @@ export const useServicePlannerStore = defineStore('servicePlannerStore', () => {
       })
     const serviceLocation = ref<ILocationSearchResult>();
     const employeeDataSource = ref(<IEmployee[]>[]);
-    const vehicleCombinationsDataSource  = ref(<VehicleCombination[]>[]);
+    const vehicleCombinationsDataSource  = ref<VehicleCombination[]>(<VehicleCombination[]>[]);
     const selectedVehicleCombination = ref<VehicleCombination>();
 
     const hours = ref(['00','02','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23']);
@@ -68,8 +68,8 @@ export const useServicePlannerStore = defineStore('servicePlannerStore', () => {
 
     async function getVehicles() {
       try {
-        const api = useApi();
-        const res = await api.trip.GetAvailableVehicles({
+        
+        const res = await useApi().trip.GetAvailableVehicles({
           extraServices: [],
           segments: [],
           totalLengthOfRoad: 0,
@@ -79,38 +79,16 @@ export const useServicePlannerStore = defineStore('servicePlannerStore', () => {
     
         const combinationsData = res.data;
         const vehicleCombinations = combinationsData.map(
-          x => new VehicleCombination(Number.NaN, x.vehicles)
+          x => new VehicleCombination(x.vehicles)
         );
-    
+        
         // OptimizeRoute çağrılarını topluca beklemek için `Promise.all` kullanılıyor
         await Promise.all(
           vehicleCombinations.map(async combination => {
-            const vroomResponse = await api.trip.OptimizeRoute({
-              jobs: selectedEmployee.value.map((x, i) => {
-                return <IVroomJob>{
-                  location: [x.longitude, x.latitude],
-                  amount: [1],
-                  description: x.id,
-                  id: i + 1
-                };
-              }),
-              vehicles: combination.vehicles.map(vehicle => {
-                return <IVroomVehicle>{
-                  capacity: vehicle.capacity,
-                  description: vehicle.description,
-                  id: vehicle.id,
-                  end: [serviceLocation.value!.longitude, serviceLocation.value!.latitude]
-                };
-              }),
-              options: {
-                format: "geojson"
-              }
-            });
-            combination.vroom = vroomResponse.data;
+            await combination.GetRoutes(selectedEmployee.value, serviceLocation.value!)
           })
         );
-    
-        // Tüm OptimizeRoute işlemleri tamamlandıktan sonra set ediliyor
+
         vehicleCombinationsDataSource.value = vehicleCombinations;
         useRouter().push('/service-vehicles')
       } catch (error) {
