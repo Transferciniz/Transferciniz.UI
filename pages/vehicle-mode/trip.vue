@@ -142,7 +142,7 @@ function checkWaypointDistances(value: any){
   }
   for(let i = 1; i<= selectedTrip.value.trip.waypoints.length; i++){
     const waypoint = selectedTrip.value.trip.waypoints[i];
-    if(useHaversineDistance([value.longitude, value.latitude], [waypoint.longitude, waypoint.latitude])){
+    if(useHaversineDistance([value.longitude, value.latitude], [waypoint.longitude, waypoint.latitude]) < 100){
       if(lastWaypointId.value != waypoint.id){
         lastWaypointId.value = waypoint.id;
         selectedWaypoint.value = waypoint;
