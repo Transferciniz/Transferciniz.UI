@@ -1,4 +1,4 @@
-import type {AxiosInstance, AxiosResponse} from "axios";
+import type {Axios, AxiosInstance, AxiosResponse} from "axios";
 import type {
     IGetAvailableVehiclesQuery,
     IVehicleCombinationPricePair
@@ -14,6 +14,7 @@ import type {IPagingResponse} from "~/core/api/modules/trip/models/IPagingRespon
 import type { IUpdateUserWillComeCommand } from "./models/IUpdateUserWillComeCommand";
 import type { IOptimizeRoute } from "./models/IOptimizeRoute";
 import type { VroomResponse } from "./models/IVroom";
+import type { CreateTripV2Request } from "./models/ICreateTripV2";
 
 export const useTripModule = (api: AxiosInstance) => {
     async function GetAvailableVehicles(request: IGetAvailableVehiclesQuery): Promise<AxiosResponse<IVehicleCombinationPricePair[]>> {
@@ -74,6 +75,10 @@ export const useTripModule = (api: AxiosInstance) => {
         return api.post<any>('/Trip/UpdateUserWillCome', payload);
     }
 
+    async function CreateTripV2(payload: CreateTripV2Request): Promise<AxiosResponse<any>>{
+        return api.post<any>('/Trip/CreateTripV2', payload)
+    }
+
     async function OptimizeRoute(payload: IOptimizeRoute): Promise<AxiosResponse<VroomResponse>>{
         return api.post<VroomResponse>('/vroom', payload, {baseURL:'/'})
     }
@@ -95,7 +100,8 @@ export const useTripModule = (api: AxiosInstance) => {
         FinishTrip,
         GetTripHistory,
         UpdateUserWillCome,
-        OptimizeRoute
+        OptimizeRoute,
+        CreateTripV2
 
     }
 }

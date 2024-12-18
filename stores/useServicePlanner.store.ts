@@ -4,6 +4,8 @@ import type { ILocationSearchResult } from "~/core/app/ITripLocation";
 import { CalendarDate, DateFormatter, getLocalTimeZone } from '@internationalized/date'
 import { VehicleCombination } from "~/core/api/modules/trip/models/VehicleCombination";
 import type { IVroomJob, IVroomVehicle } from "~/core/api/modules/trip/models/IOptimizeRoute";
+import { TimeType, type CreateTripDto, type CreateWaypointDto, type CreateWaypointUserDto } from "~/core/api/modules/trip/models/ICreateTripV2";
+import moment from "moment";
 
 export const useServicePlannerStore = defineStore('servicePlannerStore', () => {
     const df = new DateFormatter('tr-TR', {
@@ -18,10 +20,10 @@ export const useServicePlannerStore = defineStore('servicePlannerStore', () => {
     const minutes = ref(['00', '10', '15', '20' ,'30','40','45','50']);
     const fromHour = ref('09');
     const fromMinute = ref('00');
-    const fromDates = ref(<any>[]);
+    const fromDates = ref<any[]>(<any>[]);
     const toHour = ref('18');
     const toMinute = ref('00')
-    const toDates = ref(<any>[])
+    const toDates = ref<any[]>(<any>[])
     const directionType = ref<'oneWay' | 'twoWay' | 'none'>('none');
     const oneWayDetail = ref<'to' | 'from' | 'none'>('none');
     
@@ -101,6 +103,44 @@ export const useServicePlannerStore = defineStore('servicePlannerStore', () => {
       useRouter().push('/service-map')
     }
 
+    async function createTrip(){
+      const directionString = oneWayDetail.value == 'from' ? 'Toplama Servisi' : 'Dağtım Servisi'
+      const dateValues = oneWayDetail.value == 'from' ? fromDates.value : toDates.value
+      const dates = dateValues.map(x => {
+        const date = moment(`${x.year}-${x.month}-${x.day}`);
+        return date.format('YYYY-MM-DDTHH:mm:ssZ');
+      })
+      useApi().trip.CreateTripV2({
+        timeType: oneWayDetail.value == 'from' ? TimeType.ArriveAtTime : TimeType.StartAtTime,
+        cost: selectedVehicleCombination.value!.totalPrice,
+        name: `${serviceLocation.value!.name} ${directionString}`,
+        dates: dates,
+        hour: oneWayDetail.value == 'from' ? Number.parseInt(fromHour.value) : Number.parseInt(toHour.value),
+        minute: oneWayDetail.value == 'from' ? Number.parseInt(fromMinute.value) : Number.parseInt(toMinute.value),
+        trips: selectedVehicleCombination.value!.vehicles.map(vehicle => {
+          return <CreateTripDto>{
+            cost: vehicle.basePrice * vehicle.totalDistance / 1000,
+            vehicleId: vehicle.description,
+            route: vehicle.geometryText,
+            duration: vehicle.totalTime,
+            waypoints: vehicle.users.map(user => {
+              return <CreateWaypointDto>{
+                latitude: user.waypoint.lat,
+                longitude: user.waypoint.lng,
+                duration: user.duration,
+                name: `${user.user.name} ${user.user.surname} Durağı`,
+                users: <CreateWaypointUserDto[]>[{
+                  accountId: user.user.id,
+                  name: user.user.name,
+                  surname: user.user.surname
+                }]
+              }
+            })
+          }
+        })
+      })
+    }
+
 
     useApi().account.GetEmployee().then(res => {
         employeeDataSource.value = res.data.map(x => {
@@ -132,6 +172,7 @@ export const useServicePlannerStore = defineStore('servicePlannerStore', () => {
         setOneWayDetail,
         setDirectionType,
         getVehicles,
-        setSelectedVehicleCombination
+        setSelectedVehicleCombination,
+        createTrip
     }
 })

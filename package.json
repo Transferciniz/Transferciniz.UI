@@ -33,6 +33,7 @@
     "nuxt": "^3.14.1592",
     "sass": "^1.77.8",
     "@types/mapbox__polyline": "1.0.5",
-    "typescript": "5.6.3"
+    "typescript": "5.6.3",
+    "@turf/turf": "7.1.0"
   }
 }

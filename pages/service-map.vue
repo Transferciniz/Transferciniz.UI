@@ -10,7 +10,7 @@
         <USeparator orientation="horizontal"/>
         <div class="flex justify-between items-center gap-x-2 w-full">
           <UButton block label="Araçları Göster" color="neutral" variant="soft" @click="isVehiclesDrawerVisible = true"/>
-          <UButton block label="Servisi Oluştur" color="success" variant="soft"/>
+          <UButton block label="Servisi Oluştur" color="success" variant="soft" @click="createTrip"/>
         </div>
       </div>
     </div>
@@ -44,10 +44,12 @@ const {
   serviceLocation
   } = storeToRefs(useServicePlannerStore())
   const isVehiclesDrawerVisible = ref(true);
+  const {createTrip} = useServicePlannerStore()
   
 
   const mapBoxContainer = ref();
   const mapbox = ref<mapboxgl.Map>();
+  const markers = ref<mapboxgl.Marker[]>([]);
   onMounted(() => {
     mapbox.value = useMapbox().createMap(mapBoxContainer.value, {latitude: 0, longitude: 0})
     let bounds = selectedEmployee.value.reduce((bounds, coord) => bounds.extend([coord.longitude, coord.latitude]), new mapboxgl.LngLatBounds());
@@ -58,9 +60,26 @@ const {
     mapbox.value.on('load', () => {
 
       selectedVehicleCombination.value?.drawRoutes(mapbox.value!);
-      selectedVehicleCombination.value?.vehicles.forEach(vehicle => {
+      drawMarkers();
+
+    })
+
+  })
+
+function drawMarkers(){
+  markers.value.forEach(x => {
+    x.remove();
+  })
+  markers.value = [];
+  selectedVehicleCombination.value?.vehicles.forEach(vehicle => {
         vehicle.users.forEach(user => {
           new mapboxgl.Marker({
+          element: useMapbox().createWaypointMarker(1),
+          draggable: false,
+          })
+          .setLngLat([user.waypoint.lng, user.waypoint.lat])
+          .addTo(mapbox.value!)
+          const marker = new mapboxgl.Marker({
           element: useMapbox().createUserMarker(user.user.profilePicture),
           draggable: true,
           })
@@ -72,17 +91,17 @@ const {
               user.user.longitude = lng;
               selectedVehicleCombination.value?.recalculateRoutes(serviceLocation.value!).then(() => {
                 selectedVehicleCombination.value?.drawRoutes(mapbox.value!)
+                drawMarkers();
            })
-          })
-          .getElement().addEventListener('click', () => {
+          });
+          marker.getElement().addEventListener('click', () => {
             selectedVehicleCombination.value!.toggleSelected(vehicle.id);
             selectedVehicleCombination.value?.drawRoutes(mapbox.value!);
           })
+          markers.value.push(marker);
         })
       })
-    })
-
-  })
+}
 
 function redrawRoutes(){
   selectedVehicleCombination.value!.drawRoutes(mapbox.value!)

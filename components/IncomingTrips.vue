@@ -24,7 +24,7 @@
                     <USeparator orientation="vertical" class="w-4" />
                     <UButtonGroup size="lg">
                         <UButton label="İncele" icon="ic:twotone-search" color="neutral" variant="soft"
-                            @click="goDetail(trip.id)" />
+                            @click="goDetail(trip)" />
                         <UButton label="Gelmeyeceğim" trailing-icon="gridicons:cross-circle" color="warning"
                             variant="soft" loading-auto @click="updateWillComeStatus(trip)"
                             v-if="trip.willCome === true" />
@@ -66,7 +66,7 @@ function getClock(date: Date): string {
   return moment(date).format('HH:mm')
 }
 
-function goDetail(tripId: string){
+function goDetail(tripId: ITripHeaderDto){
   goTripDetails(tripId)
 }
 

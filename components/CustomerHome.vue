@@ -71,7 +71,7 @@
     </div>
 
     <div class="p-4 flex flex-col gap-y-2">
-      <IncomingTrips/>
+      <IncomingTrips />
     </div>
 
     <UDrawer should-scale-background :direction="'bottom'" v-model:open="isVehicleCardVisible">
@@ -166,7 +166,7 @@ onMounted(() => {
       })
 })*/
 
-function deleteFavorite(payload: IFavoriteTrip){
+function deleteFavorite(payload: IFavoriteTrip) {
   useCreateTransferStore().deleteFavorite(payload);
 }
 

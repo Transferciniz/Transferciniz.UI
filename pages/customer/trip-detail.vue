@@ -4,16 +4,16 @@
     <div class="absolute w-full bottom-0 left-0 z-[10000] ">
       <div class="flex flex-col justify-center items-center p-4 gap-y-2">
 
-        <div v-if="myTrip?.status == TripStatus.Live " class="flex flex-col justify-center items-center p-4 gap-y-2 w-full bg-gray-900 border-gray-700 border rounded-md">
+        <div v-if="selectedTrip.status == TripStatus.Live && selectedTrip!!" class="flex flex-col justify-center items-center p-4 gap-y-2 w-full bg-gray-900 border-gray-700 border rounded-md">
           <div class="flex justify-between items-center w-full gap-x-2">
             <div class="flex justify-start items-center gap-x-2">
-              <UAvatar :src="myTrip?.driverPhoto" :alt="myTrip?.driverName" size="3xl" />
+              <UAvatar :src="selectedTrip.driverPhoto" :alt="selectedTrip.driverName" size="3xl" />
               <div class="flex flex-col">
-                <p class="text-sm font-bold">{{ myTrip?.driverName }}</p>
-                <p class="text-xs">{{ myTrip?.vehiclePlate }}</p>
+                <p class="text-sm font-bold">{{ selectedTrip.driverName }}</p>
+                <p class="text-xs">{{ selectedTrip.plate }}</p>
               </div>
             </div>
-            <img :src="myTrip?.vehiclePhoto" class="h-20" alt="vehicle-photo">
+            <img :src="selectedTrip.vehiclePhoto" class="h-20" alt="vehicle-photo">
           </div>
 
           <div class="flex flex-col w-full gap-y-4">
@@ -38,25 +38,23 @@
 </template>
 
 <script setup lang="ts">
-import moment from "moment/moment";
-import 'moment/locale/tr'
 import mapboxgl from "mapbox-gl";
-import { ITripStatusForUser } from "~/core/api/modules/trip/models/ITripStatusForUser";
 import { TripStatus } from "~/core/api/modules/trip/models/ITripHeaderDto";
 import { IWaypointStatus } from "~/core/api/modules/trip/models/IWaypointStatus";
 
-moment.locale('tr');
+
+
 const mapContainer = ref();
 const mapbox = ref<mapboxgl.Map>();
+const vehicleMarker = ref<mapboxgl.Marker>();
 
 const {
-  myWaypoint,
+  selectedTrip,
   vehicleCoordinate,
-  myTrip
 } = storeToRefs(useCustomerTripStore());
 
 const sliderValue = computed(() => {
-  switch (myTrip.value?.waypointStatus) {
+  switch (selectedTrip.value?.waypointStatus) {
     case IWaypointStatus.OnRoad:
       return 12.5
     case IWaypointStatus.Near1Km:
@@ -78,21 +76,20 @@ const sliderValue = computed(() => {
 })
 
 onMounted(() => {
-  mapbox.value = useMapbox().createMap(mapContainer.value, { latitude: 0, longitude: 0 });
+  mapbox.value = useMapbox().createMap(mapContainer.value, { latitude: selectedTrip.value!.waypointLatitude, longitude: selectedTrip.value!.waypointLongitude });
   mapbox.value.on('load', () => {
-    useMapbox().fetchRouteData(myTrip.value!.waypoints as any[]).then((res) => {
-      useMapbox().drawRoute(mapbox.value!, res)
+
+      useMapbox().drawRoute(mapbox.value!, useDecodePolyline(selectedTrip.value!.route))
       new mapboxgl.Marker({
-        element: useMapbox().createDefaultMarker(),
+        element: useMapbox().createLiveWaypointMarker(),
         draggable: false,
-      }).setLngLat([myWaypoint.value.longitude, myWaypoint.value.latitude]).addTo(mapbox.value!);
+        offset: [0, -36]
+      }).setLngLat([selectedTrip.value!.waypointLongitude, selectedTrip.value!.waypointLatitude]).addTo(mapbox.value!);
 
-      vehicleMarker.value = new mapboxgl.Marker({
-        element: useMapbox().createCustomerCarMarker(),
-        draggable: false,
-      }).setLngLat([0, 0]).addTo(mapbox.value!);
 
-    })
+
+
+
   })
 })
 
@@ -100,11 +97,18 @@ onBeforeUnmount(() => {
   mapbox.value?.remove();
 })
 
-const vehicleMarker = ref<mapboxgl.Marker>();
+
 
 watch(vehicleCoordinate, value => {
-    vehicleMarker.value!.setLngLat([value.longitude, value.latitude])
-  
+  if(vehicleMarker.value!!){
+    vehicleMarker.value.setLngLat([value.longitude, value.latitude])
+  }else{
+    vehicleMarker.value = new mapboxgl.Marker({
+        element: useMapbox().createCustomerCarMarker(),
+        draggable: false,
+        
+      }).setLngLat([value.longitude, value.latitude]).addTo(mapbox.value!);
+  }
 }, {deep: true})
 
 </script>

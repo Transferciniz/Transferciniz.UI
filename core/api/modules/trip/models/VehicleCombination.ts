@@ -64,9 +64,8 @@ export class VehicleCombination{
                     }
                 })).data
         this.vroom.routes.forEach(route => {
-         
+        
             const vehicle = this.vehicles.find(x => x.id == route.vehicle);
-            console.log(vehicle)
             if(vehicle){
                 vehicle.geometryText = route.geometry;
                 vehicle.decodedGeometry = decode(vehicle.geometryText).map(([lat, lng]) => [lng, lat]) ;
@@ -75,12 +74,13 @@ export class VehicleCombination{
                 vehicle.users = route.steps.filter(x => x.type == 'job').map(x => {
                     const user = users.find(y => y.id == x.description);
                     return {
-                        user: user!
+                        user: user!,
+                        duration: x.arrival,
+                        waypoint: useGetNearestPoint([user!.longitude, user!.latitude], vehicle.decodedGeometry)
                     }
                 })
                 this.totalPrice += vehicle.basePrice * vehicle.totalDistance / 1000
-                console.log('TotalPrice', this.totalPrice)
-                console.log(this)
+
             }
             
         })
@@ -123,7 +123,9 @@ export class VehicleCombination{
                     vehicle.users = route.steps.filter(x => x.type == 'job').map(x => {
                         const user = users.find(y => y.user.id == x.description);
                         return {
-                            user: user!.user
+                            user: user!.user,
+                            waypoint: useGetNearestPoint([user!.user.longitude, user!.user.latitude], vehicle.decodedGeometry),
+                            duration: x.arrival
                         }
                     })
                     this.totalPrice += vehicle.basePrice * vehicle.totalDistance / 1000
@@ -193,4 +195,6 @@ interface IVehicle{
 
 interface IEmployeeMarkerPair{
     user: IEmployee
+    waypoint: {lat: number, lng: number, distance: number};
+    duration: number;
 }

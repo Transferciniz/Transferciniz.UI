@@ -103,7 +103,7 @@ export function useMapbox(){
             
              
                 if(center){
-                    const coordinates = geoJsonData?.features[0]?.geometry?.coordinates ?? geoJsonData.geometry.coordinates;
+                    const coordinates = geoJsonData.features!! ?  geoJsonData.features[0].geometry.coordinates : geoJsonData.geometry.coordinates;
                     const bounds = coordinates.reduce((bounds: any, coord: any) => bounds.extend(coord), new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
                     map.fitBounds(bounds, {
                         padding: 50
@@ -123,6 +123,23 @@ export function useMapbox(){
 
     function createWaypointMarker(personCount: number){
         const innerHtml = '<div class="bg-red-500 text-white rounded-full px-4 py-1 flex justify-center items-center gap-x-2 min-w-[70px]"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="#ffffff" d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3s1.34 3 3 3m-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5S5 6.34 5 8s1.34 3 3 3m0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5m8 0c-.29 0-.62.02-.97.05c1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5"/></svg>' + personCount + '</div>';
+        const htmlElement = document.createElement('div');
+        htmlElement.innerHTML = innerHtml;
+        return htmlElement;
+    }
+
+    function createLiveWaypointMarker(){
+        const innerHtml = `
+        <div class="relative drop-shadow-lg">
+            <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center border-2 border-white shadow">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                d="M16 1H8C5.24 1 3 3.24 3 6V15C3 16.1 3.9 17 5 17V20C5 20.55 5.45 21 6 21H7C7.55 21 8 20.55 8 20V18H16V20C16 20.55 16.45 21 17 21H18C18.55 21 19 20.55 19 20V17C20.1 17 21 16.1 21 15V6C21 3.24 18.76 1 16 1ZM8 3H16C17.65 3 19 4.35 19 6V8H5V6C5 4.35 6.35 3 8 3ZM5 10H19V15H5V10ZM7 12C7.55 12 8 12.45 8 13C8 13.55 7.55 14 7 14C6.45 14 6 13.55 6 13C6 12.45 6.45 12 7 12ZM17 12C17.55 12 18 12.45 18 13C18 13.55 17.55 14 17 14C16.45 14 16 13.55 16 13C16 12.45 16.45 12 17 12Z" />
+            </svg>
+            </div>
+            <div class="w-1 h-6 bg-blue-500 mx-auto rounded-b-full"></div>
+        </div>
+        `;
         const htmlElement = document.createElement('div');
         htmlElement.innerHTML = innerHtml;
         return htmlElement;
@@ -183,6 +200,7 @@ export function useMapbox(){
         createFinishMarker,
         createDefaultMarker,
         createCustomerCarMarker,
-        createUserMarker
+        createUserMarker,
+        createLiveWaypointMarker
     }
 }
