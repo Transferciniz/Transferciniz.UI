@@ -99,7 +99,7 @@ export class VehicleCombination{
 
     }
 
-    public async recalculateRoutes(serviceLocation: ILocationSearchResult): Promise<any>{
+    public async recalculateRoutes(serviceLocation: ILocationSearchResult, type: 'to' |'from'): Promise<any>{
         return new Promise(async (resolve, reject) => {
             const users = this.vehicles.map(x => x.users).flat(1)
             const jobs: IVroomJob[] = users.map((x, index) => {
@@ -110,12 +110,21 @@ export class VehicleCombination{
                     location: [x.user.longitude, x.user.latitude]
                 }
             })
-            const vehicles = this.vehicles.map(vehicle => {
+            const vehicles = type == 'from' ? this.vehicles.map(vehicle => {
                 return <IVroomVehicle>{
                   capacity: vehicle.capacity,
                   description: vehicle.description,
                   id: vehicle.id,
                   end: [serviceLocation.longitude, serviceLocation.latitude]
+                };
+              })
+              :
+              this.vehicles.map(vehicle => {
+                return <IVroomVehicle>{
+                  capacity: vehicle.capacity,
+                  description: vehicle.description,
+                  id: vehicle.id,
+                  start: [serviceLocation.longitude, serviceLocation.latitude]
                 };
               })
             this.vroom = (await useApi().trip.OptimizeRoute({

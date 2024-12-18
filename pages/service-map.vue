@@ -41,7 +41,8 @@ import mapboxgl from 'mapbox-gl';
 const {
   selectedVehicleCombination,
   selectedEmployee,
-  serviceLocation
+  serviceLocation,
+  oneWayDetail
   } = storeToRefs(useServicePlannerStore())
   const isVehiclesDrawerVisible = ref(false);
   const {createTrip} = useServicePlannerStore()
@@ -83,7 +84,7 @@ function drawMarkers(){
               const {lat, lng} =event.target.getLngLat()
               user.user.latitude = lat;
               user.user.longitude = lng;
-              selectedVehicleCombination.value?.recalculateRoutes(serviceLocation.value!).then(() => {
+              selectedVehicleCombination.value?.recalculateRoutes(serviceLocation.value!, oneWayDetail.value == 'to' ? 'to' : 'from').then(() => {
                 selectedVehicleCombination.value?.drawRoutes(mapbox.value!)
                 drawMarkers();
            })
