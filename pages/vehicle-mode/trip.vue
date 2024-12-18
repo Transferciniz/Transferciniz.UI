@@ -133,7 +133,7 @@ watch(bearing, value => {
 
 function checkWaypointDistances(value: any){
   const finishPoint = coordinates.value[coordinates.value.length -1];
-  if(useHaversineDistance([value.longitude, value.latitude], finishPoint) < 100){
+  if(useHaversineDistance([value.longitude, value.latitude], finishPoint) < 30){
     if(lastWaypointId.value != 'finish'){
       lastWaypointId.value = 'finish';
       isFinishDrawerOpen.value = true;
@@ -142,7 +142,7 @@ function checkWaypointDistances(value: any){
   }
   for(let i = 1; i<= selectedTrip.value.trip.waypoints.length; i++){
     const waypoint = selectedTrip.value.trip.waypoints[i];
-    if(useHaversineDistance([value.longitude, value.latitude], [waypoint.longitude, waypoint.latitude]) < 100){
+    if(useHaversineDistance([value.longitude, value.latitude], [waypoint.longitude, waypoint.latitude]) < 15){
       if(lastWaypointId.value != waypoint.id){
         lastWaypointId.value = waypoint.id;
         selectedWaypoint.value = waypoint;
