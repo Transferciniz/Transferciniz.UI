@@ -12,9 +12,32 @@ import type {
 import moment from "moment/moment";
 import type {IFavoriteTrip} from "~/core/api/modules/trip/models/IFavoriteTrip";
 import {useStorage} from "@vueuse/core";
+import { TimeType, type CreateTripDto, type CreateWaypointDto, type CreateWaypointUserDto } from "~/core/api/modules/trip/models/ICreateTripV2";
+import { VehicleCombination } from "~/core/api/modules/trip/models/VehicleCombination";
+import type { IEmployee } from "~/core/api/modules/account/models/IEmployee";
+import { AccountType } from "~/core/api/modules/auth/models/AccountType";
+import { DateFormatter, getLocalTimeZone } from "@internationalized/date";
 
 
 export const useCreateTransferStore = defineStore('useCreateTransferStore', () => {
+    const toHour = ref('09');
+    const toMinute = ref('00')
+    const toDates = ref<any>();
+    const df = new DateFormatter('tr-TR', {
+        dateStyle: 'medium'
+    })
+    const toDatesView = computed(() => {
+        if(toDates.value!!){
+            return df.format(toDates.value.toDate(getLocalTimeZone())) 
+        }else{
+            return 'Tarih Seçin'
+        }
+    })
+    const hours = ref(['00','02','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23']);
+    const minutes = ref(['00', '10', '15', '20' ,'30','40','45','50']);
+
+
+    const vehicleCombinationsDataSource  = ref<VehicleCombination[]>(<VehicleCombination[]>[]);
     const waypoints = ref<IWaypoint[]>([]);
     const totalWaypoints = computed<IWaypoint[]>((): IWaypoint[] =>  {
         return [...waypoints.value, finalDestination.value] as IWaypoint[]
@@ -35,9 +58,6 @@ export const useCreateTransferStore = defineStore('useCreateTransferStore', () =
     const favoriteName = ref("");
     const favoriteTrips = useStorage("favoriteTrips", <IFavoriteTrip[]>[])
 
-    watchDebounced(preDefinedPeopleCount, value => {
-        getVehicleCombinations();
-    }, {debounce:500})
 
     function addWaypoint(payload: IWaypoint){
         waypoints.value.push(payload);
@@ -99,17 +119,56 @@ export const useCreateTransferStore = defineStore('useCreateTransferStore', () =
         }
     }
 
-    function getVehicleCombinations(){
-        useApi().trip.GetAvailableVehicles({
-            extraServices: [],
-            totalLengthOfRoad: 1473,
-            totalPerson: preDefinedPeopleCount.value,
-            segments: [],
-            types: []
-        }).then(x => {
-            //TODO: Burada hesaplama lazım
-            vehicleCombinations.value = x.data
-        })
+    async function getVehicleCombinations(){
+        try {
+        
+            const res = await useApi().trip.GetAvailableVehicles({
+                extraServices: [],
+                segments: [],
+                totalLengthOfRoad: 0,
+                totalPerson: totalAddedPeopleCount.value,
+                types: []
+            });
+        
+            const combinationsData = res.data;
+            const vehicleCombinations = combinationsData.map(
+                x => new VehicleCombination(x.vehicles)
+            );
+            let employees: IEmployee[] = []; 
+            waypoints.value.forEach((waypoint, waypointIndex) => {
+                employees = [...employees, ...waypoint.users.map((x, userIndex) => {
+                    return <IEmployee>{
+                        accountType: AccountType.Customer,
+                        id: x.userId ?? `waypoint${waypointIndex}-${userIndex}`,
+                        isSelected: true,
+                        latitude: waypoint.latitude,
+                        longitude: waypoint.longitude,
+                        name: x.name!,
+                        surname: x.surname!,
+                        username: '',
+                        profilePicture: x.profilePicture
+                    }
+                })]
+            })
+            const {latitude, longitude, name} = finalDestination.value!
+            
+            // OptimizeRoute çağrılarını topluca beklemek için `Promise.all` kullanılıyor
+            await Promise.all(
+                vehicleCombinations.map(async combination => {
+                await combination.GetRoutes(employees, {
+                    address: name,
+                    latitude: latitude,
+                    longitude: longitude,
+                    name: name
+                })
+                })
+            );
+
+            vehicleCombinationsDataSource.value = vehicleCombinations;
+            //useRouter().push('/service-vehicles')
+        } catch (error) {
+        console.error("An error occurred:", error);
+        }
     }
 
     function createBasicTransferWaypoints(locations: ILocationSearchResult[]) {
@@ -127,7 +186,6 @@ export const useCreateTransferStore = defineStore('useCreateTransferStore', () =
             }
             index == 0 ?  waypoints.value.push(iteratorWaypoint) : finalDestination.value = iteratorWaypoint;
         })
-        getVehicleCombinations();
         useRouter().push('/basic-transfer-preview')
     }
 
@@ -192,6 +250,40 @@ export const useCreateTransferStore = defineStore('useCreateTransferStore', () =
             })
         })
 
+    }
+
+    async function createTripV2(payload: VehicleCombination){
+        useApi().trip.CreateTripV2({
+            name: `${finalDestination.value!.name} Gidiş`,
+            timeType: TimeType.StartAtTime,
+            cost: payload.totalPrice,
+            dates: [moment(`${toDates.value.year}-${toDates.value.month}-${toDates.value.day}`).format('YYYY-MM-DDTHH:mm:ssZ')],
+            hour: Number.parseInt(toHour.value),
+            minute: Number.parseInt(toMinute.value),
+            trips: payload.vehicles.map(vehicle => {
+          return <CreateTripDto>{
+            cost: vehicle.basePrice * vehicle.totalDistance / 1000,
+            vehicleId: vehicle.description,
+            route: vehicle.geometryText,
+            duration: vehicle.totalTime,
+            waypoints: vehicle.users.map(user => {
+              return <CreateWaypointDto>{
+                latitude: user.waypoint.lat,
+                longitude: user.waypoint.lng,
+                duration: user.duration,
+                name: `${user.user.name} ${user.user.surname} Durağı`,
+                users: <CreateWaypointUserDto[]>[{
+                  accountId: user.user.id.startsWith('waypoint') ? null : user.user.id,
+                  name: user.user.name,
+                  surname: user.user.surname
+                }]
+              }
+            })
+          }
+        })
+        }).then(() => {
+            useRouter().push('/')
+        })
     }
 
     function setCosts(payload: IVehicleFillPair[], finalLat: number, finalLng: number): Promise<void>{
@@ -283,6 +375,13 @@ export const useCreateTransferStore = defineStore('useCreateTransferStore', () =
         isAddPeople,
         favoriteName,
         favoriteTrips,
+        vehicleCombinationsDataSource,
+        toHour,
+        toMinute,
+        toDates,
+        toDatesView,
+        hours,
+        minutes,
 
         addWaypoint,
         setFinalDestination,
@@ -294,7 +393,9 @@ export const useCreateTransferStore = defineStore('useCreateTransferStore', () =
         setRoutingSummary,
         createTrip,
         updateWaypointLatLang,
-        deleteFavorite
+        deleteFavorite,
+        getVehicleCombinations,
+        createTripV2
     }
 })
 

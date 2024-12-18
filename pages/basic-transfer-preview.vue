@@ -26,7 +26,7 @@
             <UButton label="Durak Ekle" block color="error" variant="subtle"
               @click="isAddWaypointModalVisible = true" />
             <USeparator orientation="vertical" class="h-10" />
-            <UButton label="Araçları Göster" block color="neutral" variant="subtle" @click="step = 1" />
+            <UButton label="Araçları Göster" block color="neutral" variant="subtle" @click="getVehicles" />
           </div>
         </div>
 
@@ -41,9 +41,8 @@
           <UButton label="Geri Dön" variant="subtle" color="neutral" @click="step= 0"/>
           <p class="text-xl">Aracınızı Seçin</p>
         </div>
-        <div class="flex flex-col divide-y divide-gray-900 gap-y-2 bg-gray-700 rounded-md p-4"
-          v-for="combinations in vehicleCombinations">
-          <template v-for="vehicle in combinations.vehicles">
+        <div class="flex flex-col divide-y divide-gray-900 gap-y-2 bg-gray-700 rounded-md p-4" v-for="item in vehicleCombinationsDataSource">
+          <template v-for="vehicle in item.combinations">
             <div class="flex justify-between items-center gap-x-2">
               <img :src="vehicle.vehicle.vehicleModel.photo" alt="vito" class="w-40 object-contain" />
               <p class="text-3xl">{{ vehicle.usage }}x</p>
@@ -65,8 +64,8 @@
             </div>
           </template>
           <div class="flex justify-between items-center pt-3">
-            <p class="text-2xl">{{ combinations.totalPrice }} ₺</p>
-            <div class="bg-red-700 text-white text-xs px-4 py-2 rounded-md" @click="createTransfer(combinations)">Seç ve
+            <p class="text-2xl">{{ item.totalPrice }} ₺</p>
+            <div class="bg-red-700 text-white text-xs px-4 py-2 rounded-md" @click="createTripV2(item as VehicleCombination)">Seç ve
               Ödemeye
               Devam Et</div>
           </div>
@@ -83,7 +82,7 @@
     <UDrawer v-model:open="isAddWaypointModalVisible" direction="top">
       <template #body>
         <div class="flex flex-col rounded-md mt-2">
-          <UInput icon="i-heroicons-magnifying-glass-20-solid" size="xl" class="w-full" color="white"
+          <UInput icon="i-heroicons-magnifying-glass-20-solid" size="xl" class="w-full" 
             v-model="locationSearchInput" :trailing="false" @click="locationIsSearchPanelVisible = true"
             placeholder="Bir yer arayın..." />
           <div class="flex flex-col w-full justify-center items-center" v-if="locationIsSearchPanelVisible">
@@ -219,9 +218,9 @@
 <script setup lang="ts">
 
 import type { ILocationSearchResult, IWaypoint } from "~/core/app/ITripLocation";
-import mapboxgl, { Marker } from "mapbox-gl";
+import mapboxgl from "mapbox-gl";
 import type { IVehicleCombinationPricePair } from "~/core/api/modules/trip/models/IVehicleCombination";
-import { routing } from "leaflet";
+import type { VehicleCombination } from "~/core/api/modules/trip/models/VehicleCombination";
 
 const mapboxContainer = ref<HTMLElement>();
 const mapbox = ref<mapboxgl.Map>();
@@ -252,7 +251,8 @@ const {
   vehicleCombinations,
   routingSummary,
   totalWaypoints,
-  totalAddedPeopleCount
+  totalAddedPeopleCount,
+  vehicleCombinationsDataSource
 } = storeToRefs(useCreateTransferStore());
 
 const {
@@ -277,7 +277,8 @@ const {
   deleteUserFromWaypoint,
   addWaypoint,
   createTrip,
-  updateWaypointLatLang
+  updateWaypointLatLang,
+  createTripV2
 } = useCreateTransferStore();
 
 watch(waypoints, value => {
@@ -336,6 +337,12 @@ function selectUser(e: any) {
     surname: e.surname,
     userId: e.id,
     profilePicture: e.profilePicture,
+  })
+}
+
+function getVehicles(){
+  useCreateTransferStore().getVehicleCombinations().then(() => {
+    step.value = 1
   })
 }
 

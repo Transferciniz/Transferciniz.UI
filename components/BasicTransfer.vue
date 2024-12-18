@@ -28,9 +28,35 @@
       </div>
 
 
-      <UInput type="datetime-local" class="mt-4" v-model="formattedDate" @change="onDateChange" size="xl" />
+            <div class="flex flex-col items-start justify-start">
 
+      <div class="flex justify-between items-center w-full mt-4">
+        <p class="w-1/2">Tarih:</p>
+        <UPopover>
+          <!--
+          {{ df.format(modelValue.toDate(getLocalTimeZone())) }}
+          -->
+          <UButton color="neutral" variant="subtle" icon="i-lucide-calendar" block>
+            {{toDatesView}}
+          </UButton>
 
+          <template #content>
+            <UCalendar :multiple="false" v-model="toDates" class="p-2" />
+          </template>
+        </UPopover>
+      </div>
+
+      <div class="flex justify-start items-center w-full mt-2">
+        <p class="w-1/2 ">Saat:</p>
+        <div class="flex justify-end items-center w-full gap-x-2">
+          <USelect :items="hours" v-model:model-value="toHour" class="flex-1"/>
+          <p>:</p>
+          <USelect :items="minutes" v-model:model-value="toMinute" class="flex-1"/>
+        </div>
+      </div>
+      </div>
+
+      <!--
       <div class="mt-4 flex flex-col gap-y-2">
         <USwitch label="Rotayı Favoriye Ekle" v-model:model-value="isAddFavorite"
           description="Sık kullandığınız rotaları favorilerinize ekleyerek zaman kazanın." />
@@ -40,7 +66,9 @@
         <USwitch label="Kişileride Rotaya Kaydet" v-if="isAddFavorite" v-model:model-value="isAddPeople"
           description="Bu transferi hep aynı kişiler ile yapıyorsanız kişileri de kaydedebilirsiniz." />
       </div>
-      <div class="flex justify-center items-center" @click="searchTransfer">
+      -->
+
+      <div class="flex justify-center items-center mt-4" @click="searchTransfer">
         <UButton variant="solid" size="xl" label="Transfer Ara" trailing-icon="ic:baseline-search"
           class="relative mt-2 w-60 flex justify-center" />
 
@@ -70,7 +98,13 @@ const {
   date,
   isAddPeople,
   isAddFavorite,
-  favoriteName
+  favoriteName,
+  toDates,
+  toDatesView,
+  toHour,
+  toMinute,
+  hours,
+  minutes
 } = storeToRefs(useCreateTransferStore())
 
 const formattedDate = computed(() => {

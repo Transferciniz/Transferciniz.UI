@@ -51,7 +51,6 @@ export const useVehicleModeStore = defineStore('useVehicleModeStore', () => {
     }
 
     function startTrip(trip: IGetVehicleTripsResponse){
-        console.log(trip)
         selectedTrip.value = trip;
         useApi().trip.StartTrip(trip.trip.id).then(() => {
             useRouter().push('/vehicle-mode/trip')

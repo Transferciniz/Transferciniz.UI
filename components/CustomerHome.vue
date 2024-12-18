@@ -57,7 +57,7 @@
                 <p>{{ trip.name }}</p>
               </div>
               <div class="w-1/2">
-                <div class="bg-red-800 py-2 text-white text-center rounded-md" @click="goTripDetails(trip.id)">Canlı
+                <div class="bg-red-800 py-2 text-white text-center rounded-md" @click="goTripDetails(trip)">Canlı
                   Takip
                 </div>
               </div>
@@ -154,17 +154,15 @@ function onVehicleModeClick() {
   }
 }
 
-/**
- * Silinecek
- */
 /*
 onMounted(() => {
-  const vehicleId = '61220d17-9097-4135-9d8a-220b7003e7cc'
+  const vehicleId = '253bfee9-429d-4c0f-b5d5-9dda941fa85a'
   useApi().accountVehicle.GetAccountVehicle(vehicleId).then(res => {
         accountVehicleCard.value = res.data;
         isVehicleCardVisible.value = true;
       })
-})*/
+})
+      */
 
 function deleteFavorite(payload: IFavoriteTrip) {
   useCreateTransferStore().deleteFavorite(payload);

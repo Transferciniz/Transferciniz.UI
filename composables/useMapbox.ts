@@ -152,6 +152,61 @@ export function useMapbox(){
         return htmlElement;
     }
 
+    function createBlueMarker(){
+        const innerHTML = `
+        <div class="relative flex items-center justify-center w-16 h-16">
+            <div class="absolute w-12 h-12 rounded-full bg-blue-300 opacity-50 animate-ping"></div>
+            <div class="relative w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 shadow-lg flex items-center justify-center">
+                <div class="w-3 h-3 rounded-full bg-white"></div>
+            </div>
+        </div>
+        `;
+        const htmlElement = document.createElement('div');
+        htmlElement.innerHTML = innerHTML
+        return htmlElement;
+    }
+
+    function createRouteStartMarker(){
+        const innerHTML = `
+<div class="relative flex items-center justify-center w-10 h-10 drop-shadow-lg">
+  <!-- Dış Halka -->
+  <div class="absolute w-8 h-8 rounded-full bg-blue-200 flex items-center justify-center border-4 border-blue-600">
+    <!-- İç Daire -->
+    <div class="relative w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center shadow-lg">
+      <!-- Play Butonu -->
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M8 5v14l11-7z" />
+      </svg>
+    </div>
+  </div>
+</div>
+        `;
+        const htmlElement = document.createElement('div');
+        htmlElement.innerHTML = innerHTML
+        return htmlElement;
+    }
+
+    function createRouteFinishMarker(){
+        const innerHTML = `
+<div class="relative flex items-center justify-center w-10 h-10 drop-shadow-lg">
+  <!-- Dış Halka -->
+  <div class="absolute w-8 h-8 rounded-full bg-blue-200 flex items-center justify-center border-4 border-blue-600">
+    <!-- İç Daire -->
+    <div class="relative w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center shadow-lg">
+      <!-- Finish Bayrağı İkonu (Küçültülmüş) -->
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 100 100">
+        <path fill="#ffffff" d="M2.5 12.5A2.5 2.5 0 0 0 0 15v70a2.5 2.5 0 0 0 2.5 2.5h95A2.5 2.5 0 0 0 100 85V15a2.5 2.5 0 0 0-2.5-2.5zm2.5 5h90v65H5Z" color="#ffffff"/>
+        <path fill="#ffffff" d="M71.668 17.496v16.668h16.664V17.496Zm16.664 16.668v16.664H99V34.164Zm0 16.664H71.668v16.668h16.664zm0 16.668v16.666H99V67.496Zm-16.664 0H55v16.666h16.668Zm-16.668 0V50.832H38.332v16.664zm-16.668 0H21.668v16.668h16.664zm-16.664 0V50.832H5v16.664zm0-16.664h16.664V34.164H21.668Zm0-16.668V17.5H5v16.664zm16.664 0H55V17.5H38.332Zm16.668 0v16.664h16.668V34.164Z" color="#ffffff"/>
+      </svg>
+    </div>
+  </div>
+</div>
+`;
+const htmlElement = document.createElement('div');
+htmlElement.innerHTML = innerHTML
+return htmlElement;
+    }
+
     function createVehicleMarker(plate: string){
         const innerHtml = '<div class="bg-white text-black rounded-md text-xs border-2 border-black px-2 py-1 flex justify-center items-center gap-x-2 min-w-[70px]">' + plate + '</div>';
         const htmlElement = document.createElement('div');
@@ -201,6 +256,9 @@ export function useMapbox(){
         createDefaultMarker,
         createCustomerCarMarker,
         createUserMarker,
-        createLiveWaypointMarker
+        createLiveWaypointMarker,
+        createBlueMarker,
+        createRouteStartMarker,
+        createRouteFinishMarker
     }
 }

@@ -30,7 +30,7 @@
       <p class="text-xs">Sıradaki İşiniz</p>
       <div class="flex flex-col justify-between">
         <p class="text-lg">{{ trips[0].name }}</p>
-        <p class="text-xs">{{ trips[0].trip.startDate }}</p>
+        <p class="text-xs">{{ moment(trips[0].trip.startDate).format('DD MMMM / HH:mm') }}</p>
         <div ref="map" class="w-full rounded-md h-[300px] mt-2"></div>
         <div class="bg-red-600 text-white text-center px-8 py-2 rounded-md mt-2" @click="startTrip(trips[0])">
           <span v-if="trips[0].trip.status == 1">Transferi Başlat</span>
@@ -70,6 +70,7 @@
 
 <script setup lang="ts">
 import mapboxgl from "mapbox-gl";
+import moment from "moment";
 import { TripStatus } from "~/core/api/modules/trip/models/ITripHeaderDto";
 import { useApi } from "~/core/api/useApi";
 
@@ -102,20 +103,21 @@ onMounted(() => {
   useVehicleModeStore().getVehicleTrips().then(() => {
     mapbox.value = useMapbox().createMap(map.value, { latitude: 0, longitude: 0 });
     mapbox.value.on('load', () => {
-      useMapbox().fetchRouteData(trips.value[0].trip.waypoints as any[]).then((res) => {
-        useMapbox().drawRoute(mapbox.value!, res)
-        new mapboxgl.Marker({
-          element: useMapbox().createStartMarker(),
-          draggable: false,
+      const nextTrip =trips.value[0]
+      const routeGeoJson = useDecodePolyline(nextTrip.trip.route);
+      useMapbox().drawRoute(mapbox.value!, routeGeoJson)
+      new mapboxgl.Marker({
+        element: useMapbox().createRouteStartMarker(),
+        draggable: false,
+      }).setLngLat(routeGeoJson.geometry.coordinates[0] as any).addTo(mapbox.value!);
+      
+      new mapboxgl.Marker({
+        element: useMapbox().createRouteFinishMarker(),
+        draggable: false,
 
-        }).setLngLat([res.features[0].geometry.coordinates[0][0], res.features[0].geometry.coordinates[0][1]]).addTo(mapbox.value!);
-        new mapboxgl.Marker({
-          element: useMapbox().createFinishMarker(),
-          draggable: false,
+      }).setLngLat(routeGeoJson.geometry.coordinates[routeGeoJson.geometry.coordinates.length -1] as any).addTo(mapbox.value!);
 
-        }).setLngLat([res.features[0].geometry.coordinates[res.features[0].geometry.coordinates.length - 1][0], res.features[0].geometry.coordinates[res.features[0].geometry.coordinates.length - 1][1]]).addTo(mapbox.value!);
 
-      });
     })
   })
   getProblems();

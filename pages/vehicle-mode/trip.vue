@@ -11,14 +11,14 @@
         v-if="selectedWaypoint"
         :title="selectedWaypoint.name + ' Durağına Geldiniz'"
         description="Lütfen araca binen kişileri onaylayınız."
-        :open="isWaypointDrawerOpen"
+        v-model:open="isWaypointDrawerOpen"
     >
       <UButton label="Open" color="neutral" variant="subtle" trailing-icon="i-lucide-chevron-up" />
 
       <template #body>
         <div class="rounded-t-md flex flex-col w-full p-4">
           <div class="flex justify-between items-center mt-2" v-for="user in selectedWaypoint.users">
-            <UAvatar :src="user.profilePicture" :alt="user.name + ' ' + user.surname " size="3xl" />
+            <UAvatar :src="user.profilePicture" :alt="user.name + ' ' + user.surname " size="3xl" class="size-20" />
 
             <div class="flex flex-col rounded-md p-4 justify-center items-center">
               <p class="text-lg">{{user.name}}</p>
@@ -89,7 +89,7 @@ definePageMeta({
   layout: "fullscreen",
 })
 const mapBoxContainer = ref();
-const mapbox = ref()
+const mapbox = ref<mapboxgl.Map>()
 
 const isNavigationStarted = ref(false);
 const carMarker = ref<mapboxgl.Marker>();
@@ -97,6 +97,8 @@ const selectedWaypoint = ref<IWayPointDto>();
 const isWaypointDrawerOpen = ref(false);
 const lastWaypointId = ref("");
 const isFinishDrawerOpen = ref(false);
+const coordinates = ref<any[][]>([]);
+
 const {
   selectedTrip
 } = storeToRefs(useVehicleModeStore());
@@ -147,9 +149,10 @@ function navigateToVehicleMode(){
 }
 
 function getRouteForStartPoint(){
+  const startPoint = coordinates.value[0]
   useMapbox().fetchRouteData([
       {latitude: location.value.latitude, longitude: location.value.longitude},
-      {longitude: selectedTrip.value!.trip.waypoints[0].longitude, latitude: selectedTrip.value!.trip.waypoints[0].latitude},
+      {longitude: startPoint[0], latitude: startPoint[1]},
   ]).then(res => {
     useMapbox().drawRoute(mapbox.value!, res, 'startNavigationSource', 'startNavigationLayer', false, '#3bdd4b');
     mapbox.value?.easeTo({
@@ -188,16 +191,52 @@ async function finishTrip(): Promise<void>{
 
 onMounted(() => {
   mapbox.value = useMapbox().createMap(mapBoxContainer.value, {latitude: 0, longitude:0}, false);
-  useMapbox().fetchRouteData(selectedTrip.value!.trip.waypoints as any[]).then((res) => {
-    useMapbox().drawRoute(mapbox.value, res)
+  mapbox.value.on('load', () => {
+    const routeGeoJSON = useDecodePolyline(selectedTrip.value.trip.route)
+    coordinates.value = routeGeoJSON.geometry.coordinates;
+    useMapbox().drawRoute(mapbox.value!, routeGeoJSON)
+    
     carMarker.value = new mapboxgl.Marker({
-      element: useMapbox().createCustomerCarMarker(),
+      element: useMapbox().createBlueMarker(),
+      draggable: false,
+    }).setLngLat([location.value.longitude, location.value.latitude]).addTo(mapbox.value!);
+    new mapboxgl.Marker({
+      element: useMapbox().createRouteStartMarker(),
+      draggable: false,
+    }).setLngLat(routeGeoJSON.geometry.coordinates[0] as any).addTo(mapbox.value!);
+   const finishMarker =  new mapboxgl.Marker({
+      element: useMapbox().createRouteFinishMarker(),
+      draggable: false,
+    }).setLngLat(routeGeoJSON.geometry.coordinates[routeGeoJSON.geometry.coordinates.length -1] as any).addTo(mapbox.value!);
+
+    finishMarker.getElement().addEventListener('click', () => {
+         isFinishDrawerOpen.value = true;
+    })
+
+    selectedTrip.value.trip.waypoints.forEach(waypoint => {
+       const waypointMarker =  new mapboxgl.Marker({
+        element: useMapbox().createLiveWaypointMarker(),
+        draggable: false,
+        offset: [0, -36]
+      }).setLngLat([waypoint.longitude, waypoint.latitude]).addTo(mapbox.value!);
+      waypointMarker.getElement().addEventListener('click', () => {
+          selectedWaypoint.value = waypoint;
+          isWaypointDrawerOpen.value = true;
+        })
+    })
+  })
+
+  /*
+  useMapbox().fetchRouteData(selectedTrip.value!.trip.waypoints as any[]).then((res) => {
+  
+    carMarker.value = new mapboxgl.Marker({
+      element: useMapbox().createBlueMarker(),
       draggable: false,
     }).setLngLat([location.value.longitude, location.value.latitude]).addTo(mapbox.value!);
     selectedTrip.value!.trip.waypoints.forEach((waypoint, index) => {
       if(index === selectedTrip.value!.trip.waypoints.length-1){
        const finishMarker =  new mapboxgl.Marker({
-          element: useMapbox().createFinishMarker(),
+          element: useMapbox().createRouteStartMarker(),
           draggable: false,
         }).setLngLat([waypoint.longitude, waypoint.latitude]).addTo(mapbox.value!);
         finishMarker.getElement().addEventListener('click', () => {
@@ -216,7 +255,7 @@ onMounted(() => {
       }
 
     })
-  })
+  })*/
 })
 
 onBeforeUnmount(() => {
@@ -224,3 +263,11 @@ onBeforeUnmount(() => {
 })
 
 </script>
+
+<style>
+@layer utilities {
+  .clip-path-triangle {
+    clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+  }
+}
+</style>

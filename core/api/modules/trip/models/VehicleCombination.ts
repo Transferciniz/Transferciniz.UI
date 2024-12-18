@@ -3,7 +3,7 @@ import type { ICombinationVehicle, IVehicleCombinationPricePair } from "./IVehic
 import type { VroomResponse } from "./IVroom";
 import type { IEmployee } from "../../account/models/IEmployee";
 import type { IVroomJob, IVroomVehicle } from "./IOptimizeRoute";
-import type { ILocationSearchResult } from "~/core/app/ITripLocation";
+import type { ILocationSearchResult, IWaypoint } from "~/core/app/ITripLocation";
 import { decode } from "@mapbox/polyline";
 import mapboxgl from "mapbox-gl";
 
@@ -40,8 +40,26 @@ export class VehicleCombination{
         })
     }
 
-    public async GetRoutes(users: IEmployee[], serviceLocation: ILocationSearchResult): Promise<void>{
+    public async GetRoutes(users: IEmployee[], serviceLocation: ILocationSearchResult, type: 'to' | 'from'): Promise<void>{
         this.totalPrice =0;
+        const vehicles = type == 'from' ? 
+        this.vehicles.map(vehicle => {
+            return <IVroomVehicle>{
+                capacity: vehicle.capacity,
+                description: vehicle.description,
+                id: vehicle.id,
+                end: [serviceLocation.longitude, serviceLocation.latitude]
+            };
+        })
+        :
+        this.vehicles.map(vehicle => {
+            return <IVroomVehicle>{
+                capacity: vehicle.capacity,
+                description: vehicle.description,
+                id: vehicle.id,
+                start: [serviceLocation.longitude, serviceLocation.latitude]
+            };
+        })
         this.vroom= (await useApi().trip.OptimizeRoute({
                     jobs: users.map((x, i) => {
                     return <IVroomJob>{
@@ -51,14 +69,7 @@ export class VehicleCombination{
                         id: i + 1
                     };
                     }),
-                    vehicles: this.vehicles.map(vehicle => {
-                    return <IVroomVehicle>{
-                        capacity: vehicle.capacity,
-                        description: vehicle.description,
-                        id: vehicle.id,
-                        end: [serviceLocation.longitude, serviceLocation.latitude]
-                    };
-                    }),
+                    vehicles: vehicles,
                     options: {
                     format: "geojson"
                     }

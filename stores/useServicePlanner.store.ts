@@ -4,7 +4,7 @@ import type { ILocationSearchResult } from "~/core/app/ITripLocation";
 import { CalendarDate, DateFormatter, getLocalTimeZone } from '@internationalized/date'
 import { VehicleCombination } from "~/core/api/modules/trip/models/VehicleCombination";
 import type { IVroomJob, IVroomVehicle } from "~/core/api/modules/trip/models/IOptimizeRoute";
-import { TimeType, type CreateTripDto, type CreateWaypointDto, type CreateWaypointUserDto } from "~/core/api/modules/trip/models/ICreateTripV2";
+import { TimeType, TripDirection, type CreateTripDto, type CreateWaypointDto, type CreateWaypointUserDto } from "~/core/api/modules/trip/models/ICreateTripV2";
 import moment from "moment";
 
 export const useServicePlannerStore = defineStore('servicePlannerStore', () => {
@@ -87,7 +87,7 @@ export const useServicePlannerStore = defineStore('servicePlannerStore', () => {
         // OptimizeRoute çağrılarını topluca beklemek için `Promise.all` kullanılıyor
         await Promise.all(
           vehicleCombinations.map(async combination => {
-            await combination.GetRoutes(selectedEmployee.value, serviceLocation.value!)
+            await combination.GetRoutes(selectedEmployee.value, serviceLocation.value!, oneWayDetail.value == 'to' ? 'to' : 'from')
           })
         );
 
@@ -110,35 +110,89 @@ export const useServicePlannerStore = defineStore('servicePlannerStore', () => {
         const date = moment(`${x.year}-${x.month}-${x.day}`);
         return date.format('YYYY-MM-DDTHH:mm:ssZ');
       })
-      useApi().trip.CreateTripV2({
-        timeType: oneWayDetail.value == 'from' ? TimeType.ArriveAtTime : TimeType.StartAtTime,
-        cost: selectedVehicleCombination.value!.totalPrice,
-        name: `${serviceLocation.value!.name} ${directionString}`,
-        dates: dates,
-        hour: oneWayDetail.value == 'from' ? Number.parseInt(fromHour.value) : Number.parseInt(toHour.value),
-        minute: oneWayDetail.value == 'from' ? Number.parseInt(fromMinute.value) : Number.parseInt(toMinute.value),
-        trips: selectedVehicleCombination.value!.vehicles.map(vehicle => {
-          return <CreateTripDto>{
-            cost: vehicle.basePrice * vehicle.totalDistance / 1000,
-            vehicleId: vehicle.description,
-            route: vehicle.geometryText,
-            duration: vehicle.totalTime,
-            waypoints: vehicle.users.map(user => {
-              return <CreateWaypointDto>{
-                latitude: user.waypoint.lat,
-                longitude: user.waypoint.lng,
-                duration: user.duration,
-                name: `${user.user.name} ${user.user.surname} Durağı`,
-                users: <CreateWaypointUserDto[]>[{
-                  accountId: user.user.id,
-                  name: user.user.name,
-                  surname: user.user.surname
-                }]
-              }
-            })
-          }
+      if(oneWayDetail.value == 'from'){
+        useApi().trip.CreateTripV2({
+          timeType: TimeType.ArriveAtTime,
+          cost: selectedVehicleCombination.value!.totalPrice,
+          name: `${serviceLocation.value!.name} ${directionString}`,
+          dates: dates,
+          hour: Number.parseInt(fromHour.value),
+          minute: Number.parseInt(fromMinute.value),
+          trips: selectedVehicleCombination.value!.vehicles.map(vehicle => {
+            return <CreateTripDto>{
+              cost: vehicle.basePrice * vehicle.totalDistance / 1000,
+              vehicleId: vehicle.description,
+              route: vehicle.geometryText,
+              duration: vehicle.totalTime,
+              startLatitude: vehicle.decodedGeometry[0][1],
+              startLongitude: vehicle.decodedGeometry[0][0],
+              endLatitude: vehicle.decodedGeometry[vehicle.decodedGeometry.length -1][1],
+              endLongitude: vehicle.decodedGeometry[vehicle.decodedGeometry.length -1][0],
+              tripDirection: TripDirection.From,
+              waypoints: vehicle.users.map(user => {
+                return <CreateWaypointDto>{
+                  latitude: user.waypoint.lat,
+                  longitude: user.waypoint.lng,
+                  duration: user.duration,
+                  name: `${user.user.name} ${user.user.surname}`,
+                  users: <CreateWaypointUserDto[]>[{
+                    accountId: user.user.id,
+                    name: user.user.name,
+                    surname: user.user.surname
+                  }]
+                }
+              })
+            }
+          })
         })
-      })
+      }else{
+        useApi().trip.CreateTripV2({
+          timeType: TimeType.StartAtTime,
+          cost: selectedVehicleCombination.value!.totalPrice,
+          name: `${serviceLocation.value!.name} ${directionString}`,
+          dates: dates,
+          hour:  Number.parseInt(toHour.value),
+          minute: Number.parseInt(toMinute.value),
+          trips: selectedVehicleCombination.value!.vehicles.map(vehicle => {
+            return <CreateTripDto>{
+              cost: vehicle.basePrice * vehicle.totalDistance / 1000,
+              vehicleId: vehicle.description,
+              route: vehicle.geometryText,
+              duration: vehicle.totalTime,
+              startLatitude: vehicle.decodedGeometry[0][1],
+              startLongitude: vehicle.decodedGeometry[0][0],
+              endLatitude: vehicle.decodedGeometry[vehicle.decodedGeometry.length -1][1],
+              endLongitude: vehicle.decodedGeometry[vehicle.decodedGeometry.length -1][0],
+              tripDirection: TripDirection.To,
+              waypoints: [
+                {
+                  duration: 0,
+                  latitude: useGetNearestPoint([serviceLocation.value!.longitude, serviceLocation.value!.latitude], vehicle.decodedGeometry).lat,
+                  longitude: useGetNearestPoint([serviceLocation.value!.longitude, serviceLocation.value!.latitude], vehicle.decodedGeometry).lng,
+                  users: vehicle.users.map(x => {
+                    return <CreateWaypointUserDto>{
+                      accountId: x.user.id,
+                      name: x.user.name,
+                      surname: x.user.surname
+                    }
+                  }),
+                  name: 'Kalkış'
+                },
+                ...vehicle.users.map(user => {
+                  return <CreateWaypointDto>{
+                    latitude: user.waypoint.lat,
+                    longitude: user.waypoint.lng,
+                    duration: user.duration,
+                    name: `${user.user.name} ${user.user.surname}`,
+                    users: []
+                  }
+                })
+              ]
+            }
+          })
+        })
+      }
+   
     }
 
 

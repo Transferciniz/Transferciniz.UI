@@ -43,7 +43,7 @@ const {
   selectedEmployee,
   serviceLocation
   } = storeToRefs(useServicePlannerStore())
-  const isVehiclesDrawerVisible = ref(true);
+  const isVehiclesDrawerVisible = ref(false);
   const {createTrip} = useServicePlannerStore()
   
 
@@ -73,12 +73,6 @@ function drawMarkers(){
   markers.value = [];
   selectedVehicleCombination.value?.vehicles.forEach(vehicle => {
         vehicle.users.forEach(user => {
-          new mapboxgl.Marker({
-          element: useMapbox().createWaypointMarker(1),
-          draggable: false,
-          })
-          .setLngLat([user.waypoint.lng, user.waypoint.lat])
-          .addTo(mapbox.value!)
           const marker = new mapboxgl.Marker({
           element: useMapbox().createUserMarker(user.user.profilePicture),
           draggable: true,

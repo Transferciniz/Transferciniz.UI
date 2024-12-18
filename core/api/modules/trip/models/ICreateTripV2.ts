@@ -19,6 +19,11 @@ export interface CreateTripV2Request {
     vehicleId: string; // UUID
     route: string;
     waypoints: CreateWaypointDto[];
+    tripDirection: TripDirection;
+    startLatitude: number;
+    startLongitude: number;
+    endLatitude: number;
+    endLongitude: number;
   }
   
   export interface CreateWaypointDto {
@@ -33,4 +38,9 @@ export interface CreateTripV2Request {
     accountId: string; // UUID
     name: string;
     surname: string;
+  }
+
+  export enum TripDirection {
+    From = 1,
+    To = 2
   }

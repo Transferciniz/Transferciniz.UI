@@ -2,7 +2,7 @@
   <USwitch
       unchecked-icon="i-lucide-x"
       checked-icon="i-lucide-check"
-      label="Kişi Araca Bindi"
+      :label="checkBoxValue ? 'Araca Bindi' : 'Araca Binmedi'"
       size="xl"
       v-model="checkBoxValue"
   />

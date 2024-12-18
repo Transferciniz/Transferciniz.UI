@@ -38,7 +38,7 @@ export class OpenRouteService {
         // POST isteği için gövdeyi hazırlıyoruz
         const body = {
             coordinates: coordinates,
-            profile: 'car',
+            profileName: 'car',
             format: 'geojson'
         };
 
