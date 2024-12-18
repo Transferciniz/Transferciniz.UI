@@ -132,16 +132,25 @@ watch(bearing, value => {
 })
 
 function checkWaypointDistances(value: any){
-  selectedTrip.value?.trip.waypoints.forEach((waypoint, index) => {
-    if(useHaversineDistance([value.longitude, value.latitude], [waypoint.longitude, waypoint.latitude]) < 70 && isWaypointDrawerOpen.value == false && waypoint.id != lastWaypointId.value){
-      if(index === selectedTrip.value?.trip.waypoints.length - 1){
-        isFinishDrawerOpen.value = true;
-      }else{
+  const finishPoint = coordinates.value[coordinates.value.length -1];
+  if(useHaversineDistance([value.longitude, value.latitude], finishPoint) < 100){
+    if(lastWaypointId.value != 'finish'){
+      lastWaypointId.value = 'finish';
+      isFinishDrawerOpen.value = true;
+      return;
+    }
+  }
+  for(let i = 1; i<= selectedTrip.value.trip.waypoints.length; i++){
+    const waypoint = selectedTrip.value.trip.waypoints[i];
+    if(useHaversineDistance([value.longitude, value.latitude], [waypoint.longitude, waypoint.latitude])){
+      if(lastWaypointId.value != waypoint.id){
+        lastWaypointId.value = waypoint.id;
         selectedWaypoint.value = waypoint;
         isWaypointDrawerOpen.value = true;
+        break;
       }
     }
-  })
+  }
 }
 
 function navigateToVehicleMode(){
