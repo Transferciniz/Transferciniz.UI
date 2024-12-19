@@ -129,11 +129,7 @@ export const useCreateTransferStore = defineStore('useCreateTransferStore', () =
                 totalPerson: totalAddedPeopleCount.value,
                 types: []
             });
-        
-            const combinationsData = res.data;
-            const vehicleCombinations = combinationsData.map(
-                x => new VehicleCombination(x.vehicles)
-            );
+
             let employees: IEmployee[] = []; 
             waypoints.value.forEach((waypoint, waypointIndex) => {
                 employees = [...employees, ...waypoint.users.map((x, userIndex) => {
@@ -150,17 +146,23 @@ export const useCreateTransferStore = defineStore('useCreateTransferStore', () =
                     }
                 })]
             })
+        
+            const combinationsData = res.data;
+            const vehicleCombinations = combinationsData.map(
+                x => new VehicleCombination(x.vehicles, employees)
+            );
+
             const {latitude, longitude, name} = finalDestination.value!
             
             // OptimizeRoute çağrılarını topluca beklemek için `Promise.all` kullanılıyor
             await Promise.all(
                 vehicleCombinations.map(async combination => {
-                await combination.GetRoutes(employees, {
+                await combination.GetRoutes({
                     address: name,
                     latitude: latitude,
                     longitude: longitude,
                     name: name
-                })
+                }, 'from')
                 })
             );
 

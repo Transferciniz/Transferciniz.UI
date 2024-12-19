@@ -86,7 +86,7 @@
 
 
     <div class="flex justify-start items-center gap-x-2 my-4" v-if="directionType == 'twoWay'">
-      <p class="text-lg">Toplama Tarih ve Saati</p>
+      <p class="text-lg">Servis Tarih ve Saati</p>
       <USeparator orientation="horizontal" class="flex-1" />
     </div>
     <div class="flex flex-col items-start justify-start" v-if="directionType == 'twoWay'">
@@ -94,60 +94,37 @@
       <div class="flex justify-between items-center w-full">
         <p class="w-1/2">Tarih:</p>
         <UPopover>
-          <!--
-           {{ df.format(modelValue.toDate(getLocalTimeZone())) }}
-          -->
+  
           <UButton color="neutral" variant="subtle" icon="i-lucide-calendar" block>
-            {{ fromDatesView }}
+            {{ twoWayDatesView }}
           </UButton>
 
           <template #content>
-            <UCalendar :multiple="true" v-model="fromDates" class="p-2" />
+            <UCalendar :multiple="true" v-model="twoWayDates" class="p-2" />
           </template>
         </UPopover>
       </div>
 
       <div class="flex justify-start items-center w-full mt-2">
-        <p class="w-1/2">Varış Saati Seçin:</p>
+        <p class="w-1/2">Varış Saati:</p>
         <div class="flex justify-end items-center w-full gap-x-2">
           <USelect :items="hours" v-model:model-value="fromHour" class="flex-1"/>
           <p>:</p>
           <USelect :items="minutes" v-model:model-value="fromMinute"class="flex-1"/>
         </div>
       </div>
-    </div>
-
-    <div class="flex justify-start items-center gap-x-2 my-4" v-if="directionType == 'twoWay'">
-      <p class="text-lg">Dağıtım Tarih ve Saati</p>
-      <USeparator orientation="horizontal" class="flex-1" />
-    </div>
-    <div class="flex flex-col items-start justify-start" v-if="directionType == 'twoWay'">
-
-      <div class="flex justify-between items-center w-full">
-        <p class="w-1/2">Tarih:</p>
-        <UPopover>
-          <!--
-           {{ df.format(modelValue.toDate(getLocalTimeZone())) }}
-          -->
-          <UButton color="neutral" variant="subtle" icon="i-lucide-calendar" block>
-            {{toDatesView}}
-          </UButton>
-
-          <template #content>
-            <UCalendar :multiple="true" v-model="toDates" class="p-2" />
-          </template>
-        </UPopover>
-      </div>
 
       <div class="flex justify-start items-center w-full mt-2">
-        <p class="w-1/2">Çıkış Saati Seçin:</p>
+        <p class="w-1/2">Çıkış Saati:</p>
         <div class="flex justify-end items-center w-full gap-x-2">
           <USelect :items="hours" v-model:model-value="toHour" class="flex-1"/>
           <p>:</p>
           <USelect :items="minutes" v-model:model-value="toMinute" class="flex-1"/>
         </div>
       </div>
+
     </div>
+
 
     <UButton label="Araç Seçeneklerini Göster" color="neutral" block class="mt-4" v-if="directionType != 'none'" @click="getVehicles"/>
    
@@ -224,7 +201,9 @@ const {
   fromDates,
   toDates,
   fromDatesView,
-  toDatesView
+  toDatesView,
+  twoWayDates,
+  twoWayDatesView
 } = storeToRefs(useServicePlannerStore())
 
 const {

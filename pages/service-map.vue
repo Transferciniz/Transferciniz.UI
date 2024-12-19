@@ -3,14 +3,26 @@
     <div ref="mapBoxContainer" class="w-screen h-screen"></div>
     <div class="absolute bottom-20 p-4 flex justify-center items-center w-full">
       <div class="bg-gray-900 p-4 flex flex-col justify-center items-center rounded-md w-full gap-y-2">
-        <div class="flex justify-between gap-x-2 items-center w-full">
-          <p>Toplam Ödenecek Tutar:</p>
-          <p>{{ selectedVehicleCombination?.totalPrice.toFixed(2) }} ₺</p>
+        <div class="flex justify-between gap-x-2 items-center w-full text-xs" v-if="directionType == 'twoWay'">
+          <p>Gidiş Ücreti:</p>
+          <p>{{ (selectedVehicleCombination!.totalPrice).toFixed(2) }} ₺</p>
+        </div>
+        <div class="flex justify-between gap-x-2 items-center w-full text-xs" v-if="directionType == 'twoWay'">
+          <p>Dönüş Ücreti:</p>
+          <p>{{ (selectedVehicleCombination!.twoWayTotalPrice).toFixed(2) }} ₺</p>
+        </div>
+        <div class="flex justify-between gap-x-2 items-center w-full font-bold text-xs">
+          <p>Günlük Toplam:</p>
+          <p>{{ (selectedVehicleCombination!.totalPrice + selectedVehicleCombination!.twoWayTotalPrice).toFixed(2) }} ₺</p>
+        </div>
+        <USeparator orientation="horizontal"/>
+        <div class="flex justify-center gap-x-2 items-center w-full font-bold text-md">
+          <p>{{ dateCount }} Gün için {{ ((selectedVehicleCombination!.totalPrice + selectedVehicleCombination!.twoWayTotalPrice) * dateCount).toFixed(2) }} ₺</p>
         </div>
         <USeparator orientation="horizontal"/>
         <div class="flex justify-between items-center gap-x-2 w-full">
           <UButton block label="Araçları Göster" color="neutral" variant="soft" @click="isVehiclesDrawerVisible = true"/>
-          <UButton block label="Servisi Oluştur" color="success" variant="soft" @click="createTrip"/>
+          <UButton block label="Servisi Oluştur" color="success" variant="soft" loading-auto @click="makeTrip"/>
         </div>
       </div>
     </div>
@@ -42,18 +54,35 @@ const {
   selectedVehicleCombination,
   selectedEmployee,
   serviceLocation,
-  oneWayDetail
+  oneWayDetail,
+  directionType,
+  toDates,
+  fromDates,
+  twoWayDates
   } = storeToRefs(useServicePlannerStore())
   const isVehiclesDrawerVisible = ref(false);
   const {createTrip} = useServicePlannerStore()
-  
 
+  async function makeTrip(): Promise<any>{
+    return new Promise((resolve, reject) => {
+      createTrip().then(() => {
+        resolve({});
+        useRouter().push('/')
+      })
+    })
+  }
+  
+  const dateCount = computed(() => {
+    if(directionType.value =='twoWay') return twoWayDates.value.length;
+    if(oneWayDetail.value == 'from') return fromDates.value.length;
+    return toDates.value.length;
+  })
   const mapBoxContainer = ref();
   const mapbox = ref<mapboxgl.Map>();
   const markers = ref<mapboxgl.Marker[]>([]);
   onMounted(() => {
     mapbox.value = useMapbox().createMap(mapBoxContainer.value, {latitude: 0, longitude: 0})
-    let bounds = selectedEmployee.value.reduce((bounds, coord) => bounds.extend([coord.longitude, coord.latitude]), new mapboxgl.LngLatBounds());
+    let bounds = selectedVehicleCombination.value!.users.reduce((bounds, coord) => bounds.extend([coord.longitude, coord.latitude]), new mapboxgl.LngLatBounds());
     mapbox.value.fitBounds(bounds, {
       padding: 50,
       animate: false
@@ -61,42 +90,30 @@ const {
     mapbox.value.on('load', () => {
 
       selectedVehicleCombination.value?.drawRoutes(mapbox.value!);
-      drawMarkers();
+      selectedVehicleCombination.value?.users.forEach(user => {
+        new mapboxgl.Marker({
+          element: useMapbox().createUserMarker(user.profilePicture),
+          draggable: true,
+          })
+          .setLngLat([user.longitude, user.latitude])
+          .addTo(mapbox.value!)
+          .on('dragend', (event) => {
+              const {lat, lng} =event.target.getLngLat()
+              user.latitude = lat;
+              user.longitude = lng;
+              selectedVehicleCombination.value?.GetRoutes(serviceLocation.value!, directionType.value == 'oneWay' ? 
+              oneWayDetail.value  == 'to' ? 'to' : 'from'
+              : 'both'
+            ).then(() => {
+                selectedVehicleCombination.value?.drawRoutes(mapbox.value!)
+           })
+          });
+      })
 
     })
 
   })
 
-function drawMarkers(){
-  markers.value.forEach(x => {
-    x.remove();
-  })
-  markers.value = [];
-  selectedVehicleCombination.value?.vehicles.forEach(vehicle => {
-        vehicle.users.forEach(user => {
-          const marker = new mapboxgl.Marker({
-          element: useMapbox().createUserMarker(user.user.profilePicture),
-          draggable: true,
-          })
-          .setLngLat([user.user.longitude, user.user.latitude])
-          .addTo(mapbox.value!)
-          .on('dragend', (event) => {
-              const {lat, lng} =event.target.getLngLat()
-              user.user.latitude = lat;
-              user.user.longitude = lng;
-              selectedVehicleCombination.value?.recalculateRoutes(serviceLocation.value!, oneWayDetail.value == 'to' ? 'to' : 'from').then(() => {
-                selectedVehicleCombination.value?.drawRoutes(mapbox.value!)
-                drawMarkers();
-           })
-          });
-          marker.getElement().addEventListener('click', () => {
-            selectedVehicleCombination.value!.toggleSelected(vehicle.id);
-            selectedVehicleCombination.value?.drawRoutes(mapbox.value!);
-          })
-          markers.value.push(marker);
-        })
-      })
-}
 
 function redrawRoutes(){
   selectedVehicleCombination.value!.drawRoutes(mapbox.value!)
